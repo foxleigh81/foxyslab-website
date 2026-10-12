@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { Poppins } from "next/font/google";
 import Script from "next/script";
 import { FlagDefinitions } from "flags/react";
 import { encryptFlagDefinitions } from "flags";
@@ -24,11 +23,17 @@ const sink = localFont({
   display: "swap",
 });
 
-const poppins = Poppins({
-  subsets: ["latin"],
+const poppins = localFont({
+  src: [
+    { path: "../public/fonts/poppins-300.woff2", weight: "300" },
+    { path: "../public/fonts/poppins-400.woff2", weight: "400" },
+    { path: "../public/fonts/poppins-500.woff2", weight: "500" },
+    { path: "../public/fonts/poppins-600.woff2", weight: "600" },
+    { path: "../public/fonts/poppins-700.woff2", weight: "700" },
+    { path: "../public/fonts/poppins-900.woff2", weight: "900" },
+  ],
   variable: "--font-poppins",
   display: "swap",
-  weight: ["300", "400", "500", "600", "700", "900"],
 });
 
 const title = `${siteConfig.name} | ${siteConfig.tagline}`;

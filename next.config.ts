@@ -4,7 +4,14 @@ import { REMOTE_IMAGE_PATTERNS } from "./lib/image-hosts";
 import { shortLinkRedirects } from "./lib/short-links";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
+  // CI validates the site with fixtures but does not ship an image, so copying
+  // the entire standalone tree only consumes sandbox disk and adds no coverage.
+  output:
+    process.env.CI === "1" &&
+    process.env.STUDIO_SITE_FIXTURES === "1" &&
+    !process.env.VERCEL
+      ? undefined
+      : "standalone",
   poweredByHeader: false,
   images: {
     // Defined in lib/image-hosts.ts so tests can assert against the real list.

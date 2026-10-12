@@ -72,6 +72,25 @@ npm run build
 npm start
 ```
 
+### Browser and Lighthouse checks without API credentials
+
+CI uses a deterministic, populated YouTube response set so `/videos` tests and Lighthouse
+measure the gallery rather than an API-key error page. The fixture is enabled only when
+`CI=1 STUDIO_SITE_FIXTURES=1` and is disabled on Vercel. It uses a public test-only
+`FLAGS_SECRET`; no deployment credentials are supplied to the engineering sandbox.
+
+Run `npm ci`, then:
+
+```bash
+CI=1 STUDIO_SITE_FIXTURES=1 FLAGS_SECRET=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= npm run test:e2e
+CI=1 STUDIO_SITE_FIXTURES=1 FLAGS_SECRET=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= npm run build
+CI=1 STUDIO_SITE_FIXTURES=1 FLAGS_SECRET=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= npm run test:lighthouse
+node scripts/report-gallery-lighthouse.mjs
+```
+
+The browser suite needs Playwright's Chromium and WebKit binaries (`npx playwright install
+chromium webkit`). Build after E2E because `next dev` replaces the `.next` production output.
+
 ## 📁 Project Structure
 
 ```
