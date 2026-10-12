@@ -3,7 +3,7 @@ import { waitForHydration } from "./helpers";
 
 test.describe("populated video gallery", () => {
   test.skip(
-    process.env.STUDIO_SITE_FIXTURES !== "1",
+    process.env.YOUTUBE_TEST_FIXTURES !== "1",
     "Requires deterministic YouTube data"
   );
 

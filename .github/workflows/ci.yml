@@ -46,7 +46,7 @@ jobs:
     env:
       FLAGS_SECRET: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=" # CI-only key; no production secret reaches test code
       CI: "1"
-      STUDIO_SITE_FIXTURES: "1"
+      YOUTUBE_TEST_FIXTURES: "1"
     steps:
       - uses: actions/checkout@v4
 
@@ -94,7 +94,7 @@ jobs:
       NEXT_PUBLIC_SENTRY_DSN: ""
       FLAGS_SECRET: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=" # CI-only key
       CI: "1"
-      STUDIO_SITE_FIXTURES: "1"
+      YOUTUBE_TEST_FIXTURES: "1"
     steps:
       - uses: actions/checkout@v4
 

@@ -21,7 +21,7 @@ module.exports = {
       },
     },
     upload:
-      process.env.STUDIO_SITE_FIXTURES === "1"
+      process.env.YOUTUBE_TEST_FIXTURES === "1"
         ? { target: "filesystem", outputDir: ".lighthouseci/upload" }
         : { target: "temporary-public-storage" },
   },

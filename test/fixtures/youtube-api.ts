@@ -1,7 +1,7 @@
 /** Deterministic YouTube API responses for browser and Lighthouse checks in CI. */
 const ids = Array.from(
   { length: 36 },
-  (_, i) => `studioVideo${String(i + 1).padStart(2, "0")}`
+  (_, i) => `fixtureVideo${String(i + 1).padStart(2, "0")}`
 );
 
 const titles = [
@@ -14,7 +14,7 @@ const titles = [
 export function youtubeFixtureEnabled(
   env: Record<string, string | undefined> = process.env
 ): boolean {
-  return env.CI === "1" && env.STUDIO_SITE_FIXTURES === "1" && !env.VERCEL;
+  return env.CI === "1" && env.YOUTUBE_TEST_FIXTURES === "1" && !env.VERCEL;
 }
 
 export function youtubeFixtureResponse(rawUrl: string): Response {
@@ -31,7 +31,7 @@ export function youtubeFixtureResponse(rawUrl: string): Response {
     body = {
       items: [
         {
-          id: "studio-channel",
+          id: "fixture-channel",
           snippet: {
             title: "Foxy's Lab",
             description: "Smart homes and homelabs",
@@ -42,18 +42,18 @@ export function youtubeFixtureResponse(rawUrl: string): Response {
             videoCount: "36",
             viewCount: "300000",
           },
-          contentDetails: { relatedPlaylists: { uploads: "studio-uploads" } },
+          contentDetails: { relatedPlaylists: { uploads: "fixture-uploads" } },
         },
       ],
     };
   } else if (endpoint === "playlistItems") {
     const playlist = url.searchParams.get("playlistId");
     const selected =
-      playlist === "studio-uploads"
+      playlist === "fixture-uploads"
         ? ids
-        : playlist === "studio-home"
+        : playlist === "fixture-home"
           ? ids.filter((_, i) => i % 2 === 0)
-          : playlist === "studio-lab"
+          : playlist === "fixture-lab"
             ? ids.filter((_, i) => i % 2 === 1)
             : null;
     if (!selected) throw new Error(`Unknown fixture playlist: ${playlist}`);
@@ -97,12 +97,12 @@ export function youtubeFixtureResponse(rawUrl: string): Response {
     body = {
       items: [
         {
-          id: "studio-home",
+          id: "fixture-home",
           snippet: { title: "Smart Home", description: "", thumbnails: {} },
           contentDetails: { itemCount: 18 },
         },
         {
-          id: "studio-lab",
+          id: "fixture-lab",
           snippet: { title: "Homelab", description: "", thumbnails: {} },
           contentDetails: { itemCount: 18 },
         },

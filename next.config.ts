@@ -5,10 +5,10 @@ import { shortLinkRedirects } from "./lib/short-links";
 
 const nextConfig: NextConfig = {
   // CI validates the site with fixtures but does not ship an image, so copying
-  // the entire standalone tree only consumes sandbox disk and adds no coverage.
+  // the entire standalone tree only consumes CI disk and adds no coverage.
   output:
     process.env.CI === "1" &&
-    process.env.STUDIO_SITE_FIXTURES === "1" &&
+    process.env.YOUTUBE_TEST_FIXTURES === "1" &&
     !process.env.VERCEL
       ? undefined
       : "standalone",
