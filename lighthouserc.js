@@ -10,6 +10,7 @@ module.exports = {
       startServerCommand: "npm start",
       startServerReadyPattern: "Ready in",
       numberOfRuns: 3,
+      settings: { chromeFlags: "--no-sandbox --disable-dev-shm-usage" },
     },
     assert: {
       assertions: {
@@ -19,8 +20,9 @@ module.exports = {
         "categories:seo": ["warn", { minScore: 0.9 }],
       },
     },
-    upload: {
-      target: "temporary-public-storage",
-    },
+    upload:
+      process.env.YOUTUBE_TEST_FIXTURES === "1"
+        ? { target: "filesystem", outputDir: ".lighthouseci/upload" }
+        : { target: "temporary-public-storage" },
   },
 };

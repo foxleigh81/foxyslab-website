@@ -1,6 +1,10 @@
 import * as Sentry from "@sentry/nextjs";
 import { YouTubeVideo, YouTubeChannel, YouTubePlaylist } from "@/types/youtube";
 import { siteConfig } from "@/site.config";
+import {
+  youtubeFixtureEnabled,
+  youtubeFixtureResponse,
+} from "@/test/fixtures/youtube-api";
 
 const CHANNEL_HANDLE = siteConfig.youtube.channelHandle;
 const YOUTUBE_API_BASE = "https://www.googleapis.com/youtube/v3";
@@ -18,6 +22,7 @@ export type ApiResult<T> =
   { success: true; data: T } | { success: false; error: string };
 
 function getApiKey(): string {
+  if (youtubeFixtureEnabled()) return "ci-fixture";
   const apiKey = process.env.YOUTUBE_API_KEY;
   if (!apiKey && process.env.NODE_ENV === "production") {
     /*
@@ -117,6 +122,7 @@ async function fetchWithRetry(
   options: RequestInit & { next?: { revalidate: number } },
   retries: number = MAX_RETRIES
 ): Promise<Response> {
+  if (youtubeFixtureEnabled()) return youtubeFixtureResponse(url);
   let lastError: Error | null = null;
   let lastResponse: Response | null = null;
 
