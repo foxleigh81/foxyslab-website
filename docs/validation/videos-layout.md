@@ -69,3 +69,55 @@ exercises search, clearing an empty result, and axe accessibility checks on
 both URLs. It can use a separately started production server on port 3000 via
 the existing Playwright `reuseExistingServer` option. Actual browser execution
 and the credentialed production measurements remain required before acceptance.
+
+## Revision 2 validation attempt
+
+Run date: 2026-10-12. Starting revision: `d4d9314`.
+
+This revision updates only this validation record. No production or test code
+changed, so there is no new red-green-refactor cycle or meaningful automated
+behavior test for this documentation change. The earlier cycle above is the
+previous implementation's recorded evidence. No raw initial-layout red log was
+found in the checkout; its full original output is unavailable. The summary
+above must not be treated as a captured failure transcript or a newly observed
+red run.
+
+Checks rerun directly in this sandbox:
+
+| Command | Observed result |
+| --- | --- |
+| `npm ci` | Exit 0; installed 987 packages. |
+| `npm run lint` | Exit 0. |
+| `npm run type-check` | Exit 0. |
+| `npm test -- app/videos/__tests__/page.test.tsx components/VideoGallery/__tests__/VideoGallery.test.tsx` | Exit 0; 30 tests passed. |
+| `npm test` | Exit 0; 30 files passed, 280 tests passed, one skipped. |
+| `npm run build` | Exit 1; `app/layout.tsx`: `next/font` failed to fetch Poppins from Google Fonts. |
+| `npm run test:e2e -- --reporter=line --workers=2` | Exit 1; configured development server returned `flags: Missing FLAGS_SECRET` and timed out after 60000ms. No browser assertions ran; no production server was available. |
+
+The focused green run covers initial default, direct-playlist and paginated
+markup, empty/error states, and gallery interactions with mocked data. It does
+not establish browser hydration behavior or production performance.
+
+Environment inspection checked presence only: `YOUTUBE_API_KEY`,
+`FOURTHWALL_STOREFRONT_TOKEN`, and `FLAGS_SECRET` are all unset. Only
+`.env.example` is present. Neither Playwright Chromium nor WebKit is installed.
+The sandbox's permitted network destinations exclude Google Fonts and the
+YouTube API. A credentialed production build therefore remains blocked even
+if the font download were independently resolved.
+
+No pre-change production-equivalent Lighthouse baseline or post-change
+Lighthouse measurements were produced. CLS below 0.1, LCP, footer stability
+through hydration, and production interaction behavior remain unverified.
+The first-thumbnail priority observation remains source-only:
+`VideoGallery` passes `priority={index === 0}` to `VideoCard`, which forwards
+it to Next Image. No emitted production preload or fetch-priority hint was
+inspected, and no thumbnail-priority code was changed.
+
+Completion requires an environment with valid data credentials, access to the
+font/data/image origins, and installed browsers. Build and serve both baseline
+`eca93e0` and the final revision there, capture mobile Lighthouse results for
+the populated videos route (three post-change runs), inspect the first image's
+emitted priority hint, and run the complete E2E suite against the final
+production server, including the default/direct-playlist hydration check.
+Record per-run CLS and LCP and retain the reports. The review's production
+acceptance items remain open.
