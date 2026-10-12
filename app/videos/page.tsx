@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import { Suspense } from "react";
 import { getArticleSlugsByVideoId } from "@/lib/blog";
 import { pageMetadata, canonicalUrl } from "@/lib/seo";
 import {
@@ -27,7 +26,18 @@ export const metadata: Metadata = pageMetadata({
 
 export const revalidate = 3600;
 
-export default async function VideosPage() {
+function firstParam(value: string | string[] | undefined): string | null {
+  return (Array.isArray(value) ? value[0] : value) ?? null;
+}
+
+export default async function VideosPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  // Resolve URL state on the server so cards and controls share their initial
+  // layout. This route is request-rendered; YouTube fetches remain cached.
+  const params = await searchParams;
   const [videosResult, playlistsResult] = await Promise.all([
     getLatestVideos(200),
     getPlaylists(),
@@ -161,32 +171,15 @@ export default async function VideosPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: breadcrumbSchema }}
       />
-      {/*
-        VideoGallery reads search params for playlist filtering. Without a
-        Suspense boundary around it, Next bails the *whole route* out to client
-        rendering — which is why this page's server HTML contained no h1, no
-        structured data and no markup at all, only an RSC payload.
-
-        The fallback renders the unfiltered heading server-side, which is the
-        state that matches the canonical URL. The client swaps in the
-        playlist-specific title once it takes over.
-      */}
-      <Suspense
-        fallback={
-          <PageHeader
-            title="All Videos"
-            subtitle="Browse through our complete collection of tutorials and guides"
-          />
-        }
-      >
-        <VideoGallery
-          videos={videos}
-          playlists={visiblePlaylists}
-          playlistVideoMap={playlistVideoMap}
-          playlistSlugMap={playlistSlugMap}
-          articleSlugByVideoId={articleSlugByVideoId}
-        />
-      </Suspense>
+      <VideoGallery
+        videos={videos}
+        playlists={visiblePlaylists}
+        playlistVideoMap={playlistVideoMap}
+        playlistSlugMap={playlistSlugMap}
+        articleSlugByVideoId={articleSlugByVideoId}
+        activeSlug={firstParam(params.playlist)}
+        pageParam={firstParam(params.page)}
+      />
 
       <div className={styles.ctaWrapper}>
         <a
