@@ -361,3 +361,43 @@ three absent credentials. No bypass or placeholder credentials were used. This
 sandbox also cannot reach the required data origins. The new CI workflow was
 not dispatched from this sandbox; a credentialed build, populated desktop/mobile
 browser checks and genuine Lighthouse measurements remain unverified.
+
+## Revision 8: E2E readiness
+
+The regular browser suite now navigates with `DOMContentLoaded` and uses
+hydration checks before interactions and accessibility audits. Waiting for
+`load` or `networkidle` can stall a usable page on an image or media request.
+The production gallery's script gate, font readiness and layout measurements
+remain separate and unchanged. No application, font or CI files changed.
+
+The regression holds image responses open on the real homepage and opens the
+hydrated mobile menu before releasing them. This command first exited 1 on
+both desktop Chromium and mobile WebKit at `page.goto`, waiting for `load`:
+
+```sh
+NODE_OPTIONS=--max-old-space-size=1536 FLAGS_SECRET="$(node -e 'process.stdout.write(require("node:crypto").randomBytes(32).toString("base64url"))')" npm run test:e2e -- e2e/mobile-menu.spec.ts --grep='decorative image' --reporter=line --workers=1 --retries=0
+```
+
+Adding `gotoPage` with `waitUntil: "domcontentloaded"` made the same command
+pass both tests. Reusing that helper across the regular navigation checks,
+using hydration for accessibility readiness, and formatting kept both tests
+green on the refactor rerun. The ephemeral flags secret above is only for the
+local development server; it is not a production data credential.
+
+Using the same environment prefix, the full command
+`npm run test:e2e -- --reporter=line --workers=1 --retries=0` exited 0:
+51 passed and one existing desktop-only navigation test skipped on mobile.
+Earlier diagnostic runs were interrupted after an OOM kill or development
+server restarts with a lower heap limit; they are not passing evidence.
+
+`npm ci`, `npm run lint`, `npm run type-check`, and `npm test` exited 0.
+The unit suite passed 295 tests with one skipped across 34 files, including
+the populated-gallery fixture diagnostics and production test selection checks.
+`npm run verify:videos` exited 1 immediately, naming the three absent credential
+variables. No credentialed build or Lighthouse result is claimed by these
+development browser tests.
+
+`NODE_OPTIONS=--max-old-space-size=1536 npm run build` compiled successfully
+and passed lint/type validation, then exited 1 during prerendering with
+`flags: Missing FLAGS_SECRET`. Production credentials remain unavailable in
+this sandbox; no missing-key bypass was added or used.

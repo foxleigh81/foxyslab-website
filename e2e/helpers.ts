@@ -1,5 +1,11 @@
 import type { Page } from "@playwright/test";
 
+export function gotoPage(page: Page, path: string) {
+  // Decorative media can delay `load` even when the page is interactive.
+  // Callers still assert visible content and wait for hydration before input.
+  return page.goto(path, { waitUntil: "domcontentloaded" });
+}
+
 /**
  * Wait until React has hydrated the given element.
  *
