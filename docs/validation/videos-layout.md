@@ -117,11 +117,51 @@ The first-thumbnail priority observation remains source-only:
 it to Next Image. No emitted production preload or fetch-priority hint was
 inspected, and no thumbnail-priority code was changed.
 
-Completion requires an environment with valid data credentials, access to the
-font/data/image origins, and installed browsers. Build and serve both baseline
-`eca93e0` and the final revision there, capture mobile Lighthouse results for
-the populated videos route (three post-change runs), inspect the first image's
-emitted priority hint, and run the complete E2E suite against the final
-production server, including the default/direct-playlist hydration check.
-Record per-run CLS and LCP and retain the reports. The review's production
-acceptance items remain open.
+## Revision 9: populated-check navigation diagnostic
+
+The production-only browser check now bounds `/videos` navigation to five
+seconds and reports a fixture/data diagnostic if the default or direct-playlist
+navigation fails. It still waits for the response to commit while scripts are
+held back for the initial-layout measurement. This changes verification
+behavior only; the gallery rendering and thumbnail priority are unchanged.
+
+Observed TDD cycle:
+
+- Red: `npm test -- lib/__tests__/videos-navigation.test.ts` exited 1 because
+  a failed navigation surfaced `Navigation timeout` rather than the fixture/data
+  diagnostic. The same command exited 1 for the direct-playlist case because
+  it used `domcontentloaded` instead of the required `commit` wait state.
+- Green: the focused command exited 0 after each minimal change. Refactoring
+  the route check into `isVideosRoute` kept
+  `npm test -- lib/__tests__/videos-navigation.test.ts lib/__tests__/videos-fixture.test.ts`
+  green (nine tests).
+
+`npm ci`, `npm run lint`, `npm run type-check`, and `npm test` exited 0. The unit
+suite passed 297 tests with one skipped across 35 files. The regular E2E command
+below passed 51 tests with one skipped using an ephemeral local flags secret:
+
+```sh
+NODE_OPTIONS=--max-old-space-size=1536 FLAGS_SECRET="$(node -e 'process.stdout.write(require("node:crypto").randomBytes(32).toString("base64url"))')" npm run test:e2e -- --reporter=line --workers=1 --retries=0
+```
+
+The production-only check was run against an intentionally unpopulated local
+development server with `VIDEOS_BASE_URL=http://127.0.0.1:3000`, a local report
+directory, and the production Playwright config. It exited 1 in about five
+seconds with `Gallery fixture/data unavailable: videos navigation failed` and
+the underlying five-second navigation timeout. The cold development compile
+took longer than five seconds. This exercises the diagnostic path, not a
+production-equivalent populated browser check.
+
+`NODE_OPTIONS=--max-old-space-size=1536 npm run build` compiled and passed its
+integrated checks, then exited 1 prerendering because `FLAGS_SECRET` is absent.
+`npm run verify:videos` exited 1 at the credential gate, listing the missing
+`YOUTUBE_API_KEY`, `FOURTHWALL_STOREFRONT_TOKEN`, and `FLAGS_SECRET` names only.
+No populated baseline, three mobile Lighthouse runs, CLS/LCP values, or emitted
+thumbnail-priority hint were obtained in this sandbox.
+
+Completion still requires valid data credentials and access to the data and
+image origins. Build and serve both baseline `eca93e0` and the final revision
+there, capture three mobile Lighthouse runs for the populated videos route,
+inspect the first image's emitted priority hint, and run the production E2E
+check against the final build. Record per-run CLS and LCP and retain the
+reports. These production acceptance items remain open.

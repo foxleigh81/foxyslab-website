@@ -23,7 +23,8 @@ test.describe("Videos Page", () => {
     { tag: "@production" },
     async ({ page }) => {
       test.slow();
-      await page.goto("/videos");
+      page.setDefaultNavigationTimeout(5000);
+      await gotoPage(page, "/videos");
       const options = await page
         .getByLabel("Playlist", { exact: true })
         .locator("option")
@@ -53,7 +54,7 @@ test.describe("Videos Page", () => {
         });
 
         try {
-          await page.goto(url, { waitUntil: "commit" });
+          await gotoPage(page, url, "commit");
           const cards = page.locator("main h2");
           await expect(cards.first(), missingCardsDiagnostic).toBeVisible({
             timeout: 5000,
