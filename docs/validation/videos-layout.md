@@ -69,3 +69,47 @@ No populated desktop/mobile footer stability result or three mobile
 Lighthouse reports (CLS and LCP) were obtainable in this sandbox. Run the
 procedure in [videos-production-checks.md](videos-production-checks.md) with
 valid credentials and data-origin access to complete those acceptance checks.
+
+## Revision 11: continue the supplied draft
+
+This round started with a clean working tree on
+`eng/71-d38d08-fix-videos-layout-shift-and-slow-first-t` at
+`94072565934a00deb1fd8c1689f9409b51401a20` (revision 10). Its history includes
+the preceding nine implementation revisions; the checkout was not restarted
+from `eca93e0`. No branch changes, commits, or pushes were made.
+
+The review names discarded run `r20261013-49e4de29a61d`, which is absent from
+the available Git history. The configured remote, `file:///work/trusted.git`,
+is unavailable (`git ls-remote` exits 128), so the supplied checkout's head
+cannot independently be compared with the pushed head in this sandbox.
+
+Inspection confirmed that the current draft already retains the server-rendered
+gallery, initial-layout regression, local fonts, and populated-browser diagnostic
+checks. The review identifies no additional behavioral change to reapply.
+This revision only records provenance and fresh verification; it does not
+replace the draft implementation. There is no new red/green/refactor cycle for
+this documentation-only update, and no new red run is claimed. The historical
+cycle and outstanding production acceptance checks remain documented above.
+
+Fresh checks on this checkout:
+
+- `npm ci`: exit 0.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0, 297 passed and one skipped across 35 files.
+- `npm test -- app/videos/__tests__/page.test.tsx components/VideoGallery/__tests__/VideoGallery.test.tsx lib/__tests__/videos-navigation.test.ts lib/__tests__/videos-fixture.test.ts`:
+  exit 0, 39 tests passed across four files.
+- `npm run verify:videos`: exit 1 at credential preflight, naming missing
+  `YOUTUBE_API_KEY`, `FOURTHWALL_STOREFRONT_TOKEN`, and `FLAGS_SECRET` without
+  printing values. A credentialed build, populated browser checks, and three
+  mobile Lighthouse measurements remain blocked; no new CLS/LCP result is
+  claimed.
+- `NODE_OPTIONS=--max-old-space-size=1536 FLAGS_SECRET="$(node -e 'process.stdout.write(require("node:crypto").randomBytes(32).toString("base64url"))')" npm run test:e2e -- --reporter=line --workers=1 --retries=0`:
+  exit 0, 49 passed and one skipped. This checks routes and missing-data
+  presentation, not populated gallery stability. The generated flag secret is
+  ephemeral and does not supply the missing data credentials.
+- `NODE_OPTIONS=--max-old-space-size=1536 FLAGS_SECRET="$(node -e 'process.stdout.write(require("node:crypto").randomBytes(32).toString("base64url"))')" npm run build`:
+  exit 1 after successful compilation and integrated lint/type checks. The
+  `/about` prerender reports that `YOUTUBE_API_KEY` is required in production.
+  The prebuild-generated sitemap date changes were removed from the diff.
+- `git diff --check`: exit 0.
