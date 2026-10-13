@@ -35,6 +35,16 @@ validity still requires the real build and populated-gallery browser check.
 
 ## Run
 
+In GitHub Actions, manually run **Production Videos Verification**
+(`.github/workflows/videos-verification.yml`) for the checkout to measure.
+The workflow uses the existing repository secrets through the step's
+`${{ secrets.YOUTUBE_API_KEY }}`, `${{ secrets.FOURTHWALL_STOREFRONT_TOKEN }}`,
+and `${{ secrets.FLAGS_SECRET }}` contexts. It does not accept credential inputs
+or enable a missing-key bypass. Missing secrets fail the verifier's credential
+gate. This job retains reports as Actions artifacts and does not upload them to
+Lighthouse's public storage. The ordinary CI Lighthouse job is not evidence for
+this procedure because it uses a missing-key bypass.
+
 ```sh
 npm run lint
 npm run type-check
@@ -72,6 +82,47 @@ raises a fixture/data diagnostic instead of waiting for a second option.
 Check the `browser-smoke.json` error details if the runner reports a failed smoke
 stage. Correct the data source or slug; do not bypass the check with an empty
 gallery. Both desktop and mobile exercise the selected playlist's direct URL.
+
+Discovery also rejects a gallery with zero rendered cards even if its dropdown
+labels claim a positive video count. Default and direct-playlist navigation
+must each render a visible card within five seconds; failures name the gallery
+fixture/data and suggest checking credentials and playlist membership.
+
+### Exact underlying commands
+
+`npm run verify:videos` is the recommended entry point: it suppresses dependency
+output that could contain credential-bearing URLs and always stops its server.
+For reproduction on a trusted host, its build/browser/Lighthouse commands are
+shown below. Direct commands do not provide that log protection; keep their
+output private. Export the required credentials securely before running them.
+
+```sh
+export NODE_ENV=production
+export ALLOW_MISSING_API_KEYS=false
+npm run build
+# Keep this process running in a separate terminal with the same environment.
+node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 4173
+```
+
+In the checking terminal, with the same environment:
+
+```sh
+export VIDEOS_BASE_URL=http://127.0.0.1:4173
+mkdir -p .lighthouseci/videos
+export VIDEOS_REPORT_DIR="$(mktemp -d "$PWD/.lighthouseci/videos/manual-XXXXXX")"
+export CHROME_PATH="$(node -p 'require("@playwright/test").chromium.executablePath()')"
+node node_modules/@playwright/test/cli.js test e2e/videos-gallery.spec.ts --config=playwright.videos-production.config.ts || exit "$?"
+for run in 1 2 3; do
+  node node_modules/lighthouse/cli/index.js "$VIDEOS_BASE_URL/videos" \
+    --form-factor=mobile --throttling-method=simulate \
+    --output=json --output=html \
+    --output-path="$VIDEOS_REPORT_DIR/mobile-$run" \
+    --chrome-flags=--headless --quiet || exit "$?"
+done
+```
+
+Stop the manually started server afterward. The automated command additionally validates metrics and writes
+`summary.json`; direct commands retain the raw reports only.
 
 The populated-gallery hydration check is tagged `@production`. The regular
 `npm run test:e2e` configuration excludes that tag because its development
@@ -276,3 +327,37 @@ green; those homepage failures remain outside this gallery configuration fix.
 passed its lint/type checks, then exited 1 during prerendering because
 `FLAGS_SECRET` is absent. The credentialed build and mobile Lighthouse evidence
 remain pending on an authorized host with the required data-service access.
+
+## Revision 7 sandbox evidence
+
+Added a manual production-verification workflow using repository secrets at the
+verification step, and documented the exact build, browser and Lighthouse
+commands. No gallery rendering or font files changed in this revision.
+
+`npm test -- lib/__tests__/videos-fixture.test.ts` first could not start because
+dependencies were absent (exit 127; not a regression red). After `npm ci`, the
+same command produced the expected red (exit 1): the new zero-rendered-cards
+case did not throw despite a positive playlist label. Adding the card-count
+guard made all seven tests pass (exit 0). Extracting the shared data diagnostic
+for fixture discovery and direct-navigation assertions kept the following
+refactor rerun green (14 tests, exit 0):
+
+```sh
+npm test -- lib/__tests__/videos-fixture.test.ts lib/__tests__/videos-browser-config.test.ts lib/__tests__/verify-videos.test.ts
+```
+
+`npm ci`, `npm run lint`, `npm run type-check`, and `npm test` passed. The full
+unit suite passed 295 tests with one skipped across 34 files. Workflow YAML
+parsing, changed-code formatting and `git diff --check` also passed.
+
+`NODE_OPTIONS=--max-old-space-size=1536 npm run build` compiled and passed its
+lint/type checks, then exited 1 prerendering `/supporters`: `FLAGS_SECRET` is
+absent. `npm run test:e2e -- e2e/videos-gallery.spec.ts --reporter=line --workers=1`
+exited 1 at the 60-second web-server readiness timeout with the same missing
+secret; no browser assertions ran.
+
+`npm run verify:videos` exited 1 immediately, listing only the names of the
+three absent credentials. No bypass or placeholder credentials were used. This
+sandbox also cannot reach the required data origins. The new CI workflow was
+not dispatched from this sandbox; a credentialed build, populated desktop/mobile
+browser checks and genuine Lighthouse measurements remain unverified.

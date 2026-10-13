@@ -1,7 +1,15 @@
+export const missingCardsDiagnostic =
+  "Gallery fixture/data unavailable: no rendered video cards. " +
+  "Check YouTube credentials and playlist membership in the latest videos.";
+
 export function selectPlaylist(
   options: { value: string; text: string }[],
-  requested?: string
+  requested: string | undefined,
+  cardCount: number
 ): string {
+  if (cardCount === 0) {
+    throw new Error(missingCardsDiagnostic);
+  }
   const populated = options.filter(
     // The gallery labels options with the count of matching, loaded videos.
     (option) =>

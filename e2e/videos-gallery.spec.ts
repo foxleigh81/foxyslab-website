@@ -1,6 +1,9 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-import { selectPlaylist } from "./helpers/videos-fixture";
+import {
+  missingCardsDiagnostic,
+  selectPlaylist,
+} from "./helpers/videos-fixture";
 
 test.describe("Videos Page", () => {
   test("page loads with heading", async ({ page }) => {
@@ -29,7 +32,11 @@ test.describe("Videos Page", () => {
             text: option.textContent ?? "",
           }))
         );
-      const slug = selectPlaylist(options, process.env.VIDEOS_PLAYLIST_SLUG);
+      const slug = selectPlaylist(
+        options,
+        process.env.VIDEOS_PLAYLIST_SLUG,
+        await page.locator("main h2").count()
+      );
 
       for (const url of [
         "/videos",
@@ -47,7 +54,9 @@ test.describe("Videos Page", () => {
         try {
           await page.goto(url, { waitUntil: "commit" });
           const cards = page.locator("main h2");
-          await expect(cards.first()).toBeVisible();
+          await expect(cards.first(), missingCardsDiagnostic).toBeVisible({
+            timeout: 5000,
+          });
           await page.evaluate(() => document.fonts.ready);
           const titles = await cards.allTextContents();
           const footerBefore = await page.locator("footer").boundingBox();
