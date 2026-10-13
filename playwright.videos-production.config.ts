@@ -9,7 +9,7 @@ if (!process.env.VIDEOS_BASE_URL || !process.env.VIDEOS_REPORT_DIR) {
 
 export default defineConfig({
   testDir: "./e2e",
-  testMatch: "videos.spec.ts",
+  testMatch: "videos-gallery.spec.ts",
   workers: 1,
   retries: 0,
   reporter: [

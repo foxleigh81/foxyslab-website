@@ -8,8 +8,10 @@ It does not change the page or establish a baseline retroactively.
 ## Prerequisites
 
 Use the same Node version and feature-flag environment as the target deployment.
-Run from the repository root on a host with access to Google Fonts, YouTube,
-Fourthwall and the site's image origins. Install dependencies and Chromium:
+Run from the repository root on a host with access to YouTube, Fourthwall and
+the site's image origins. Poppins is bundled in `public/fonts/poppins` with its
+license and provenance; builds no longer need Google Fonts access. Install
+dependencies and Chromium:
 
 ```sh
 npm ci
@@ -45,7 +47,7 @@ npm run verify:videos
 1. Run `npm run build` with `NODE_ENV=production`, including the normal prebuild.
 2. Start that build with `next start` on an unused loopback port. It never reuses
    a development server, including when `CI` is set.
-3. Run `e2e/videos.spec.ts` with the dedicated production Playwright config and
+3. Run `e2e/videos-gallery.spec.ts` with the dedicated production Playwright config and
    mobile Chromium. This requires a populated gallery and playlist, checks the
    initial default/direct-playlist cards and footer position through hydration,
    exercises search and clearing an empty result, and runs accessibility checks.
@@ -124,7 +126,7 @@ Configured checks observed in this revision:
 | `npm run type-check` | Final run exit 0 after correcting the test environment's TypeScript type. |
 | `npm test` | Exit 0; 31 files, 285 passed, one skipped. |
 | `npm run build` | Exit 1; Google Fonts/Poppins download failed. |
-| `npm run test:e2e -- e2e/videos.spec.ts --reporter=line --workers=1` | Exit 1; development server lacked `FLAGS_SECRET`, readiness timed out after 60000ms; no browser assertions ran. |
+| `npm run test:e2e -- e2e/videos-gallery.spec.ts --reporter=line --workers=1` | Exit 1; development server lacked `FLAGS_SECRET`, readiness timed out after 60000ms; no browser assertions ran. |
 | `npm run test:lighthouse` | Exit 1; `next start` could not find a successful production build; no measurements or uploads. |
 | `npm run verify:videos` | Exit 1; all three required credentials absent, rejected before build. |
 
@@ -132,3 +134,45 @@ The dedicated Playwright configuration also passed `--list` with a loopback URL
 and ignored report directory: it discovers three tests under Mobile Chrome.
 This is configuration validation only. Chromium and WebKit binaries are present
 in this revision's sandbox, unlike the earlier validation environment.
+
+## Revision 4 sandbox evidence
+
+The gallery suite is now `e2e/videos-gallery.spec.ts`, matching the review
+runner's command. Both the production config and verification script use that
+name; there is no duplicate suite. Poppins now uses bundled, licensed Latin
+WOFF2 files for the same six weights instead of a build-time Google Fonts fetch.
+This changes font delivery, not the gallery render boundary, and establishes no
+performance result.
+
+Observed red/green checks:
+
+- `npm run test:e2e -- e2e/videos-gallery.spec.ts --list` initially exited 1
+  with "No tests found". After the rename it exited 0 and discovered six tests.
+  The dedicated production config also discovers all three mobile tests.
+- `npm test -- lib/__tests__/local-fonts.test.ts` initially exited 1 because
+  the layout used the Google loader. With bundled fonts it passes. The test
+  exercises Next's local font loader and verifies six real WOFF2 files, emitted
+  local CSS for every weight, the CSS variable and fallback metrics.
+- `npm test -- lib/__tests__/local-fonts.test.ts lib/__tests__/verify-videos.test.ts`
+  passed all six tests after the fix and again after formatting the font
+  configuration and correcting the test adapter to match Next's loader types.
+  No further production refactor was needed.
+
+`npm ci`, `npm run lint`, `npm run type-check`, and `npm test` passed (32 unit
+test files; 286 passed, one skipped). The standalone `npm run build` compiled
+successfully without Google Fonts access, passed lint/type validation, then
+failed prerendering `/about` because `FLAGS_SECRET` is absent. An earlier build
+attempt was killed with exit 137; the standalone rerun above is the useful
+build result.
+
+`npm run test:e2e -- e2e/videos-gallery.spec.ts --reporter=line --workers=1`
+exited 1 after the 60-second server readiness timeout: the development server
+reported missing `FLAGS_SECRET`, so no browser assertions ran.
+`npm run test:lighthouse` passed its Chrome/config healthcheck but exited 1
+because `next start` had no completed production build. No measurements or
+uploads occurred.
+
+All three required credentials remain absent. `npm run verify:videos` exited 1
+listing only their names, before creating a build or reports. A credentialed
+production build and three genuine mobile measurements remain pending; the
+font-loader and discovery tests do not substitute for that evidence.

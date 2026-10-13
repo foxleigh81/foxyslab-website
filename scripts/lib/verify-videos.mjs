@@ -137,7 +137,7 @@ export async function verifyVideos({
       [
         require.resolve("@playwright/test/cli"),
         "test",
-        "e2e/videos.spec.ts",
+        "e2e/videos-gallery.spec.ts",
         "--config=playwright.videos-production.config.ts",
       ],
       {
