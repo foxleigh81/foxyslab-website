@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { selectPlaylist } from "./helpers/videos-fixture";
 
 test.describe("Videos Page", () => {
   test("page loads with heading", async ({ page }) => {
@@ -18,16 +19,20 @@ test.describe("Videos Page", () => {
   }) => {
     test.slow();
     await page.goto("/videos");
-    const slug = await page
+    const options = await page
       .getByLabel("Playlist", { exact: true })
       .locator("option")
-      .nth(1)
-      .getAttribute("value");
-    expect(slug).toBeTruthy();
+      .evaluateAll((options) =>
+        options.map((option) => ({
+          value: (option as HTMLOptionElement).value,
+          text: option.textContent ?? "",
+        }))
+      );
+    const slug = selectPlaylist(options, process.env.VIDEOS_PLAYLIST_SLUG);
 
     for (const url of [
       "/videos",
-      `/videos?playlist=${encodeURIComponent(slug!)}`,
+      `/videos?playlist=${encodeURIComponent(slug)}`,
     ]) {
       let releaseScripts!: () => void;
       const scriptsReady = new Promise<void>((resolve) => {

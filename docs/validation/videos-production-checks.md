@@ -48,7 +48,7 @@ npm run verify:videos
 2. Start that build with `next start` on an unused loopback port. It never reuses
    a development server, including when `CI` is set.
 3. Run `e2e/videos-gallery.spec.ts` with the dedicated production Playwright config and
-   mobile Chromium. This requires a populated gallery and playlist, checks the
+   desktop and mobile Chromium. This requires a populated gallery and playlist, checks the
    initial default/direct-playlist cards and footer position through hydration,
    exercises search and clearing an empty result, and runs accessibility checks.
 4. Run Lighthouse against `/videos` three times, sequentially, with mobile
@@ -62,6 +62,16 @@ errors may contain credential-bearing URLs. The console identifies the failed
 stage and exit status. The browser JSON report retains browser assertion details.
 The Lighthouse command uses the lockfile-installed version supplied by the
 existing `@lhci/cli` dependency; it does not download tools on demand.
+
+Optionally export `VIDEOS_PLAYLIST_SLUG` with a known populated playlist's URL
+slug (the value after `?playlist=`). The gallery check requires that exact option
+to have a positive matching-video count. Without it, the check discovers the
+first option with a positive count from the loaded page. It reads all options
+at once; a missing control, missing slug, or no populated playlists immediately
+raises a fixture/data diagnostic instead of waiting for a second option.
+Check the `browser-smoke.json` error details if the runner reports a failed smoke
+stage. Correct the data source or slug; do not bypass the check with an empty
+gallery. Both desktop and mobile exercise the selected playlist's direct URL.
 
 The existing `test:lighthouse` command remains the broader site CI check and
 has a public upload target. **Use `verify:videos` for this procedure**: it does
@@ -176,3 +186,31 @@ All three required credentials remain absent. `npm run verify:videos` exited 1
 listing only their names, before creating a build or reports. A credentialed
 production build and three genuine mobile measurements remain pending; the
 font-loader and discovery tests do not substitute for that evidence.
+
+## Revision 5 sandbox evidence
+
+`npm test -- lib/__tests__/videos-fixture.test.ts` first exited 1 with six
+assertion failures against the extracted second-option selection: it selected
+an empty playlist, ignored the configured slug, and did not diagnose missing
+data. The same command passed all six tests after adding populated-playlist
+selection and explicit fixture/data errors. Refactoring the table-driven test
+cases for clearer names and formatting kept the combined fixture and runner
+checks green:
+`npm test -- lib/__tests__/videos-fixture.test.ts lib/__tests__/verify-videos.test.ts`
+(11 passed).
+
+`npm ci`, `npm run lint`, `npm run type-check`, and `npm test` passed (33 unit
+test files; 292 passed, one skipped). Production Playwright `--list` with
+`VIDEOS_BASE_URL` and `VIDEOS_REPORT_DIR` discovers six tests across desktop
+and mobile Chromium. This validates discovery, not browser assertions.
+
+`npm run build` compiled and passed lint/type validation, then exited 1 during
+prerendering because `FLAGS_SECRET` is absent. `npm run verify:videos` exited 1
+before building, listing the three absent credential variable names. No bypass
+was used and no production Lighthouse measurements were produced. Credentialed
+production verification remains pending on a host with access to the data
+services described above.
+
+`npm run test:e2e -- e2e/videos-gallery.spec.ts --reporter=line --workers=1`
+exited 1 after the 60-second server-readiness timeout. The server reported the
+missing `FLAGS_SECRET`; no browser assertions ran.
