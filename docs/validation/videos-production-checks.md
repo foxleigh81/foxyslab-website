@@ -73,6 +73,15 @@ Check the `browser-smoke.json` error details if the runner reports a failed smok
 stage. Correct the data source or slug; do not bypass the check with an empty
 gallery. Both desktop and mobile exercise the selected playlist's direct URL.
 
+The populated-gallery hydration check is tagged `@production`. The regular
+`npm run test:e2e` configuration excludes that tag because its development
+server and CI job do not supply YouTube credentials. It still runs the gallery
+heading and graceful-loading smoke tests on desktop Chromium and mobile WebKit.
+The dedicated production configuration includes the tagged check unconditionally
+on desktop and mobile Chromium; missing data remains a failure, never a skip.
+Passing the regular E2E suite does not establish populated-gallery or performance
+evidence. Use `npm run verify:videos` for that evidence.
+
 The existing `test:lighthouse` command remains the broader site CI check and
 has a public upload target. **Use `verify:videos` for this procedure**: it does
 not invoke that upload flow or send reports to public storage.
@@ -214,3 +223,56 @@ services described above.
 `npm run test:e2e -- e2e/videos-gallery.spec.ts --reporter=line --workers=1`
 exited 1 after the 60-second server-readiness timeout. The server reported the
 missing `FLAGS_SECRET`; no browser assertions ran.
+
+## Revision 6 sandbox evidence
+
+The regular E2E job has no YouTube credential. With an ephemeral, locally
+generated `FLAGS_SECRET` supplied only in the process environment, the original
+desktop hydration test reproduced the reported failure: `Gallery fixture/data
+unavailable`, following the server's missing-YouTube-key response.
+
+`npm test -- lib/__tests__/videos-browser-config.test.ts` initially exited 1:
+the regular configuration selected the live-data hydration test. After tagging
+that test `@production` and excluding the tag only in the regular configuration,
+the same command passed both tests. They exercise real Playwright discovery and
+also require the production configuration to retain the hydration check on both
+desktop and mobile. After formatting, the combined config, fixture-selection,
+and verification-runner tests passed all 13 tests:
+
+```sh
+npm test -- lib/__tests__/videos-browser-config.test.ts lib/__tests__/videos-fixture.test.ts lib/__tests__/verify-videos.test.ts
+```
+
+No application behavior or CI workflow changed. The production data diagnostic
+remains mandatory. `npm run verify:videos` exited 1 at the credential gate;
+the three required credentials remain absent. No production measurements were
+obtained and no missing-key bypass was used.
+
+`npm ci`, `npm run lint`, `npm run type-check`, and `npm test` passed (34 unit
+test files; 294 passed, one skipped). The first lint attempt overlapped Playwright
+deleting `test-results` and failed with ENOENT; the subsequent run passed.
+
+The focused browser command passed all four desktop Chromium/mobile WebKit
+smoke tests:
+
+```sh
+NODE_OPTIONS=--max-old-space-size=1536 FLAGS_SECRET="$(node -e 'process.stdout.write(require("node:crypto").randomBytes(32).toString("base64url"))')" npm run test:e2e -- e2e/videos-gallery.spec.ts --reporter=line --workers=1
+```
+
+This generates an ephemeral local flags secret; it is not a deployment credential
+and is not used for production verification. The heap limit keeps the development
+server within this sandbox's memory budget.
+
+The full E2E run was also attempted. Its first attempt lost the development
+server with a sandbox OOM kill and subsequent connection-refused errors. The
+heap-limited retry passed 34 tests, including all desktop tests and the mobile
+videos accessibility audit. Mobile WebKit repeatedly timed out in `page.goto`
+loading `/` in the homepage accessibility and skip-link tests. The run was
+interrupted (exit 130) after those two failures, leaving 14 tests unrun. The
+focused gallery rerun above passed afterward. The full suite is not claimed
+green; those homepage failures remain outside this gallery configuration fix.
+
+`NODE_OPTIONS=--max-old-space-size=1536 npm run build` compiled successfully and
+passed its lint/type checks, then exited 1 during prerendering because
+`FLAGS_SECRET` is absent. The credentialed build and mobile Lighthouse evidence
+remain pending on an authorized host with the required data-service access.
