@@ -1,5 +1,9 @@
 # Videos initial layout: task 1 validation
 
+For the repeatable credentialed build, browser smoke check, and three retained
+mobile Lighthouse reports, see [Production /videos checks](videos-production-checks.md).
+The historical results below are not new measurements from that procedure.
+
 Run date: 2026-10-12. Starting revision: `eca93e0`.
 
 ## Scope
