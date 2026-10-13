@@ -22,8 +22,10 @@ measurements cannot be recovered here: the required YouTube and Fourthwall
 credentials are unset, and the sandbox cannot reach their data origins. The
 historical live ticket reported mobile CLS 0.511 on three runs and LCP of 3.8,
 4.3, and 11.8 seconds, but those are ticket measurements, not reproductions.
-The lead must decide whether to accept this reconstructed baseline in place of
-the requested pre-change populated browser baseline.
+The genuine pre-implementation focused-test run and its raw output are
+unavailable. The reconstructed run below is not evidence of that historical
+red result. No pre-change populated browser or Lighthouse evidence exists in
+this checkout.
 
 ## Observed layout regression cycle in revision 10
 
@@ -112,4 +114,36 @@ Fresh checks on this checkout:
   exit 1 after successful compilation and integrated lint/type checks. The
   `/about` prerender reports that `YOUTUBE_API_KEY` is required in production.
   The prebuild-generated sitemap date changes were removed from the diff.
+- `git diff --check`: exit 0.
+
+## Revision 13: review follow-up
+
+This revision makes no page or test behavior changes. The populated desktop and
+mobile hydration check, three mobile Lighthouse runs, and emitted priority-hint
+inspection still require the production-equivalent credentials and data access
+described in [videos-production-checks.md](videos-production-checks.md). There
+is no historical pre-implementation red run available; the reconstructed red
+described above remains explicitly separate and is not presented as that run.
+This is an evidence limitation, not a request for an exception.
+
+The production verification command was retried on this checkout:
+
+- `npm run verify:videos`: exit 1 at credential preflight, naming missing
+  `YOUTUBE_API_KEY`, `FOURTHWALL_STOREFRONT_TOKEN`, and `FLAGS_SECRET`. It did
+  not build or start a server, so it produced no populated browser result,
+  priority-hint observation, CLS, or LCP report.
+
+This was a documentation-only correction, so no behavior change or new TDD
+cycle was appropriate. The existing red/green/refactor evidence is historical
+and described above; no new red run is claimed.
+
+Fresh checks for this revision:
+
+- `npm ci`: exit 0.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0, 297 passed and one skipped across 35 files.
+- `npm test -- app/videos/__tests__/page.test.tsx`: exit 0, seven passed.
+- `NODE_OPTIONS=--max-old-space-size=1536 FLAGS_SECRET="<ephemeral>" npm run test:e2e -- --reporter=line --workers=1 --retries=0`: exit 0, 49 passed and one skipped. This ran against missing-data development server behavior, not populated hydration.
+- `NODE_OPTIONS=--max-old-space-size=1536 FLAGS_SECRET="<ephemeral>" npm run build`: exit 1 after compilation and integrated lint/type checks because production prerendering requires `YOUTUBE_API_KEY`.
 - `git diff --check`: exit 0.
