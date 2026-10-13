@@ -1,19 +1,19 @@
 import { test, expect } from "@playwright/test";
-import { gotoPage } from "./helpers";
 import AxeBuilder from "@axe-core/playwright";
 import {
   missingCardsDiagnostic,
   selectPlaylist,
+  gotoVideosPage,
 } from "./helpers/videos-fixture";
 
 test.describe("Videos Page", () => {
   test("page loads with heading", async ({ page }) => {
-    await gotoPage(page, "/videos");
+    await gotoVideosPage(page, "/videos");
     await expect(page.locator("h1")).toBeVisible();
   });
 
   test("handles empty state gracefully", async ({ page }) => {
-    await gotoPage(page, "/videos");
+    await gotoVideosPage(page, "/videos");
     // Page should load without errors even without YouTube API key
     await expect(page).toHaveTitle(/Foxy's Lab/);
   });
@@ -24,7 +24,7 @@ test.describe("Videos Page", () => {
     async ({ page }) => {
       test.slow();
       page.setDefaultNavigationTimeout(5000);
-      await gotoPage(page, "/videos");
+      await gotoVideosPage(page, "/videos");
       const options = await page
         .getByLabel("Playlist", { exact: true })
         .locator("option")
@@ -54,7 +54,7 @@ test.describe("Videos Page", () => {
         });
 
         try {
-          await gotoPage(page, url, "commit");
+          await gotoVideosPage(page, url, "commit");
           const cards = page.locator("main h2");
           await expect(cards.first(), missingCardsDiagnostic).toBeVisible({
             timeout: 5000,

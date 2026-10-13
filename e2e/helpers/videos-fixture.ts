@@ -1,3 +1,20 @@
+import type { Page } from "@playwright/test";
+
+export async function gotoVideosPage(
+  page: Page,
+  path: string,
+  waitUntil: "domcontentloaded" | "commit" = "domcontentloaded"
+) {
+  try {
+    return await page.goto(path, { waitUntil });
+  } catch (error) {
+    throw new Error(
+      "Gallery fixture/data unavailable: videos navigation failed. Check the production server and YouTube credentials.",
+      { cause: error }
+    );
+  }
+}
+
 export const missingCardsDiagnostic =
   "Gallery fixture/data unavailable: no rendered video cards. " +
   "Check YouTube credentials and playlist membership in the latest videos.";

@@ -1,29 +1,5 @@
 import type { Page } from "@playwright/test";
 
-function isVideosRoute(path: string) {
-  return path === "/videos" || path.startsWith("/videos?");
-}
-
-export async function gotoPage(
-  page: Page,
-  path: string,
-  waitUntil: "domcontentloaded" | "commit" = "domcontentloaded"
-) {
-  // Decorative media can delay `load` even when the page is interactive.
-  // Callers still assert visible content and wait for hydration before input.
-  try {
-    return await page.goto(path, { waitUntil });
-  } catch (error) {
-    if (isVideosRoute(path)) {
-      throw new Error(
-        "Gallery fixture/data unavailable: videos navigation failed. Check the production server and YouTube credentials.",
-        { cause: error }
-      );
-    }
-    throw error;
-  }
-}
-
 /**
  * Wait until React has hydrated the given element.
  *

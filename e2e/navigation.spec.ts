@@ -1,24 +1,23 @@
 import { test, expect } from "@playwright/test";
-import { gotoPage } from "./helpers";
 
 test.describe("Navigation", () => {
   test("homepage loads successfully", async ({ page }) => {
-    await gotoPage(page, "/");
+    await page.goto("/");
     await expect(page).toHaveTitle(/Foxy's Lab/);
   });
 
   test("videos page loads", async ({ page }) => {
-    await gotoPage(page, "/videos");
+    await page.goto("/videos");
     await expect(page.locator("h1")).toBeVisible();
   });
 
   test("about page loads", async ({ page }) => {
-    await gotoPage(page, "/about");
+    await page.goto("/about");
     await expect(page.locator("h1")).toBeVisible();
   });
 
   test("enquiries page loads", async ({ page }) => {
-    await gotoPage(page, "/enquiries");
+    await page.goto("/enquiries");
     await expect(page.locator("h1")).toBeVisible();
   });
 
@@ -42,7 +41,7 @@ test.describe("Navigation", () => {
       "Desktop nav is hidden below 1024px — the mobile menu equivalent lives in mobile-menu.spec.ts"
     );
 
-    await gotoPage(page, "/");
+    await page.goto("/");
     const nav = page.getByTestId("desktop-nav");
 
     await nav.getByRole("link", { name: "About", exact: true }).click();
@@ -53,7 +52,7 @@ test.describe("Navigation", () => {
   });
 
   test("YouTube CTA link opens in new tab", async ({ page }) => {
-    await gotoPage(page, "/");
+    await page.goto("/");
 
     const ctaLink = page
       .getByRole("link", { name: "Subscribe on YouTube" })
