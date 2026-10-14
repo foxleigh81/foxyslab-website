@@ -1,0 +1,70 @@
+name: Populated Videos Verification
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  videos:
+    name: Credentialed Videos Build and Measurements
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+
+      - name: Build, check populated gallery, and measure three mobile runs
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          FOURTHWALL_STOREFRONT_TOKEN: ${{ secrets.FOURTHWALL_STOREFRONT_TOKEN }}
+          FLAGS_SECRET: ${{ secrets.FLAGS_SECRET }}
+          ALLOW_MISSING_API_KEYS: "false"
+        run: |
+          echo "Verified checkout: $(git rev-parse HEAD)"
+          export CHROME_PATH="$(node -p 'require("@playwright/test").chromium.executablePath()')"
+          npm run verify:videos
+
+      - name: Retain browser and Lighthouse evidence
+        id: reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: videos-verification-${{ github.event.pull_request.head.sha }}
+          path: .lighthouseci/videos/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Link evidence
+        if: always()
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          REPORT_URL: ${{ steps.reports.outputs.artifact-url }}
+        run: |
+          echo "### Videos verification: $HEAD_SHA" >> "$GITHUB_STEP_SUMMARY"
+          if [ -n "$REPORT_URL" ]; then
+            echo "[Browser and Lighthouse reports]($REPORT_URL)" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No reports produced; check the failed build or credential preflight step." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          for report in .lighthouseci/videos/run-*/summary.json; do
+            if [ -f "$report" ]; then
+              echo '```json' >> "$GITHUB_STEP_SUMMARY"
+              cat "$report" >> "$GITHUB_STEP_SUMMARY"
+              echo '' >> "$GITHUB_STEP_SUMMARY"
+              echo '```' >> "$GITHUB_STEP_SUMMARY"
+            fi
+          done
