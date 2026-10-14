@@ -160,7 +160,8 @@ export async function verifyVideos({
           "--output=json",
           "--output=html",
           `--output-path=${prefix}`,
-          "--chrome-flags=--headless",
+          // Match Playwright's default on runners without a usable Chromium sandbox.
+          "--chrome-flags=--headless --no-sandbox",
           "--quiet",
         ],
         productionEnv

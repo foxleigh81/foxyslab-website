@@ -124,6 +124,23 @@ describe("production videos verification command", () => {
     expect(h.events).toEqual(["Build"]);
   });
 
+  it("launches every Lighthouse browser without requiring a host sandbox, like the smoke browser", async () => {
+    const h = harness();
+    await verifyVideos({ ...h, env: credentials });
+    const measurements = h.run.mock.calls.filter(([label]) =>
+      label.startsWith("Lighthouse")
+    );
+    expect(measurements).toHaveLength(3);
+    for (const [, , args] of measurements) {
+      const flags = args
+        .find((arg) => arg.startsWith("--chrome-flags="))!
+        .slice("--chrome-flags=".length)
+        .split(/\s+/);
+      expect(flags).toContain("--headless");
+      expect(flags).toContain("--no-sandbox");
+    }
+  });
+
   it("closes its server when the browser smoke check fails", async () => {
     const h = harness();
     h.run
