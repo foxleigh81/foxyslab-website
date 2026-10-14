@@ -49,13 +49,24 @@ function runCommand(label, command, args, env) {
 function browserResultDiagnostic(spec, result) {
   // Only fixed categories and numeric locations leave the report.
   // Titles, paths, errors and attachments can contain credentials.
-  const dataUnavailable = (result.errors ?? []).some((error) =>
+  const dataError = (result.errors ?? []).find((error) =>
     error.message?.includes("Gallery fixture/data unavailable")
   );
+  const dataReasons = [
+    ["videos navigation failed", "videos navigation failed"],
+    ["no rendered video cards", "no rendered video cards"],
+    [
+      "no populated playlist matches",
+      "no populated playlist matches the requested or discovered fixture",
+    ],
+  ];
+  const dataReason =
+    dataReasons.find(([marker]) => dataError?.message.includes(marker))?.[1] ??
+    "unclassified gallery data failure";
   const line =
     Number.isSafeInteger(spec.line) && spec.line > 0 ? spec.line : "unknown";
-  const reason = dataUnavailable
-    ? "populated gallery data unavailable; check YouTube credentials and playlist membership"
+  const reason = dataError
+    ? `populated gallery data unavailable; ${dataReason}`
     : "inspect retained browser report for assertion or browser error";
   return `line ${line}: ${result.status}; ${reason}`;
 }
