@@ -46,6 +46,51 @@ function runCommand(label, command, args, env) {
   });
 }
 
+function browserResultDiagnostic(spec, result) {
+  // Only fixed categories and numeric locations leave the report.
+  // Titles, paths, errors and attachments can contain credentials.
+  const dataUnavailable = (result.errors ?? []).some((error) =>
+    error.message?.includes("Gallery fixture/data unavailable")
+  );
+  const line =
+    Number.isSafeInteger(spec.line) && spec.line > 0 ? spec.line : "unknown";
+  const reason = dataUnavailable
+    ? "populated gallery data unavailable; check YouTube credentials and playlist membership"
+    : "inspect retained browser report for assertion or browser error";
+  return `line ${line}: ${result.status}; ${reason}`;
+}
+
+async function browserFailureDiagnostic(directory) {
+  try {
+    const report = JSON.parse(
+      await readFile(path.join(directory, "browser-smoke.json"), "utf8")
+    );
+    const failures = [];
+    function visit(suites) {
+      for (const suite of suites ?? []) {
+        for (const spec of suite.specs ?? []) {
+          for (const test of spec.tests ?? []) {
+            for (const result of test.results ?? []) {
+              if (
+                !["failed", "timedOut", "interrupted"].includes(result.status)
+              )
+                continue;
+              failures.push(browserResultDiagnostic(spec, result));
+            }
+          }
+        }
+        visit(suite.suites);
+      }
+    }
+    visit(report.suites);
+    return failures.length
+      ? failures.join("\n")
+      : "No failed test results in browser report; inspect browser setup errors";
+  } catch {
+    return "Browser report missing or unreadable; inspect browser startup and report configuration";
+  }
+}
+
 async function serveBuild(env) {
   // Claim an unused port; never reuse an unrelated development server.
   const probe = createServer();
@@ -145,7 +190,12 @@ export async function verifyVideos({
         VIDEOS_BASE_URL: server.url,
         VIDEOS_REPORT_DIR: directory,
       }
-    );
+    ).catch(async () => {
+      const diagnostic = await browserFailureDiagnostic(directory);
+      throw new Error(
+        `Browser smoke failed: ${diagnostic}\nDetails: browser-smoke.json in the retained reports`
+      );
+    });
     const runs = [];
     for (let index = 1; index <= 3; index++) {
       const prefix = path.join(directory, `mobile-${index}`);

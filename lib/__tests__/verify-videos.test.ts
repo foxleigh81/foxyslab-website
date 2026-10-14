@@ -154,6 +154,91 @@ describe("production videos verification command", () => {
     expect(h.stop).toHaveBeenCalledOnce();
   });
 
+  it("reports browser failure locations and data diagnostics without exposing report text", async () => {
+    const h = harness();
+    h.run.mockImplementation(async (label) => {
+      if (label !== "Browser smoke") return;
+      const directory = path.join(h.outputRoot, readdirSync(h.outputRoot)[0]);
+      writeFileSync(
+        path.join(directory, "browser-smoke.json"),
+        JSON.stringify({
+          suites: [
+            {
+              suites: [
+                {
+                  specs: [
+                    {
+                      title: "private-test-value",
+                      file: "private-test-value",
+                      line: 57,
+                      tests: [
+                        {
+                          results: [
+                            {
+                              status: "failed",
+                              errors: [
+                                {
+                                  message:
+                                    "Gallery fixture/data unavailable: no rendered video cards. private-test-value",
+                                },
+                              ],
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        })
+      );
+      throw new Error(
+        "Browser smoke failed (exit 1); child output suppressed to protect credentials"
+      );
+    });
+    const error = await verifyVideos({ ...h, env: credentials }).catch(
+      (error: Error) => error
+    );
+    if (!(error instanceof Error)) throw new Error("Expected browser failure");
+    expect(error.message).toContain(
+      "line 57: failed; populated gallery data unavailable"
+    );
+    expect(error.message).toContain("browser-smoke.json");
+    expect(error.message).not.toContain("private-test-value");
+    expect(h.stop).toHaveBeenCalledOnce();
+  });
+
+  it.each([
+    [undefined, "Browser report missing or unreadable"],
+    ["not json", "Browser report missing or unreadable"],
+    [
+      JSON.stringify({ errors: [{ message: "private-test-value" }] }),
+      "No failed test results",
+    ],
+  ])(
+    "handles unavailable test results safely (%s)",
+    async (report, diagnostic) => {
+      const h = harness();
+      h.run.mockImplementation(async (label) => {
+        if (label !== "Browser smoke") return;
+        if (report !== undefined) {
+          const directory = path.join(
+            h.outputRoot,
+            readdirSync(h.outputRoot)[0]
+          );
+          writeFileSync(path.join(directory, "browser-smoke.json"), report);
+        }
+        throw new Error("private-test-value");
+      });
+      const result = verifyVideos({ ...h, env: credentials });
+      await expect(result).rejects.toThrow(diagnostic);
+      await expect(result).rejects.not.toThrow("private-test-value");
+      expect(h.stop).toHaveBeenCalledOnce();
+    }
+  );
+
   it("rejects credential bypasses even with credentials present", async () => {
     const h = harness();
     await expect(
