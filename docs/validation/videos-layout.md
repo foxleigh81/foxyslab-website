@@ -1,5 +1,81 @@
 # Videos initial layout: task 1 validation
 
+## Revision 14: exact-head Preview and E2E investigation
+
+On 2026-10-14, the GitHub PR API and local `git rev-parse HEAD` both returned
+`d6c13ef8975e6c389859eaf816a75316b38dc9bf` for draft PR #79.
+The following read-only GitHub API requests establish the remote evidence
+(paths are relative to `https://api.github.com`):
+
+- `GET /repos/foxleigh81/foxyslab-website/pulls/79`: HTTP 200, matching head.
+- `GET /repos/foxleigh81/foxyslab-website/deployments?sha=d6c13ef8975e6c389859eaf816a75316b38dc9bf&per_page=100`:
+  HTTP 200, Preview deployment `7049678288`, matching SHA.
+- `GET /repos/foxleigh81/foxyslab-website/deployments/7049678288/statuses`:
+  HTTP 200, `success` at `2026-10-13T20:46:04Z`, environment URL
+  `https://foxyslab-website-ehxb4c0j3-foxleighco.vercel.app`.
+- `GET /repos/foxleigh81/foxyslab-website/commits/d6c13ef8975e6c389859eaf816a75316b38dc9bf/check-runs`:
+  E2E job `115529433832` failed in Actions run `38465027398`; quality and
+  Build & Lighthouse jobs succeeded. The latter uses the missing-data bypass
+  and is separate from the Vercel deployment.
+- `GET /repos/foxleigh81/foxyslab-website/actions/jobs/115529433832/logs`:
+  HTTP 403, repository admin rights required. Check annotations contain only
+  exit code 1 and runner/action migration notices, not the failing assertion.
+- The run's artifacts API lists unexpired `playwright-report` artifact
+  `11850592767`; its `/actions/artifacts/11850592767/zip` endpoint returns
+  HTTP 401. The CI failure's application-level cause remains undiagnosed;
+  it cannot be inferred from a successful local run.
+
+`curl -I --max-time 20 https://foxyslab-website-ehxb4c0j3-foxleighco.vercel.app/videos`
+returned HTTP 302 to Vercel SSO. No bypass credential is available.
+The direct browser attempt below exited 1 with two failures (desktop/mobile),
+both caused by `page.goto: net::ERR_TUNNEL_CONNECTION_FAILED` before page
+assertions. These are sandbox access failures, not observed gallery defects:
+
+```sh
+VIDEOS_BASE_URL=https://foxyslab-website-ehxb4c0j3-foxleighco.vercel.app VIDEOS_REPORT_DIR=/work/repo/.lighthouseci/videos/revision14-preview npm run test:e2e -- --config=playwright.videos-production.config.ts --grep @production --reporter=line
+```
+
+The successful Preview establishes a deployed production-equivalent build,
+but its populated cards, credential validity, thumbnail hint, hydration
+stability and CLS/LCP remain unverified here. No Lighthouse runs were made
+against the inaccessible page or its login redirect. Completing verification
+requires an authorized runner/browser with Preview access and access to the
+failed job's logs/report. No secret values were retrieved or added.
+
+This revision updates only verification documentation, including the procedure
+for selecting the exact-head Preview. No behavior changes were justified by
+the available evidence, so there is no meaningful new red/green/refactor
+cycle and no new red run is claimed.
+
+Fresh local checks:
+
+- `npm ci --no-audit --no-fund`: exit 0.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0, 297 passed and one skipped across 35 files.
+- `npm test -- app/videos/__tests__/page.test.tsx components/VideoGallery/__tests__/VideoGallery.test.tsx lib/__tests__/videos-navigation.test.ts lib/__tests__/videos-fixture.test.ts`:
+  exit 0, 39 passed across four files.
+- `npm run verify:videos`: exit 1 at local credential preflight, listing
+  `YOUTUBE_API_KEY`, `FOURTHWALL_STOREFRONT_TOKEN`, and `FLAGS_SECRET` as absent.
+  This local limitation does not negate the successful remote deployment.
+- `NODE_OPTIONS=--max-old-space-size=1536 FLAGS_SECRET="<ephemeral>" npm run test:e2e -- --reporter=line --workers=1 --retries=0`:
+  exit 1, 34 passed, 15 failed, one skipped. The flag secret was generated
+  in memory with Node crypto, not stored. Desktop cases passed. Mobile WebKit's
+  homepage accessibility case timed out in `page.goto` waiting for `load`
+  (`e2e/accessibility.spec.ts:34`), despite a populated homepage DOM snapshot.
+  Fourteen subsequent mobile cases failed with connection refused after the
+  development server stopped responding; an independent curl to localhost:3000
+  also failed. The reason the server exited was not reported in captured output.
+  This establishes local navigation/server availability failures, not the
+  remote CI root cause or a populated videos regression.
+- `NODE_OPTIONS=--max-old-space-size=1536 FLAGS_SECRET="<ephemeral>" npm run build`:
+  exit 1 after compilation and integrated lint/type checks; `/about` prerender
+  requires `YOUTUBE_API_KEY`. No missing-data bypass was used. Generated
+  sitemap date changes were removed from the working diff.
+- `git diff --check`: exit 0.
+
+## Existing implementation and historical evidence
+
 The `/videos` page now resolves playlist and page parameters on the server and
 renders the gallery in the initial response. Search remains local client state.
 The old header-only Suspense fallback and `useSearchParams` gallery path are

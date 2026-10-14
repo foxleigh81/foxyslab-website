@@ -7,6 +7,33 @@ It does not change the page or establish a baseline retroactively.
 
 ## Prerequisites
 
+### Use the PR's deployed Preview when available
+
+A successful Vercel Preview is a production-equivalent build; a local build
+without data credentials does not invalidate that deployment. Resolve the
+deployment for the exact PR head before running browser checks:
+
+1. Read `GET /repos/foxleigh81/foxyslab-website/pulls/79` and record `head.sha`.
+2. Read `GET /repos/foxleigh81/foxyslab-website/deployments?sha=<head.sha>`.
+   Select a `Preview` deployment whose `sha` exactly matches that head.
+3. Read that deployment's `statuses_url`. Require a successful current status
+   and use its `environment_url`, rather than a moving branch alias.
+4. Check `/videos` at that URL. A redirect to Vercel SSO is an access blocker,
+   not evidence of an empty gallery or an application regression. Use an
+   authorized browser/runner with Preview access; do not measure the login page.
+5. Set `VIDEOS_BASE_URL` to the deployment URL and `VIDEOS_REPORT_DIR` to a
+   fresh directory under `.lighthouseci/videos/`. Run the dedicated Playwright
+   command shown below, then the three Lighthouse commands only after the
+   populated browser checks pass. Skip the local build and server steps.
+
+Record the head SHA, deployment ID, status timestamp, URL and browser results
+with the measurements. Deployment success alone does not prove cards are
+present or that CLS meets the target. Keep deployment credentials in the
+deployment provider or approved runner; do not retrieve Actions secret values
+into the checking workspace.
+
+### Build locally when no usable Preview is available
+
 Use the same Node version and feature-flag environment as the target deployment.
 Run from the repository root on a host with access to YouTube, Fourthwall and
 the site's image origins. Poppins is bundled in `public/fonts/poppins` with its
