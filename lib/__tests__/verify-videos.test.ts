@@ -109,11 +109,14 @@ describe("production videos verification command", () => {
     const summary = JSON.parse(
       readFileSync(path.join(directory, "summary.json"), "utf8")
     );
-    expect(summary.runs).toEqual([
-      { run: 1, cls: 0.05, lcpMs: 4200 },
-      { run: 2, cls: 0.05, lcpMs: 4200 },
-      { run: 3, cls: 0.05, lcpMs: 4200 },
-    ]);
+    expect(summary).toEqual({
+      url: "http://127.0.0.1:4173/videos",
+      runs: [
+        { run: 1, cls: 0.05, lcpMs: 4200 },
+        { run: 2, cls: 0.05, lcpMs: 4200 },
+        { run: 3, cls: 0.05, lcpMs: 4200 },
+      ],
+    });
   });
 
   it("never starts a server or measures a failed build", async () => {

@@ -166,8 +166,17 @@ Earlier invocations are never overwritten. A completed run contains:
 - `mobile-3.report.json` and `mobile-3.report.html`.
 - `summary.json`, with URL and per-run `cls` and `lcpMs` values.
 
-Copy that directory to private retained artifacts if running on an ephemeral
-runner. Partial reports remain after failure; only exit 0 with all three reports
+Raw reports stay local to the verification host and may contain credential-bearing
+URLs, errors, traces, or screenshots. The GitHub workflow uploads only
+`run-*/summary.json`: the loopback URL and validated numeric run/CLS/LCP values.
+It never uploads raw browser or Lighthouse reports, including on failure. A
+failure before the first measurement produces no uploaded artifact; use the
+credential-safe stage diagnostics in the job log. References to browser reports
+in diagnostics refer to local files, not the uploaded artifact.
+
+A bounded scan finding no credential patterns does not certify a raw archive as
+safe to retain. Do not upload the raw directory from an ephemeral runner.
+Partial reports remain locally after failure; only exit 0 with all three reports
 and a passing browser report counts as a completed verification. Lighthouse
 runtime errors or missing metrics cause failure. This setup records metrics; it
 does not enforce the future page task's CLS threshold. For that task, confirm
