@@ -90,3 +90,125 @@ export function selectPlaylist(
   }
   return selected.value;
 }
+
+export type VideoOutcome = {
+  source: "live" | "fixture";
+  check: string;
+  outcome: "passed" | "failed" | "not-applicable" | "observed";
+  fetchPriority?: string;
+};
+
+export async function checkPopulatedInteractions(
+  page: Page,
+  record: (outcome: VideoOutcome) => void
+) {
+  const { expect } = await import("@playwright/test");
+  const check = async (name: string, action: () => Promise<void>) => {
+    try {
+      await action();
+      record({ source: "live", check: name, outcome: "passed" });
+    } catch {
+      record({ source: "live", check: name, outcome: "failed" });
+      // Assertion details can include data titles and URLs.
+      throw new Error(`Populated gallery check failed: ${name}`);
+    }
+  };
+  await gotoVideosPage(page, "/videos");
+  const cards = page.locator("main article h2");
+  await expect(cards.first()).toBeVisible();
+  const titles = await cards.allTextContents();
+  const image = page.locator("main article img:visible").first();
+  await expect(image).toBeVisible();
+  const hint = await image.getAttribute("fetchpriority");
+  record({
+    source: "live",
+    check: "thumbnail-priority",
+    outcome: "observed",
+    fetchPriority:
+      hint === null
+        ? "absent"
+        : ["high", "low", "auto"].includes(hint)
+          ? hint
+          : "invalid",
+  });
+
+  await check("search", async () => {
+    await page.getByRole("searchbox").fill(titles[0]);
+    await expect(cards.filter({ hasText: titles[0] }).first()).toBeVisible();
+    await page.getByRole("searchbox").fill("no-matching-video-71");
+    await expect(cards).toHaveCount(0);
+    await page.getByRole("button", { name: "Clear search" }).first().click();
+    await expect(cards).toHaveText(titles);
+  });
+
+  const next = page.getByRole("button", { name: "Next page", exact: true });
+  const placeholder = await page
+    .getByRole("searchbox")
+    .getAttribute("placeholder");
+  const total = Number(placeholder?.match(/^Search (\d+) videos?$/)?.[1]);
+  // Only a known single-page dataset permits skipping either direction.
+  if (!(total > 0 && total <= 12)) {
+    await check("pagination-forward", async () => {
+      expect(Number.isInteger(total) && total <= 200).toBe(true);
+      await expect(next).toBeEnabled();
+      await next.click();
+      await expect
+        .poll(() => new URL(page.url()).searchParams.get("page"))
+        .toBe("2");
+      await expect(cards.first()).toBeVisible();
+      await expect.poll(() => cards.allTextContents()).not.toEqual(titles);
+    });
+    await check("pagination-back", async () => {
+      await page
+        .getByRole("button", { name: "Previous page", exact: true })
+        .click();
+      await expect
+        .poll(() => new URL(page.url()).searchParams.get("page") ?? "1")
+        .toBe("1");
+      await expect(cards).toHaveText(titles);
+    });
+  } else {
+    for (const direction of ["forward", "back"]) {
+      record({
+        source: "live",
+        check: `pagination-${direction}`,
+        outcome: "not-applicable",
+      });
+    }
+  }
+
+  const select = page.getByLabel("Playlist", { exact: true });
+  let slug = "";
+  let selectedTitles: string[] = [];
+  await check("playlist-selection", async () => {
+    const options = await select.locator("option").evaluateAll((options) =>
+      options.map((option) => ({
+        value: (option as HTMLOptionElement).value,
+        text: option.textContent ?? "",
+      }))
+    );
+    slug = selectPlaylist(
+      options,
+      process.env.VIDEOS_PLAYLIST_SLUG,
+      titles.length
+    );
+    const option = options.find((option) => option.value === slug)!;
+    const count = Number(option.text.match(/\((\d+)\)\s*$/)![1]);
+    await select.selectOption(slug);
+    await expect
+      .poll(() => new URL(page.url()).searchParams.get("playlist"))
+      .toBe(slug);
+    await expect(page.locator("main h1")).toHaveText(
+      option.text.replace(/\s*\(\d+\)\s*$/, "")
+    );
+    await expect(cards).toHaveCount(Math.min(12, count));
+    await expect(select).toHaveValue(slug);
+    selectedTitles = await cards.allTextContents();
+  });
+  await check("direct-playlist", async () => {
+    await gotoVideosPage(page, "/videos");
+    await gotoVideosPage(page, `/videos?playlist=${encodeURIComponent(slug)}`);
+    await expect(select).toHaveValue(slug);
+    await expect(cards).toHaveText(selectedTitles);
+  });
+}

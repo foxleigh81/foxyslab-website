@@ -161,6 +161,78 @@ async function browserFailureDiagnostic(directory) {
   }
 }
 
+async function browserOutcomes(directory) {
+  const outcomes = [];
+  try {
+    const report = JSON.parse(
+      await readFile(path.join(directory, "browser-smoke.json"), "utf8")
+    );
+    function visit(suites) {
+      for (const suite of suites ?? []) {
+        for (const spec of suite.specs ?? []) {
+          for (const test of spec.tests ?? []) {
+            for (const annotation of test.annotations ?? []) {
+              if (annotation.type !== "videos-outcome" || outcomes.length >= 40)
+                continue;
+              let value;
+              try {
+                value = JSON.parse(annotation.description);
+              } catch {
+                continue;
+              }
+              if (
+                !value ||
+                !["live", "fixture"].includes(value.source) ||
+                ![
+                  "search",
+                  "playlist-selection",
+                  "pagination-forward",
+                  "pagination-back",
+                  "direct-playlist",
+                  "thumbnail-priority",
+                  "empty",
+                  "fetch-failed",
+                  "hydration-layout",
+                ].includes(value.check) ||
+                !["passed", "failed", "not-applicable", "observed"].includes(
+                  value.outcome
+                )
+              )
+                continue;
+              const outcome = {
+                project: ["Desktop Chrome", "Mobile Chrome"].includes(
+                  test.projectName
+                )
+                  ? test.projectName
+                  : "unknown",
+                source: value.source,
+                check: value.check,
+                outcome: value.outcome,
+              };
+              if (value.check === "thumbnail-priority") {
+                outcome.fetchPriority = [
+                  "high",
+                  "low",
+                  "auto",
+                  "absent",
+                ].includes(value.fetchPriority)
+                  ? value.fetchPriority
+                  : "invalid";
+              }
+              outcomes.push(outcome);
+            }
+          }
+        }
+        visit(suite.suites);
+      }
+    }
+    visit(report.suites);
+  } catch {
+    /* Raw parser errors and report text must never reach retained output. */
+  }
+  return outcomes;
+}
+
 async function serveBuild(env) {
   // Claim an unused port; never reuse an unrelated development server.
   const probe = createServer();
@@ -246,6 +318,18 @@ export async function verifyVideos({
   await run("Build", "npm", ["run", "build"], productionEnv);
   const server = await serve(productionEnv);
   try {
+    const fixtureDirectory = path.join(directory, "state-fixtures");
+    await mkdir(fixtureDirectory);
+    await run(
+      "State fixtures",
+      "npm",
+      ["test", "--", "app/videos/__tests__/page.test.tsx"],
+      {
+        ...productionEnv,
+        NODE_ENV: "test",
+        VIDEOS_STATE_FIXTURE_DIR: fixtureDirectory,
+      }
+    );
     await run(
       "Browser smoke",
       process.execPath,
@@ -259,16 +343,29 @@ export async function verifyVideos({
         ...productionEnv,
         VIDEOS_BASE_URL: server.url,
         VIDEOS_REPORT_DIR: directory,
+        VIDEOS_STATE_FIXTURE_DIR: fixtureDirectory,
       }
     ).catch(async () => {
       const diagnostic = await browserFailureDiagnostic(directory);
       await writeFile(
         path.join(directory, "summary.json"),
-        JSON.stringify({ browserFailure: diagnostic }, null, 2)
+        JSON.stringify(
+          {
+            browserFailure: diagnostic,
+            browser: await browserOutcomes(directory),
+          },
+          null,
+          2
+        )
       );
       throw new Error(`Browser smoke failed: ${diagnostic}`);
     });
+    const browser = await browserOutcomes(directory);
     const runs = [];
+    await writeFile(
+      path.join(directory, "summary.json"),
+      JSON.stringify({ browser, runs }, null, 2)
+    );
     for (let index = 1; index <= 3; index++) {
       const prefix = path.join(directory, `mobile-${index}`);
       await run(
@@ -299,7 +396,7 @@ export async function verifyVideos({
       runs.push(metrics);
       await writeFile(
         path.join(directory, "summary.json"),
-        JSON.stringify({ url: `${server.url}/videos`, runs }, null, 2)
+        JSON.stringify({ url: `${server.url}/videos`, runs, browser }, null, 2)
       );
       console.log(`Run ${index}: CLS ${metrics.cls}; LCP ${metrics.lcpMs} ms`);
     }

@@ -8,6 +8,8 @@ import {
   getPlaylistVideoIds,
 } from "@/lib/youtube";
 import { mockVideo, mockPlaylist } from "@/test/fixtures/youtube";
+import { writeFileSync } from "node:fs";
+import path from "node:path";
 
 vi.mock("@/lib/blog", () => ({ getArticleSlugsByVideoId: async () => ({}) }));
 vi.mock("@/lib/youtube", async (importOriginal) => ({
@@ -63,6 +65,22 @@ describe("initial videos layout", () => {
           ?.getAttribute("data-videos-state")
       ).toBe(state);
       expect(markup.innerHTML).not.toContain("synthetic49-private-response");
+      if (state !== "populated") {
+        expect(markup.querySelectorAll("article")).toHaveLength(0);
+        expect(markup.textContent).toContain(
+          state === "empty"
+            ? "No videos in this playlist yet"
+            : "Unable to load videos right now"
+        );
+        // Browser verification consumes actual server markup with mocked data,
+        // never a live API response. The runner deletes these after use.
+        if (process.env.VIDEOS_STATE_FIXTURE_DIR) {
+          writeFileSync(
+            path.join(process.env.VIDEOS_STATE_FIXTURE_DIR, `${state}.html`),
+            `<main>${markup.innerHTML}</main>`
+          );
+        }
+      }
     }
   );
   it.each([

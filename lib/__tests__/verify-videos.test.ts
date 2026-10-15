@@ -64,6 +64,123 @@ function harness(failBuild = false) {
 }
 
 describe("production videos verification command", () => {
+  it("retains allowlisted browser outcomes without synthetic credentials on success or failure", async () => {
+    for (const failed of [false, true]) {
+      const h = harness();
+      const originalRun = h.run.getMockImplementation()!;
+      const marker = "synthetic52-private";
+      h.run.mockImplementation(async (label, command, args) => {
+        await originalRun(label, command, args);
+        if (label !== "Browser smoke") return;
+        const directory = path.join(h.outputRoot, readdirSync(h.outputRoot)[0]);
+        const observations = [
+          { source: "live", check: "search", outcome: "passed" },
+          {
+            source: "live",
+            check: "pagination-forward",
+            outcome: "not-applicable",
+          },
+          {
+            source: "live",
+            check: "thumbnail-priority",
+            outcome: "observed",
+            fetchPriority: "absent",
+          },
+          { source: "fixture", check: "empty", outcome: "passed" },
+          {
+            source: "live",
+            check: "thumbnail-priority",
+            outcome: "observed",
+            fetchPriority: marker,
+          },
+          { source: marker, check: marker, outcome: marker },
+        ];
+        writeFileSync(
+          path.join(directory, "browser-smoke.json"),
+          JSON.stringify({
+            suites: [
+              {
+                specs: [
+                  {
+                    tests: [
+                      {
+                        projectName: "Desktop Chrome",
+                        annotations: observations.map((observation) => ({
+                          type: "videos-outcome",
+                          description: JSON.stringify({
+                            ...observation,
+                            url: marker,
+                            error: marker,
+                          }),
+                        })),
+                        results: [
+                          {
+                            status: failed ? "failed" : "passed",
+                            errors: [{ message: marker }],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          })
+        );
+        if (failed) throw new Error(marker);
+      });
+      const log = vi.spyOn(console, "log").mockImplementation(() => {});
+      try {
+        await verifyVideos({
+          ...h,
+          env: { ...credentials, YOUTUBE_API_KEY: marker },
+        }).catch(() => {});
+        const directory = path.join(h.outputRoot, readdirSync(h.outputRoot)[0]);
+        const retained = readFileSync(
+          path.join(directory, "summary.json"),
+          "utf8"
+        );
+        expect(JSON.parse(retained).browser).toEqual([
+          {
+            project: "Desktop Chrome",
+            source: "live",
+            check: "search",
+            outcome: "passed",
+          },
+          {
+            project: "Desktop Chrome",
+            source: "live",
+            check: "pagination-forward",
+            outcome: "not-applicable",
+          },
+          {
+            project: "Desktop Chrome",
+            source: "live",
+            check: "thumbnail-priority",
+            outcome: "observed",
+            fetchPriority: "absent",
+          },
+          {
+            project: "Desktop Chrome",
+            source: "fixture",
+            check: "empty",
+            outcome: "passed",
+          },
+          {
+            project: "Desktop Chrome",
+            source: "live",
+            check: "thumbnail-priority",
+            outcome: "observed",
+            fetchPriority: "invalid",
+          },
+        ]);
+        expect(retained + JSON.stringify(log.mock.calls)).not.toContain(marker);
+        expect(readdirSync(directory)).toEqual(["summary.json"]);
+      } finally {
+        log.mockRestore();
+      }
+    }
+  });
   it("fails before building when credentials are missing, naming only missing variables", () => {
     const result = spawnSync("npm", ["run", "verify:videos"], {
       cwd: process.cwd(),
@@ -90,6 +207,7 @@ describe("production videos verification command", () => {
     expect(h.events).toEqual([
       "Build",
       "serve",
+      "State fixtures",
       "Browser smoke",
       "Lighthouse 1",
       "Lighthouse 2",
@@ -97,7 +215,7 @@ describe("production videos verification command", () => {
       "stop",
     ]);
     expect(h.run.mock.calls[0].slice(1, 3)).toEqual(["npm", ["run", "build"]]);
-    expect(h.run.mock.calls[1][2]).toContain(
+    expect(h.run.mock.calls[2][2]).toContain(
       "--config=playwright.videos-production.config.ts"
     );
     expect(readdirSync(directory)).toEqual(["summary.json"]);
@@ -105,6 +223,7 @@ describe("production videos verification command", () => {
       readFileSync(path.join(directory, "summary.json"), "utf8")
     );
     expect(summary).toEqual({
+      browser: [],
       url: "http://127.0.0.1:4173/videos",
       runs: [
         { run: 1, cls: 0.05, lcpMs: 4200 },
@@ -181,7 +300,10 @@ describe("production videos verification command", () => {
         "Lighthouse 1 report missing or unreadable"
       );
       const directory = path.join(h.outputRoot, readdirSync(h.outputRoot)[0]);
-      expect(readdirSync(directory)).toEqual([]);
+      expect(readdirSync(directory)).toEqual(["summary.json"]);
+      expect(
+        JSON.parse(readFileSync(path.join(directory, "summary.json"), "utf8"))
+      ).toEqual({ browser: [], runs: [] });
       expect(h.stop).toHaveBeenCalledOnce();
     } finally {
       log.mockRestore();
@@ -215,11 +337,9 @@ describe("production videos verification command", () => {
 
   it("closes its server when the browser smoke check fails", async () => {
     const h = harness();
-    h.run
-      .mockImplementationOnce(async () => {})
-      .mockImplementationOnce(async () => {
-        throw new Error("Browser smoke failed");
-      });
+    h.run.mockImplementation(async (label) => {
+      if (label === "Browser smoke") throw new Error("Browser smoke failed");
+    });
     await expect(verifyVideos({ ...h, env: credentials })).rejects.toThrow(
       "Browser smoke failed"
     );

@@ -42,6 +42,11 @@ describe("gallery browser test selection", () => {
   it("always runs the populated-gallery regression on production desktop and mobile", () => {
     const tests = listGalleryTests("playwright.videos-production.config.ts");
     expect(tests.match(/footer stable through hydration/g)).toHaveLength(2);
+    expect(
+      tests.match(/populated interactions and emitted thumbnail priority/g)
+    ).toHaveLength(2);
+    expect(tests.match(/controlled empty state/g)).toHaveLength(2);
+    expect(tests.match(/controlled fetch-failed state/g)).toHaveLength(2);
     expect(tests).toContain("[Desktop Chrome]");
     expect(tests).toContain("[Mobile Chrome]");
   });
