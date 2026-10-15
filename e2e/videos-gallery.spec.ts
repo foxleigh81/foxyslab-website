@@ -26,14 +26,24 @@ test.describe("Videos Page", () => {
       test.slow();
       page.setDefaultNavigationTimeout(5000);
       const response = await gotoVideosPage(page, "/videos");
-      const observation = await page.evaluate(observeGallery);
-      testInfo.annotations.push({
+      let observation = await page.evaluate(observeGallery);
+      const initial = response
+        ? await page.evaluate(observeGallery, await response.text())
+        : null;
+      const diagnostic = {
         type: "videos-state",
-        description: JSON.stringify({
+        description: "",
+      };
+      testInfo.annotations.push(diagnostic);
+      const recordAssertion = (assertion: string) => {
+        diagnostic.description = JSON.stringify({
           ...observation,
+          initial,
           httpStatus: response?.status(),
-        }),
-      });
+          assertion,
+        });
+      };
+      recordAssertion("playlist-selection");
       const options = await page
         .getByLabel("Playlist", { exact: true })
         .locator("option")
@@ -43,10 +53,14 @@ test.describe("Videos Page", () => {
             text: option.textContent ?? "",
           }))
         );
+      observation = await page.evaluate(observeGallery);
+      recordAssertion(
+        observation.headings === 0 ? "initial-cards" : "playlist-selection"
+      );
       const slug = selectPlaylist(
         options,
         process.env.VIDEOS_PLAYLIST_SLUG,
-        await page.locator("main h2").count()
+        observation.headings
       );
 
       for (const url of [
@@ -63,6 +77,7 @@ test.describe("Videos Page", () => {
         });
 
         try {
+          recordAssertion("server-cards");
           await gotoVideosPage(page, url, "commit");
           const cards = page.locator("main h2");
           await expect(cards.first(), missingCardsDiagnostic).toBeVisible({
@@ -73,6 +88,7 @@ test.describe("Videos Page", () => {
           const footerBefore = await page.locator("footer").boundingBox();
           expect(footerBefore).not.toBeNull();
 
+          recordAssertion("hydration-layout");
           releaseScripts();
           await page.waitForLoadState("networkidle");
           await expect(cards).toHaveText(titles);
@@ -81,6 +97,7 @@ test.describe("Videos Page", () => {
           expect(Math.abs(footerAfter!.y - footerBefore!.y)).toBeLessThan(2);
 
           // A working controlled input confirms hydration has completed.
+          recordAssertion("search");
           await page.getByRole("searchbox").fill("no-matching-video-71");
           await expect(
             page.getByText('No videos match "no-matching-video-71"')
@@ -90,6 +107,7 @@ test.describe("Videos Page", () => {
             .first()
             .click();
           await expect(cards).toHaveText(titles);
+          recordAssertion("accessibility");
           expect((await new AxeBuilder({ page }).analyze()).violations).toEqual(
             []
           );

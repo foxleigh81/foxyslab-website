@@ -26,8 +26,8 @@ export default defineConfig({
   outputDir: path.join(process.env.VIDEOS_REPORT_DIR, "browser-artifacts"),
   use: {
     baseURL: process.env.VIDEOS_BASE_URL,
-    trace: "retain-on-failure",
-    screenshot: "only-on-failure",
+    trace: "off",
+    screenshot: "off",
   },
   projects: [
     { name: "Desktop Chrome", use: { ...devices["Desktop Chrome"] } },

@@ -46,3 +46,12 @@ describe("gallery browser test selection", () => {
     expect(tests).toContain("[Mobile Chrome]");
   });
 });
+
+it("does not record credential-bearing browser traces or screenshots", async () => {
+  process.env.VIDEOS_BASE_URL = "http://127.0.0.1:4173";
+  process.env.VIDEOS_REPORT_DIR = ".lighthouseci/videos/config-test";
+  const { default: config } =
+    await import("../../playwright.videos-production.config");
+  expect(config.use?.trace).toBe("off");
+  expect(config.use?.screenshot).toBe("off");
+});

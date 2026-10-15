@@ -93,11 +93,38 @@ function browserResultDiagnostic(spec, test, result) {
   } else if (state?.httpStatus >= 500 && state.httpStatus <= 599) {
     classification = "application-render-failure";
   }
+  const initial = state?.initial;
+  const initialCards = boundedCount(initial?.cards);
+  const initialDocumentCards = boundedCount(initial?.documentCards);
+  if (initial?.serverError === true) classification = "server-render-error";
+  else if (initial?.state === "fetch-failed")
+    classification = "data-fetch-failure";
+  else if (initial?.state === "empty") classification = "empty-response";
+  else if (cards === 0 && initialCards !== null && initialCards > 0)
+    classification = "browser-render-mismatch";
+  else if (cards === 0 && initialCards === 0 && initialDocumentCards > 0)
+    classification = "streamed-cards-outside-main";
+  const httpStatus =
+    Number.isInteger(state?.httpStatus) &&
+    state.httpStatus >= 100 &&
+    state.httpStatus <= 599
+      ? state.httpStatus
+      : null;
+  const assertion = [
+    "initial-cards",
+    "playlist-selection",
+    "server-cards",
+    "hydration-layout",
+    "search",
+    "accessibility",
+  ].includes(state?.assertion)
+    ? state.assertion
+    : "unknown";
   const line =
     Number.isSafeInteger(spec.line) && spec.line > 0 && spec.line <= 100000
       ? spec.line
       : "unknown";
-  return `line ${line}: ${result.status}; ${classification}; cards=${cards}; headings=${headings}`;
+  return `line ${line}: ${result.status}; ${classification}; cards=${cards}; headings=${headings}; http=${httpStatus}; assertion=${assertion}; initialCards=${initialCards}; initialDocumentCards=${initialDocumentCards}`;
 }
 
 async function browserFailureDiagnostic(directory) {

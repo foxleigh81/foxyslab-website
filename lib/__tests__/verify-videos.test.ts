@@ -391,6 +391,95 @@ describe("production videos verification command", () => {
     }
   );
 
+  it.each([
+    [
+      { state: "populated", cards: 12, documentCards: 12 },
+      "browser-render-mismatch",
+    ],
+    [
+      { state: "populated", cards: 0, documentCards: 12 },
+      "streamed-cards-outside-main",
+    ],
+    [
+      { state: "fetch-failed", cards: 0, documentCards: 0 },
+      "data-fetch-failure",
+    ],
+    [{ serverError: true, cards: 0, documentCards: 0 }, "server-render-error"],
+  ])(
+    "distinguishes initial response from browser state safely: %s",
+    async (initial, classification) => {
+      const h = harness();
+      const marker = "synthetic50-private";
+      h.run.mockImplementation(async (label) => {
+        if (label !== "Browser smoke") return;
+        const directory = path.join(h.outputRoot, readdirSync(h.outputRoot)[0]);
+        writeFileSync(
+          path.join(directory, "browser-smoke.json"),
+          JSON.stringify({
+            suites: [
+              {
+                specs: [
+                  {
+                    line: 22,
+                    tests: [
+                      {
+                        annotations: [
+                          {
+                            type: "videos-state",
+                            description: JSON.stringify({
+                              state: "populated",
+                              cards: 0,
+                              headings: 0,
+                              httpStatus: 200,
+                              initial: {
+                                ...initial,
+                                body: marker,
+                                url: marker,
+                              },
+                              assertion: "initial-cards",
+                              error: marker,
+                            }),
+                          },
+                        ],
+                        results: [
+                          { status: "failed", errors: [{ message: marker }] },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          })
+        );
+        throw new Error(marker);
+      });
+      const log = vi.spyOn(console, "log").mockImplementation(() => {});
+      try {
+        const error = await verifyVideos({ ...h, env: credentials }).catch(
+          (error: Error) => error
+        );
+        const directory = path.join(h.outputRoot, readdirSync(h.outputRoot)[0]);
+        const retained = readFileSync(
+          path.join(directory, "summary.json"),
+          "utf8"
+        );
+        expect(String(error)).toContain(classification);
+        expect(retained).toContain("http=200");
+        expect(retained).toContain("assertion=initial-cards");
+        expect(retained).toContain(
+          `initialDocumentCards=${initial.documentCards}`
+        );
+        expect(
+          retained + String(error) + JSON.stringify(log.mock.calls)
+        ).not.toContain(marker);
+        expect(readdirSync(directory)).toEqual(["summary.json"]);
+      } finally {
+        log.mockRestore();
+      }
+    }
+  );
+
   it("rejects credential bypasses even with credentials present", async () => {
     const h = harness();
     await expect(

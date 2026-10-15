@@ -1,18 +1,28 @@
 import type { Page } from "@playwright/test";
 
-// Runs inside page.evaluate: never collect text, attributes containing URLs,
-// response bodies, or exception messages from the credentialed page.
-export function observeGallery() {
-  const rawState = document
+// Runs inside page.evaluate: return only bounded observations, never text,
+// URLs, response bodies, or exception messages from the credentialed page.
+export function observeGallery(html?: string) {
+  // Parse the completed HTTP response inertly; never execute its scripts.
+  const root =
+    html === undefined
+      ? document
+      : new DOMParser().parseFromString(html, "text/html");
+  const rawState = root
     .querySelector("[data-videos-state]")
     ?.getAttribute("data-videos-state");
   const state = ["populated", "empty", "fetch-failed"].includes(rawState ?? "")
     ? rawState
     : null;
+  const count = (selector: string) =>
+    Math.min(200, root.querySelectorAll(selector).length);
   return {
     state,
-    cards: Math.min(200, document.querySelectorAll("main article").length),
-    headings: Math.min(200, document.querySelectorAll("main h2").length),
+    cards: count("main article"),
+    headings: count("main h2"),
+    documentCards: count("article"),
+    documentHeadings: count("h2"),
+    serverError: root.querySelector("template[data-dgst]") !== null,
   };
 }
 

@@ -16,11 +16,21 @@ describe("gallery browser fixture selection", () => {
       state: "populated",
       cards: 1,
       headings: 0,
+      documentCards: 1,
+      documentHeadings: 0,
+      serverError: false,
     });
     document
       .querySelector("[data-videos-state]")!
       .setAttribute("data-videos-state", "synthetic49");
-    expect(observeGallery()).toEqual({ state: null, cards: 1, headings: 0 });
+    expect(observeGallery()).toEqual({
+      state: null,
+      cards: 1,
+      headings: 0,
+      documentCards: 1,
+      documentHeadings: 0,
+      serverError: false,
+    });
     document.body.innerHTML = "";
   });
   it("rejects an empty rendered gallery even when playlist labels claim videos", () => {
@@ -59,5 +69,32 @@ describe("gallery browser fixture selection", () => {
     expect(() => selectPlaylist([all, populated], "missing", 12)).toThrow(
       /VIDEOS_PLAYLIST_SLUG/
     );
+  });
+});
+
+describe("HTTP response versus rendered gallery observations", () => {
+  it("counts streamed cards outside main without retaining synthetic credentials", () => {
+    document.body.innerHTML =
+      '<main></main><div hidden data-videos-state="populated"><article><h2>synthetic50</h2></article></div><template data-dgst="synthetic50"></template>';
+    expect(observeGallery()).toEqual({
+      state: "populated",
+      cards: 0,
+      headings: 0,
+      documentCards: 1,
+      documentHeadings: 1,
+      serverError: true,
+    });
+    expect(JSON.stringify(observeGallery())).not.toContain("synthetic50");
+    const response = document.body.innerHTML;
+    document.body.innerHTML = "";
+    expect(observeGallery(response)).toEqual({
+      state: "populated",
+      cards: 0,
+      headings: 0,
+      documentCards: 1,
+      documentHeadings: 1,
+      serverError: true,
+    });
+    expect(observeGallery().documentCards).toBe(0);
   });
 });
