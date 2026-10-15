@@ -1,5 +1,21 @@
 import type { Page } from "@playwright/test";
 
+// Runs inside page.evaluate: never collect text, attributes containing URLs,
+// response bodies, or exception messages from the credentialed page.
+export function observeGallery() {
+  const rawState = document
+    .querySelector("[data-videos-state]")
+    ?.getAttribute("data-videos-state");
+  const state = ["populated", "empty", "fetch-failed"].includes(rawState ?? "")
+    ? rawState
+    : null;
+  return {
+    state,
+    cards: Math.min(200, document.querySelectorAll("main article").length),
+    headings: Math.min(200, document.querySelectorAll("main h2").length),
+  };
+}
+
 export async function gotoVideosPage(
   page: Page,
   path: string,

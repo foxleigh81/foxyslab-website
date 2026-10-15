@@ -46,7 +46,10 @@ export default async function VideosPage({
   if (!videosResult.success) {
     console.error("[VideosPage] Failed to load videos:", videosResult.error);
     return (
-      <div className={`container ${styles.page}`}>
+      <div
+        className={`container ${styles.page}`}
+        data-videos-state="fetch-failed"
+      >
         <PageHeader
           title="All Videos"
           subtitle="Browse through our complete collection of tutorials and guides"
@@ -153,7 +156,10 @@ export default async function VideosPage({
   );
 
   return (
-    <div className={`container ${styles.page}`}>
+    <div
+      className={`container ${styles.page}`}
+      data-videos-state={videos.length ? "populated" : "empty"}
+    >
       {/*
         JSON-LD uses dangerouslySetInnerHTML by design: the content is
         generated server-side from trusted config and content, never user

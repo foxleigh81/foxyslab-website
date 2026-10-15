@@ -60,29 +60,44 @@ function runCommand(label, command, args, env) {
   });
 }
 
-function browserResultDiagnostic(spec, result) {
-  // Only fixed categories and numeric locations leave the report.
-  // Titles, paths, errors and attachments can contain credentials.
-  const dataError = (result.errors ?? []).find((error) =>
-    error.message?.includes("Gallery fixture/data unavailable")
-  );
-  const dataReasons = [
-    ["videos navigation failed", "videos navigation failed"],
-    ["no rendered video cards", "no rendered video cards"],
-    [
-      "no populated playlist matches",
-      "no populated playlist matches the requested or discovered fixture",
-    ],
-  ];
-  const dataReason =
-    dataReasons.find(([marker]) => dataError?.message.includes(marker))?.[1] ??
-    "unclassified gallery data failure";
+function boundedCount(value) {
+  return Number.isInteger(value) && value >= 0 && value <= 200 ? value : null;
+}
+
+function browserResultDiagnostic(spec, test, result) {
+  let state;
+  try {
+    state = JSON.parse(
+      test.annotations?.find((item) => item.type === "videos-state")
+        ?.description
+    );
+  } catch {
+    /* Missing or malformed observations remain unclassified. */
+  }
+  const cards = boundedCount(state?.cards);
+  const headings = boundedCount(state?.headings);
+  let classification = "unclassified";
+  if (state?.state === "fetch-failed") classification = "data-fetch-failure";
+  else if (state?.state === "empty") classification = "empty-response";
+  else if (
+    state?.state === "populated" &&
+    cards !== null &&
+    headings !== null
+  ) {
+    classification =
+      cards === 0
+        ? "application-render-failure"
+        : headings === 0
+          ? "stale-browser-assertion"
+          : "browser-assertion-failure";
+  } else if (state?.httpStatus >= 500 && state.httpStatus <= 599) {
+    classification = "application-render-failure";
+  }
   const line =
-    Number.isSafeInteger(spec.line) && spec.line > 0 ? spec.line : "unknown";
-  const reason = dataError
-    ? `populated gallery data unavailable; ${dataReason}`
-    : "browser assertion or browser error; raw report omitted";
-  return `line ${line}: ${result.status}; ${reason}`;
+    Number.isSafeInteger(spec.line) && spec.line > 0 && spec.line <= 100000
+      ? spec.line
+      : "unknown";
+  return `line ${line}: ${result.status}; ${classification}; cards=${cards}; headings=${headings}`;
 }
 
 async function browserFailureDiagnostic(directory) {
@@ -100,7 +115,8 @@ async function browserFailureDiagnostic(directory) {
                 !["failed", "timedOut", "interrupted"].includes(result.status)
               )
                 continue;
-              failures.push(browserResultDiagnostic(spec, result));
+              if (failures.length < 10)
+                failures.push(browserResultDiagnostic(spec, test, result));
             }
           }
         }
@@ -217,6 +233,10 @@ export async function verifyVideos({
       }
     ).catch(async () => {
       const diagnostic = await browserFailureDiagnostic(directory);
+      await writeFile(
+        path.join(directory, "summary.json"),
+        JSON.stringify({ browserFailure: diagnostic }, null, 2)
+      );
       throw new Error(`Browser smoke failed: ${diagnostic}`);
     });
     const runs = [];

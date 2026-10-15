@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import {
   missingCardsDiagnostic,
+  observeGallery,
   selectPlaylist,
   gotoVideosPage,
 } from "./helpers/videos-fixture";
@@ -21,10 +22,18 @@ test.describe("Videos Page", () => {
   test(
     "default and playlist grids keep the footer stable through hydration",
     { tag: "@production" },
-    async ({ page }) => {
+    async ({ page }, testInfo) => {
       test.slow();
       page.setDefaultNavigationTimeout(5000);
-      await gotoVideosPage(page, "/videos");
+      const response = await gotoVideosPage(page, "/videos");
+      const observation = await page.evaluate(observeGallery);
+      testInfo.annotations.push({
+        type: "videos-state",
+        description: JSON.stringify({
+          ...observation,
+          httpStatus: response?.status(),
+        }),
+      });
       const options = await page
         .getByLabel("Playlist", { exact: true })
         .locator("option")

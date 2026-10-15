@@ -48,6 +48,23 @@ beforeEach(() => {
 });
 
 describe("initial videos layout", () => {
+  it.each(["populated", "empty", "fetch-failed"])(
+    "exposes only the bounded server data state: %s",
+    async (state) => {
+      vi.mocked(getLatestVideos).mockResolvedValue(
+        state === "fetch-failed"
+          ? { success: false, error: "synthetic49-private-response" }
+          : { success: true, data: state === "empty" ? [] : videos }
+      );
+      const markup = await initialMarkup();
+      expect(
+        markup
+          .querySelector("[data-videos-state]")
+          ?.getAttribute("data-videos-state")
+      ).toBe(state);
+      expect(markup.innerHTML).not.toContain("synthetic49-private-response");
+    }
+  );
   it.each([
     [{}, "All Videos", "Tutorial 1", 12],
     [
