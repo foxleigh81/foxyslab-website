@@ -430,6 +430,8 @@ describe("production videos verification command", () => {
                               state: "populated",
                               cards: 0,
                               headings: 0,
+                              documentCards: 12,
+                              documentHeadings: marker,
                               httpStatus: 200,
                               initial: {
                                 ...initial,
@@ -467,6 +469,8 @@ describe("production videos verification command", () => {
         expect(String(error)).toContain(classification);
         expect(retained).toContain("http=200");
         expect(retained).toContain("assertion=initial-cards");
+        expect(retained).toContain("documentCards=12");
+        expect(retained).toContain("documentHeadings=null");
         expect(retained).toContain(
           `initialDocumentCards=${initial.documentCards}`
         );

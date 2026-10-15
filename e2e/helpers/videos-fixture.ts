@@ -1,5 +1,11 @@
 import type { Page } from "@playwright/test";
 
+const settledGallerySelector = [
+  "main article",
+  'main [data-videos-state="empty"]',
+  'main [data-videos-state="fetch-failed"]',
+].join(", ");
+
 // Runs inside page.evaluate: return only bounded observations, never text,
 // URLs, response bodies, or exception messages from the credentialed page.
 export function observeGallery(html?: string) {
@@ -32,7 +38,20 @@ export async function gotoVideosPage(
   waitUntil: "domcontentloaded" | "commit" = "domcontentloaded"
 ) {
   try {
-    return await page.goto(path, { waitUntil });
+    const response = await page.goto(path, { waitUntil });
+    if (waitUntil === "domcontentloaded") {
+      // DOMContentLoaded can precede React's streamed boundary placement.
+      // A timeout still returns the response for bounded failure diagnostics.
+      await page
+        .locator(settledGallerySelector)
+        .first()
+        .waitFor({ state: "visible", timeout: 5000 })
+        .catch((error: unknown) => {
+          if (!(error instanceof Error) || error.name !== "TimeoutError")
+            throw error;
+        });
+    }
+    return response;
   } catch (error) {
     throw new Error(
       "Gallery fixture/data unavailable: videos navigation failed. Check the production server and YouTube credentials.",

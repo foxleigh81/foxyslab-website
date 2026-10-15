@@ -76,6 +76,8 @@ function browserResultDiagnostic(spec, test, result) {
   }
   const cards = boundedCount(state?.cards);
   const headings = boundedCount(state?.headings);
+  const documentCards = boundedCount(state?.documentCards);
+  const documentHeadings = boundedCount(state?.documentHeadings);
   let classification = "unclassified";
   if (state?.state === "fetch-failed") classification = "data-fetch-failure";
   else if (state?.state === "empty") classification = "empty-response";
@@ -124,7 +126,7 @@ function browserResultDiagnostic(spec, test, result) {
     Number.isSafeInteger(spec.line) && spec.line > 0 && spec.line <= 100000
       ? spec.line
       : "unknown";
-  return `line ${line}: ${result.status}; ${classification}; cards=${cards}; headings=${headings}; http=${httpStatus}; assertion=${assertion}; initialCards=${initialCards}; initialDocumentCards=${initialDocumentCards}`;
+  return `line ${line}: ${result.status}; ${classification}; cards=${cards}; headings=${headings}; documentCards=${documentCards}; documentHeadings=${documentHeadings}; http=${httpStatus}; assertion=${assertion}; initialCards=${initialCards}; initialDocumentCards=${initialDocumentCards}`;
 }
 
 async function browserFailureDiagnostic(directory) {
