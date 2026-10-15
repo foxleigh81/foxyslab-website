@@ -16,6 +16,7 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:lighthouse": "lhci autorun",
+    "verify:videos": "node scripts/verify-videos.mjs",
     "test:all": "vitest run && playwright test",
     "format": "prettier --write .",
     "prepare": "husky"

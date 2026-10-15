@@ -74,7 +74,6 @@ const LAYOUT_TREE = [
 const STATIC_PAGES = [
   "app/page.tsx",
   "app/about/page.tsx",
-  "app/videos/page.tsx",
   "app/blog/page.tsx",
 ];
 

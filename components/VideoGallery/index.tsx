@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useMemo, useState, useId } from "react";
 import { YouTubeVideo, PlaylistInfo } from "@/types/youtube";
 import { VideoCard } from "@/components/VideoCard";
@@ -11,6 +11,8 @@ import styles from "./styles.module.css";
 const VIDEOS_PER_PAGE = 12;
 
 interface VideoGalleryProps {
+  activeSlug: string | null;
+  pageParam: string | null;
   videos: YouTubeVideo[];
   playlists: PlaylistInfo[];
   playlistVideoMap: Record<string, string[]>;
@@ -20,6 +22,8 @@ interface VideoGalleryProps {
 }
 
 export function VideoGallery({
+  activeSlug,
+  pageParam,
   videos,
   playlists,
   playlistVideoMap,
@@ -27,10 +31,6 @@ export function VideoGallery({
   articleSlugByVideoId = {},
 }: VideoGalleryProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const activeSlug = searchParams.get("playlist");
-  const pageParam = searchParams.get("page");
   const currentPage = Math.max(1, parseInt(pageParam || "1", 10) || 1);
 
   const activePlaylistId = activeSlug
@@ -62,8 +62,8 @@ export function VideoGallery({
 
   /*
    * Filters the list already in the browser rather than an index built at
-   * deploy time, so results are exactly as fresh as the page — which ISR keeps
-   * within the hour. A new video is findable without a rebuild.
+   * deploy time, so results use the same cached YouTube data as the server
+   * render. A new video is findable without a rebuild.
    */
   const filteredVideos = useMemo(() => {
     /*

@@ -1,5 +1,10 @@
 import type { Page } from "@playwright/test";
 
+/** Smoke checks need the DOM, not every image/media response to finish. */
+export function gotoPage(page: Page, path: string, timeout?: number) {
+  return page.goto(path, { waitUntil: "domcontentloaded", timeout });
+}
+
 /**
  * Wait until React has hydrated the given element.
  *

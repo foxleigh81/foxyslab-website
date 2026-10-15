@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@/test/test-utils";
 import userEvent from "@testing-library/user-event";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { VideoGallery } from "../index";
 import { mockVideo, mockVideo2 } from "@/test/fixtures/youtube";
 import type { YouTubeVideo } from "@/types/youtube";
@@ -30,6 +30,8 @@ const playlistSlugMap: Record<string, string> = {
 };
 
 const defaultProps = {
+  activeSlug: null,
+  pageParam: null,
   videos: [mockVideo, mockVideo2],
   playlists,
   playlistVideoMap,
@@ -53,26 +55,18 @@ describe("VideoGallery", () => {
   });
 
   it("filters videos when playlist slug is in URL", () => {
-    vi.mocked(useSearchParams).mockReturnValue(
-      new URLSearchParams("playlist=reviews") as ReturnType<
-        typeof useSearchParams
-      >
-    );
+    const urlProps = { activeSlug: "reviews" };
 
-    render(<VideoGallery {...defaultProps} />);
+    render(<VideoGallery {...defaultProps} {...urlProps} />);
 
     expect(screen.getByText(mockVideo2.title)).toBeInTheDocument();
     expect(screen.queryByText(mockVideo.title)).not.toBeInTheDocument();
   });
 
   it("shows all videos when URL contains an invalid slug", () => {
-    vi.mocked(useSearchParams).mockReturnValue(
-      new URLSearchParams("playlist=nonexistent") as ReturnType<
-        typeof useSearchParams
-      >
-    );
+    const urlProps = { activeSlug: "nonexistent" };
 
-    render(<VideoGallery {...defaultProps} />);
+    render(<VideoGallery {...defaultProps} {...urlProps} />);
 
     expect(screen.getByText(mockVideo.title)).toBeInTheDocument();
     expect(screen.getByText(mockVideo2.title)).toBeInTheDocument();
@@ -128,15 +122,12 @@ describe("VideoGallery", () => {
   });
 
   it("shows empty state when filtered playlist has no matching videos", () => {
-    vi.mocked(useSearchParams).mockReturnValue(
-      new URLSearchParams("playlist=tutorials") as ReturnType<
-        typeof useSearchParams
-      >
-    );
+    const urlProps = { activeSlug: "tutorials" };
 
     render(
       <VideoGallery
         {...defaultProps}
+        {...urlProps}
         videos={[]}
         playlistVideoMap={{ PL1: ["nonexistent"] }}
       />
@@ -145,6 +136,28 @@ describe("VideoGallery", () => {
     expect(
       screen.getByText("No videos in this playlist yet")
     ).toBeInTheDocument();
+  });
+
+  it("keeps the search query when navigation supplies a new page", async () => {
+    const user = userEvent.setup();
+    const videos = buildVideos(25);
+    const { rerender } = render(
+      <VideoGallery {...defaultProps} videos={videos} />
+    );
+    await user.type(screen.getByRole("searchbox"), "Video");
+
+    rerender(<VideoGallery {...defaultProps} videos={videos} pageParam="2" />);
+
+    expect(screen.getByRole("searchbox")).toHaveValue("Video");
+    expect(screen.getByRole("heading", { name: "Video 13" })).toBeVisible();
+    expect(screen.queryByRole("heading", { name: "Video 1" })).toBeNull();
+    expect(screen.getByLabelText("Page 2")).toHaveAttribute(
+      "aria-current",
+      "page"
+    );
+
+    await user.type(screen.getByRole("searchbox"), " 25");
+    expect(screen.getByRole("heading", { name: "Video 25" })).toBeVisible();
   });
 
   /*
@@ -179,10 +192,8 @@ describe("VideoGallery", () => {
     it("does not call a query-filtered count the playlist total", async () => {
       // "N videos in this playlist" stops being true the moment someone types.
       const user = userEvent.setup();
-      vi.mocked(useSearchParams).mockReturnValue(
-        new URLSearchParams("playlist=tutorials") as never
-      );
-      render(<VideoGallery {...defaultProps} />);
+      const urlProps = { activeSlug: "tutorials" };
+      render(<VideoGallery {...defaultProps} {...urlProps} />);
 
       await user.type(screen.getByRole("searchbox"), "lighting");
 
@@ -222,10 +233,8 @@ describe("VideoGallery", () => {
     it("leaves the playlist control unset for an unknown slug", () => {
       // The grid falls back to showing everything; the control should agree
       // rather than sitting blank with no option matching.
-      vi.mocked(useSearchParams).mockReturnValue(
-        new URLSearchParams("playlist=does-not-exist") as never
-      );
-      render(<VideoGallery {...defaultProps} />);
+      const urlProps = { activeSlug: "does-not-exist" };
+      render(<VideoGallery {...defaultProps} {...urlProps} />);
 
       expect(screen.getByLabelText("Playlist")).toHaveValue("");
     });
