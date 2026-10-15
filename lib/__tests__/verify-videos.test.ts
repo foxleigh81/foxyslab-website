@@ -84,7 +84,7 @@ describe("production videos verification command", () => {
     expect(output).not.toContain("next build");
   });
 
-  it("builds before serving, smoke checks, and retains three mobile reports and metrics", async () => {
+  it("builds before serving, smoke checks, and retains only three mobile measurements", async () => {
     const h = harness();
     const directory = await verifyVideos({ ...h, env: credentials });
     expect(h.events).toEqual([
@@ -100,12 +100,7 @@ describe("production videos verification command", () => {
     expect(h.run.mock.calls[1][2]).toContain(
       "--config=playwright.videos-production.config.ts"
     );
-    expect(
-      readdirSync(directory).filter((name) => name.endsWith(".report.json"))
-    ).toHaveLength(3);
-    expect(
-      readdirSync(directory).filter((name) => name.endsWith(".report.html"))
-    ).toHaveLength(3);
+    expect(readdirSync(directory)).toEqual(["summary.json"]);
     const summary = JSON.parse(
       readFileSync(path.join(directory, "summary.json"), "utf8")
     );
@@ -117,6 +112,80 @@ describe("production videos verification command", () => {
         { run: 3, cls: 0.05, lcpMs: 4200 },
       ],
     });
+  });
+
+  it("retains only minimized measurements when successful reports contain synthetic credentials", async () => {
+    const h = harness();
+    const originalRun = h.run.getMockImplementation()!;
+    const markers = [
+      credentials.YOUTUBE_API_KEY,
+      credentials.FOURTHWALL_STOREFRONT_TOKEN,
+      credentials.FLAGS_SECRET,
+    ];
+    h.run.mockImplementation(async (label, command, args) => {
+      await originalRun(label, command, args);
+      const directory = path.join(h.outputRoot, readdirSync(h.outputRoot)[0]);
+      if (label === "Browser smoke") {
+        writeFileSync(
+          path.join(directory, "browser-smoke.json"),
+          JSON.stringify({ errors: markers })
+        );
+      }
+      if (!label.startsWith("Lighthouse")) return;
+      const prefix = args
+        .find((arg) => arg.startsWith("--output-path="))!
+        .slice("--output-path=".length);
+      const report = JSON.parse(readFileSync(`${prefix}.report.json`, "utf8"));
+      report.requestHeaders = { authorization: markers.join(" ") };
+      writeFileSync(`${prefix}.report.json`, JSON.stringify(report));
+      writeFileSync(`${prefix}.report.html`, markers.join(" "));
+    });
+    const log = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      const directory = await verifyVideos({ ...h, env: credentials });
+      expect(readdirSync(directory)).toEqual(["summary.json"]);
+      const retained =
+        readFileSync(path.join(directory, "summary.json"), "utf8") +
+        JSON.stringify(log.mock.calls);
+      for (const marker of markers) expect(retained).not.toContain(marker);
+      expect(
+        JSON.parse(readFileSync(path.join(directory, "summary.json"), "utf8"))
+          .runs
+      ).toHaveLength(3);
+    } finally {
+      log.mockRestore();
+    }
+  });
+
+  it("omits synthetic credentials from malformed measurement diagnostics and retained files", async () => {
+    const h = harness();
+    const marker = "synthetic48";
+    h.run.mockImplementation(async (label, _command, args) => {
+      if (!label.startsWith("Lighthouse")) return;
+      const prefix = args
+        .find((arg) => arg.startsWith("--output-path="))!
+        .slice("--output-path=".length);
+      writeFileSync(`${prefix}.report.json`, marker);
+      writeFileSync(`${prefix}.report.html`, marker);
+    });
+    const log = vi.spyOn(console, "log").mockImplementation(() => {});
+    try {
+      const error = await verifyVideos({
+        ...h,
+        env: { ...credentials, YOUTUBE_API_KEY: marker },
+      }).catch((error: Error) => error);
+      expect(error).toBeInstanceOf(Error);
+      const retainedOutput = JSON.stringify(log.mock.calls) + String(error);
+      expect(retainedOutput).not.toContain(marker);
+      expect(String(error)).toContain(
+        "Lighthouse 1 report missing or unreadable"
+      );
+      const directory = path.join(h.outputRoot, readdirSync(h.outputRoot)[0]);
+      expect(readdirSync(directory)).toEqual([]);
+      expect(h.stop).toHaveBeenCalledOnce();
+    } finally {
+      log.mockRestore();
+    }
   });
 
   it("never starts a server or measures a failed build", async () => {
@@ -219,7 +288,9 @@ describe("production videos verification command", () => {
         "line 57: failed; populated gallery data unavailable"
       );
       expect(error.message).toContain(diagnostic);
-      expect(error.message).toContain("browser-smoke.json");
+      expect(error.message).not.toContain("retained reports");
+      const directory = path.join(h.outputRoot, readdirSync(h.outputRoot)[0]);
+      expect(readdirSync(directory)).toEqual([]);
       expect(error.message).not.toContain("private-test-value");
       expect(h.stop).toHaveBeenCalledOnce();
     }

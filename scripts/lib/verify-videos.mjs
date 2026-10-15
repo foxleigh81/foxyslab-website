@@ -1,5 +1,12 @@
 import { spawn } from "node:child_process";
-import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
+import {
+  mkdir,
+  mkdtemp,
+  readFile,
+  readdir,
+  rm,
+  writeFile,
+} from "node:fs/promises";
 import { createServer } from "node:net";
 import { createRequire } from "node:module";
 import path from "node:path";
@@ -11,6 +18,13 @@ const required = [
   "FOURTHWALL_STOREFRONT_TOKEN",
   "FLAGS_SECRET",
 ];
+
+async function discardRawReports(directory) {
+  for (const name of await readdir(directory)) {
+    if (name !== "summary.json")
+      await rm(path.join(directory, name), { recursive: true, force: true });
+  }
+}
 
 function mobileMetrics(report, run) {
   const cls = report.audits?.["cumulative-layout-shift"]?.numericValue;
@@ -67,7 +81,7 @@ function browserResultDiagnostic(spec, result) {
     Number.isSafeInteger(spec.line) && spec.line > 0 ? spec.line : "unknown";
   const reason = dataError
     ? `populated gallery data unavailable; ${dataReason}`
-    : "inspect retained browser report for assertion or browser error";
+    : "browser assertion or browser error; raw report omitted";
   return `line ${line}: ${result.status}; ${reason}`;
 }
 
@@ -203,9 +217,7 @@ export async function verifyVideos({
       }
     ).catch(async () => {
       const diagnostic = await browserFailureDiagnostic(directory);
-      throw new Error(
-        `Browser smoke failed: ${diagnostic}\nDetails: browser-smoke.json in the retained reports`
-      );
+      throw new Error(`Browser smoke failed: ${diagnostic}`);
     });
     const runs = [];
     for (let index = 1; index <= 3; index++) {
@@ -227,9 +239,13 @@ export async function verifyVideos({
         ],
         productionEnv
       );
-      const report = JSON.parse(
-        await readFile(`${prefix}.report.json`, "utf8")
-      );
+      let report;
+      try {
+        report = JSON.parse(await readFile(`${prefix}.report.json`, "utf8"));
+      } catch {
+        // JSON parser errors can quote the credential-bearing input.
+        throw new Error(`Lighthouse ${index} report missing or unreadable`);
+      }
       const metrics = mobileMetrics(report, index);
       runs.push(metrics);
       await writeFile(
@@ -240,6 +256,10 @@ export async function verifyVideos({
     }
     return directory;
   } finally {
-    await server.stop();
+    try {
+      await server.stop();
+    } finally {
+      await discardRawReports(directory);
+    }
   }
 }
