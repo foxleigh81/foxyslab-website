@@ -64,6 +64,56 @@ function harness(failBuild = false) {
 }
 
 describe("production videos verification command", () => {
+  it("names a failed mobile pagination assertion when no layout observation exists", async () => {
+    const h = harness();
+    h.run.mockImplementation(async (label) => {
+      if (label !== "Browser smoke") return;
+      const directory = path.join(h.outputRoot, readdirSync(h.outputRoot)[0]);
+      writeFileSync(
+        path.join(directory, "browser-smoke.json"),
+        JSON.stringify({
+          suites: [
+            {
+              specs: [
+                {
+                  line: 14,
+                  tests: [
+                    {
+                      projectName: "Mobile Chrome",
+                      annotations: [
+                        {
+                          type: "videos-outcome",
+                          description: JSON.stringify({
+                            source: "live",
+                            check: "pagination-forward",
+                            outcome: "failed",
+                          }),
+                        },
+                      ],
+                      results: [
+                        {
+                          status: "failed",
+                          errors: [{ message: "private-video-title" }],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        })
+      );
+      throw new Error("Browser smoke failed");
+    });
+    const error = await verifyVideos({ ...h, env: credentials }).catch(
+      (error: Error) => error
+    );
+    expect(String(error)).toContain("assertion=pagination-forward");
+    expect(String(error)).toContain("Mobile Chrome");
+    expect(String(error)).not.toContain("private-video-title");
+  });
+
   it("retains allowlisted browser outcomes without synthetic credentials on success or failure", async () => {
     for (const failed of [false, true]) {
       const h = harness();

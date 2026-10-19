@@ -74,6 +74,27 @@ function browserResultDiagnostic(spec, test, result) {
   } catch {
     /* Missing or malformed observations remain unclassified. */
   }
+  let failedOutcome;
+  for (const annotation of test.annotations ?? []) {
+    if (annotation.type !== "videos-outcome") continue;
+    try {
+      const value = JSON.parse(annotation.description);
+      if (
+        value.source === "live" &&
+        value.outcome === "failed" &&
+        [
+          "search",
+          "pagination-forward",
+          "pagination-back",
+          "playlist-selection",
+          "direct-playlist",
+        ].includes(value.check)
+      )
+        failedOutcome = value.check;
+    } catch {
+      /* Untrusted annotation content is never retained. */
+    }
+  }
   const cards = boundedCount(state?.cards);
   const headings = boundedCount(state?.headings);
   const documentCards = boundedCount(state?.documentCards);
@@ -112,21 +133,27 @@ function browserResultDiagnostic(spec, test, result) {
     state.httpStatus <= 599
       ? state.httpStatus
       : null;
-  const assertion = [
-    "initial-cards",
-    "playlist-selection",
-    "server-cards",
-    "hydration-layout",
-    "search",
-    "accessibility",
-  ].includes(state?.assertion)
-    ? state.assertion
+  const assertion =
+    failedOutcome ??
+    ([
+      "initial-cards",
+      "playlist-selection",
+      "server-cards",
+      "hydration-layout",
+      "search",
+      "accessibility",
+    ].includes(state?.assertion)
+      ? state.assertion
+      : "unknown");
+  if (failedOutcome) classification = "browser-assertion-failure";
+  const project = ["Desktop Chrome", "Mobile Chrome"].includes(test.projectName)
+    ? test.projectName
     : "unknown";
   const line =
     Number.isSafeInteger(spec.line) && spec.line > 0 && spec.line <= 100000
       ? spec.line
       : "unknown";
-  return `line ${line}: ${result.status}; ${classification}; cards=${cards}; headings=${headings}; documentCards=${documentCards}; documentHeadings=${documentHeadings}; http=${httpStatus}; assertion=${assertion}; initialCards=${initialCards}; initialDocumentCards=${initialDocumentCards}`;
+  return `line ${line}: ${result.status}; ${classification}; project=${project}; cards=${cards}; headings=${headings}; documentCards=${documentCards}; documentHeadings=${documentHeadings}; http=${httpStatus}; assertion=${assertion}; initialCards=${initialCards}; initialDocumentCards=${initialDocumentCards}`;
 }
 
 async function browserFailureDiagnostic(directory) {
