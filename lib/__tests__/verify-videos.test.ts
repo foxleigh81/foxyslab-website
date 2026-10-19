@@ -33,33 +33,40 @@ function harness(failBuild = false) {
   const stop = vi.fn(async () => {
     events.push("stop");
   });
-  const serve = vi.fn(async () => {
+  const serve = vi.fn(async (_env: Record<string, string> = {}) => {
     events.push("serve");
     return { url: "http://127.0.0.1:4173", stop };
   });
-  const run = vi.fn(async (label: string, _command: string, args: string[]) => {
-    events.push(label);
-    if (failBuild) throw new Error("Build failed");
-    if (label.startsWith("Lighthouse")) {
-      expect(args).toContain("http://127.0.0.1:4173/videos");
-      expect(args).toContain("--form-factor=mobile");
-      expect(args).toContain("--throttling-method=simulate");
-      const prefix = args
-        .find((arg) => arg.startsWith("--output-path="))!
-        .split("=")[1];
-      writeFileSync(
-        `${prefix}.report.json`,
-        JSON.stringify({
-          configSettings: { formFactor: "mobile" },
-          audits: {
-            "cumulative-layout-shift": { numericValue: 0.05 },
-            "largest-contentful-paint": { numericValue: 4200 },
-          },
-        })
-      );
-      writeFileSync(`${prefix}.report.html`, "test report");
+  const run = vi.fn(
+    async (
+      label: string,
+      _command: string,
+      args: string[],
+      _env: Record<string, string> = {}
+    ) => {
+      events.push(label);
+      if (failBuild) throw new Error("Build failed");
+      if (label.startsWith("Lighthouse")) {
+        expect(args).toContain("http://127.0.0.1:4173/videos");
+        expect(args).toContain("--form-factor=mobile");
+        expect(args).toContain("--throttling-method=simulate");
+        const prefix = args
+          .find((arg) => arg.startsWith("--output-path="))!
+          .split("=")[1];
+        writeFileSync(
+          `${prefix}.report.json`,
+          JSON.stringify({
+            configSettings: { formFactor: "mobile" },
+            audits: {
+              "cumulative-layout-shift": { numericValue: 0.05 },
+              "largest-contentful-paint": { numericValue: 4200 },
+            },
+          })
+        );
+        writeFileSync(`${prefix}.report.html`, "test report");
+      }
     }
-  });
+  );
   return { outputRoot, events, run, serve, stop };
 }
 
@@ -392,6 +399,55 @@ describe("production videos verification command", () => {
         { run: 3, cls: 0.05, lcpMs: 4200 },
       ],
     });
+  });
+
+  it("gives each child only the environment needed for its job", async () => {
+    const h = harness();
+    const env = {
+      ...credentials,
+      PATH: process.env.PATH ?? "",
+      CHROME_PATH: "/synthetic/chromium",
+      VIDEOS_PLAYLIST_SLUG: "synthetic-playlist",
+      UNRELATED_SECRET: "synthetic-unrelated-secret",
+    };
+    await verifyVideos({ ...h, env });
+    const childEnv = (label: string) =>
+      (h.run.mock.calls.find(([name]) => name === label)?.[3] ?? {}) as Record<
+        string,
+        string
+      >;
+    for (const child of [childEnv("Build"), h.serve.mock.calls[0][0] ?? {}]) {
+      expect(child.YOUTUBE_API_KEY).toBe(credentials.YOUTUBE_API_KEY);
+      expect(child.FOURTHWALL_STOREFRONT_TOKEN).toBe(
+        credentials.FOURTHWALL_STOREFRONT_TOKEN
+      );
+      expect(child.UNRELATED_SECRET).toBeUndefined();
+      expect(child.FLAGS_SECRET).toBe(credentials.FLAGS_SECRET);
+    }
+    const fixtures = childEnv("State fixtures");
+    expect(fixtures.YOUTUBE_API_KEY).toMatch(/^synthetic-/);
+    expect(fixtures.FOURTHWALL_STOREFRONT_TOKEN).toMatch(/^synthetic-/);
+    expect(fixtures.FLAGS_SECRET).not.toBe(credentials.FLAGS_SECRET);
+    expect(Buffer.from(fixtures.FLAGS_SECRET, "base64url")).toHaveLength(32);
+    for (const label of [
+      "Browser smoke",
+      "Lighthouse 1",
+      "Lighthouse 2",
+      "Lighthouse 3",
+    ]) {
+      const child = childEnv(label);
+      for (const secret of [
+        "YOUTUBE_API_KEY",
+        "FOURTHWALL_STOREFRONT_TOKEN",
+        "FLAGS_SECRET",
+        "UNRELATED_SECRET",
+      ])
+        expect(child[secret], `${label}: ${secret}`).toBeUndefined();
+    }
+    expect(childEnv("Browser smoke").VIDEOS_PLAYLIST_SLUG).toBe(
+      "synthetic-playlist"
+    );
+    expect(childEnv("Lighthouse 1").CHROME_PATH).toBe("/synthetic/chromium");
   });
 
   it("retains only minimized measurements when successful reports contain synthetic credentials", async () => {

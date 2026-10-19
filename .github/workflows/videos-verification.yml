@@ -1,24 +1,46 @@
 name: Populated Videos Verification
 
 on:
-  pull_request:
-    branches: [main]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Draft PR number to verify
+        required: true
+        type: number
+      expected_sha:
+        description: Exact reviewed PR head SHA
+        required: true
+        type: string
 
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
   videos:
     name: Credentialed Videos Build and Measurements
-    if: github.event.pull_request.head.repo.full_name == github.repository
+    if: github.ref == 'refs/heads/main'
+    environment: videos-verification
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Check approved head before checkout
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.inputs.pr_number }}
+          EXPECTED_SHA: ${{ github.event.inputs.expected_sha }}
+        run: |
+          [[ "$PR_NUMBER" =~ ^[0-9]+$ ]]
+          [[ "$EXPECTED_SHA" =~ ^[0-9a-f]{40}$ ]]
+          actual=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" --jq '.head.sha')
+          test "$actual" = "$EXPECTED_SHA"
 
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.inputs.expected_sha }}
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
           cache: npm
@@ -26,24 +48,28 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
 
-      - name: Build, check populated gallery, and measure three mobile runs
+      - name: Recheck exact head and run credentialed verification
         env:
-          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
-          FOURTHWALL_STOREFRONT_TOKEN: ${{ secrets.FOURTHWALL_STOREFRONT_TOKEN }}
-          FLAGS_SECRET: ${{ secrets.FLAGS_SECRET }}
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.inputs.pr_number }}
+          EXPECTED_SHA: ${{ github.event.inputs.expected_sha }}
+          YOUTUBE_API_KEY: ${{ secrets.VIDEOS_VERIFY_YOUTUBE_API_KEY }}
+          FOURTHWALL_STOREFRONT_TOKEN: ${{ secrets.VIDEOS_VERIFY_FOURTHWALL_STOREFRONT_TOKEN }}
+          FLAGS_SECRET: ${{ secrets.VIDEOS_VERIFY_FLAGS_SECRET }}
           ALLOW_MISSING_API_KEYS: "false"
         run: |
-          echo "Verified checkout: $(git rev-parse HEAD)"
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          actual=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" --jq '.head.sha')
+          test "$actual" = "$EXPECTED_SHA"
           export CHROME_PATH="$(node -p 'require("@playwright/test").chromium.executablePath()')"
           npm run verify:videos
 
       - name: Retain minimal measurement evidence
         id: reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: videos-verification-${{ github.event.pull_request.head.sha }}
-          # Raw reports, traces, and screenshots may contain credentials.
+          name: videos-verification-${{ github.event.inputs.expected_sha }}
           path: .lighthouseci/videos/run-*/summary.json
           include-hidden-files: true
           if-no-files-found: warn
@@ -52,7 +78,7 @@ jobs:
       - name: Link evidence
         if: always()
         env:
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          HEAD_SHA: ${{ github.event.inputs.expected_sha }}
           REPORT_URL: ${{ steps.reports.outputs.artifact-url }}
         run: |
           echo "### Videos verification: $HEAD_SHA" >> "$GITHUB_STEP_SUMMARY"

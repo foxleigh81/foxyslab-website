@@ -54,11 +54,53 @@ it does not read credentials from `.env` files. Do not put values in commands,
 logs, committed files, or this document. Use the deployment's existing feature
 flags and other build environment variables as appropriate.
 
+The verifier passes an explicit environment to each child. Only the build and
+Next server receive the live YouTube, Fourthwall, and Flags values. The state-fixture
+unit test receives synthetic values; Playwright and Lighthouse receive no data
+credentials. The `flags/next` dependency requires `FLAGS_SECRET` during
+prerendering, including pages that do not directly read it in site code.
+
+For GitHub Actions, use the manual `Populated Videos Verification` workflow on
+`main` with PR number and the exact reviewed head SHA. Before using it, an
+administrator must create the `videos-verification` environment with independent
+required reviewers, restrict deployment branches to `main`, and put dedicated,
+restricted `VIDEOS_VERIFY_YOUTUBE_API_KEY` and
+`VIDEOS_VERIFY_FOURTHWALL_STOREFRONT_TOKEN`, and `VIDEOS_VERIFY_FLAGS_SECRET`
+values there. These must not be
+repository-level equivalents. Remove or rotate the old repository-level
+`YOUTUBE_API_KEY`, `FOURTHWALL_STOREFRONT_TOKEN`, and `FLAGS_SECRET` values.
+The workflow checks the current PR head before checkout and again immediately
+before the credentialed command; the approved run and artifact identify the
+requested SHA. PR-controlled workflow files cannot reach that environment from
+a PR branch when its `main` deployment-branch restriction is configured. This
+repository cannot enforce or inspect environment settings, reviewer identity,
+or secret rotation; until an administrator verifies them, do not dispatch a
+credentialed run or treat this workflow file as a complete release boundary.
+The new manual workflow is not available from the default branch until the
+trusted workflow change is installed there. That is a current interface
+blocker for a protected credentialed run on this draft head.
+
 Unset `ALLOW_MISSING_API_KEYS`. The command rejects the bypass and explicitly
 disables it in child processes, including overrides from Next's dotenv files.
 It checks credential presence before any build, server, or report creation.
 Missing values produce exit 1 and list only missing variable names. Credential
 validity still requires the real build and populated-gallery browser check.
+
+## Exact-head Preview inspection, 2026-10-19
+
+The public GitHub deployments API reports PR #79 head
+`dc64483aca760a7ed7a6172212b8359defadc824`, Preview deployment
+`7178942404`, and a successful status at `2026-10-19T16:25:26Z`. Its
+`environment_url` is
+`https://foxyslab-website-9qmz6thqu-foxleighco.vercel.app`. Requesting
+`/videos` redirected to `vercel.com/sso-api`; the sandbox proxy returned 403
+for that destination. No populated browser result or Lighthouse measurement was
+obtained from this Preview. The blocked interface is Preview access, requiring
+an authorized session or the protected-environment build above.
+
+A local compile check succeeded with `ALLOW_MISSING_API_KEYS=true npm run build`
+and a synthetic 32-byte base64url `FLAGS_SECRET`. This does not populate
+YouTube/Fourthwall content and is not a production-equivalent measurement.
 
 ## Run
 
@@ -122,16 +164,25 @@ npm run build
 node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 4173
 ```
 
-In the checking terminal, with the same environment:
+In the checking terminal, keep the build credentials only in the server
+terminal. The fixture, Playwright, and Lighthouse children must use separate
+environments:
 
 ```sh
 export VIDEOS_BASE_URL=http://127.0.0.1:4173
 mkdir -p .lighthouseci/videos
 export VIDEOS_REPORT_DIR="$(mktemp -d "$PWD/.lighthouseci/videos/manual-XXXXXX")"
+export VIDEOS_STATE_FIXTURE_DIR="$VIDEOS_REPORT_DIR/state-fixtures"
+mkdir -p "$VIDEOS_STATE_FIXTURE_DIR"
 export CHROME_PATH="$(node -p 'require("@playwright/test").chromium.executablePath()')"
-node node_modules/@playwright/test/cli.js test e2e/videos-gallery.spec.ts --config=playwright.videos-production.config.ts || exit "$?"
+env -u YOUTUBE_API_KEY -u FOURTHWALL_STOREFRONT_TOKEN -u FLAGS_SECRET \
+  FLAGS_SECRET=BwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwc \
+  npm test -- app/videos/__tests__/page.test.tsx || exit "$?"
+env -u YOUTUBE_API_KEY -u FOURTHWALL_STOREFRONT_TOKEN -u FLAGS_SECRET \
+  node node_modules/@playwright/test/cli.js test e2e/videos-gallery.spec.ts --config=playwright.videos-production.config.ts || exit "$?"
 for run in 1 2 3; do
-  node node_modules/lighthouse/cli/index.js "$VIDEOS_BASE_URL/videos" \
+  env -u YOUTUBE_API_KEY -u FOURTHWALL_STOREFRONT_TOKEN -u FLAGS_SECRET \
+    node node_modules/lighthouse/cli/index.js "$VIDEOS_BASE_URL/videos" \
     --form-factor=mobile --throttling-method=simulate \
     --output=json --output=html \
     --output-path="$VIDEOS_REPORT_DIR/mobile-$run" \

@@ -18,6 +18,33 @@ const required = [
   "FOURTHWALL_STOREFRONT_TOKEN",
   "FLAGS_SECRET",
 ];
+const processKeys = [
+  "PATH",
+  "HOME",
+  "TMPDIR",
+  "CI",
+  "HTTP_PROXY",
+  "HTTPS_PROXY",
+  "NO_PROXY",
+];
+const appKeys = [
+  "YOUTUBE_API_KEY",
+  "FOURTHWALL_STOREFRONT_TOKEN",
+  "FLAGS_SECRET",
+  "FLAG_NEWSLETTER",
+  "NEXT_PUBLIC_GA_ID",
+  "NEXT_PUBLIC_SENTRY_DSN",
+  "SENTRY_ORG",
+  "SENTRY_PROJECT",
+];
+
+function selectedEnv(source, keys) {
+  return Object.fromEntries(
+    keys
+      .filter((key) => source[key] !== undefined)
+      .map((key) => [key, source[key]])
+  );
+}
 
 async function discardRawReports(directory) {
   for (const name of await readdir(directory)) {
@@ -346,8 +373,11 @@ export async function verifyVideos({
     throw new Error(
       "Unset ALLOW_MISSING_API_KEYS for production-equivalent verification"
     );
+  const commonEnv = selectedEnv(env, processKeys);
+  const browserEnv = { ...commonEnv, ...selectedEnv(env, ["CHROME_PATH"]) };
   const productionEnv = {
-    ...env,
+    ...commonEnv,
+    ...selectedEnv(env, appKeys),
     NODE_ENV: "production",
     ALLOW_MISSING_API_KEYS: "false",
   };
@@ -364,8 +394,11 @@ export async function verifyVideos({
       "npm",
       ["test", "--", "app/videos/__tests__/page.test.tsx"],
       {
-        ...productionEnv,
+        ...commonEnv,
         NODE_ENV: "test",
+        YOUTUBE_API_KEY: "synthetic-fixture-key",
+        FOURTHWALL_STOREFRONT_TOKEN: "synthetic-fixture-token",
+        FLAGS_SECRET: "BwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwc",
         VIDEOS_STATE_FIXTURE_DIR: fixtureDirectory,
       }
     );
@@ -379,10 +412,12 @@ export async function verifyVideos({
         "--config=playwright.videos-production.config.ts",
       ],
       {
-        ...productionEnv,
+        ...browserEnv,
+        NODE_ENV: "test",
         VIDEOS_BASE_URL: server.url,
         VIDEOS_REPORT_DIR: directory,
         VIDEOS_STATE_FIXTURE_DIR: fixtureDirectory,
+        ...selectedEnv(env, ["VIDEOS_PLAYLIST_SLUG"]),
       }
     ).catch(async () => {
       const diagnostic = await browserFailureDiagnostic(directory);
@@ -422,7 +457,7 @@ export async function verifyVideos({
           "--chrome-flags=--headless --no-sandbox",
           "--quiet",
         ],
-        productionEnv
+        { ...browserEnv, NODE_ENV: "production" }
       );
       let report;
       try {
