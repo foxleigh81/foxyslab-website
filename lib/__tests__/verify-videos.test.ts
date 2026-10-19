@@ -71,6 +71,42 @@ function harness(failBuild = false) {
 }
 
 describe("production videos verification command", () => {
+  it("binds retained evidence to the checkout and production configuration even when the build fails", async () => {
+    for (const failBuild of [false, true]) {
+      const h = harness(failBuild);
+      await verifyVideos({ ...h, env: credentials }).catch(() => {});
+      const directory = path.join(h.outputRoot, readdirSync(h.outputRoot)[0]);
+      const summary = JSON.parse(
+        readFileSync(path.join(directory, "summary.json"), "utf8")
+      );
+      const head = spawnSync("git", ["rev-parse", "HEAD"], {
+        encoding: "utf8",
+      }).stdout.trim();
+      expect(summary.verification).toEqual({
+        head,
+        build: {
+          command: "npm run build",
+          nodeEnv: "production",
+          allowMissingApiKeys: false,
+        },
+        credentials: {
+          YOUTUBE_API_KEY: "present",
+          FOURTHWALL_STOREFRONT_TOKEN: "present",
+          FLAGS_SECRET: "present",
+        },
+        browserTarget: "next start",
+        browserConfig: "playwright.videos-production.config.ts",
+      });
+      for (const value of [
+        credentials.YOUTUBE_API_KEY,
+        credentials.FOURTHWALL_STOREFRONT_TOKEN,
+        credentials.FLAGS_SECRET,
+      ]) {
+        expect(JSON.stringify(summary)).not.toContain(value);
+      }
+    }
+  });
+
   it("reports playlist URL agreement without exposing its slug", async () => {
     const h = harness();
     h.run.mockImplementation(async (label) => {
@@ -390,7 +426,7 @@ describe("production videos verification command", () => {
     const summary = JSON.parse(
       readFileSync(path.join(directory, "summary.json"), "utf8")
     );
-    expect(summary).toEqual({
+    expect(summary).toMatchObject({
       browser: [],
       url: "http://127.0.0.1:4173/videos",
       runs: [
@@ -520,7 +556,7 @@ describe("production videos verification command", () => {
       expect(readdirSync(directory)).toEqual(["summary.json"]);
       expect(
         JSON.parse(readFileSync(path.join(directory, "summary.json"), "utf8"))
-      ).toEqual({ browser: [], runs: [] });
+      ).toMatchObject({ browser: [], runs: [] });
       expect(h.stop).toHaveBeenCalledOnce();
     } finally {
       log.mockRestore();

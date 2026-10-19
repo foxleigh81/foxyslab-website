@@ -1,4 +1,4 @@
-import { spawn } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import {
   mkdir,
   mkdtemp,
@@ -383,6 +383,27 @@ export async function verifyVideos({
   };
   await mkdir(outputRoot, { recursive: true });
   const directory = await mkdtemp(path.join(outputRoot, "run-"));
+  const verification = {
+    head: execFileSync("git", ["rev-parse", "HEAD"], {
+      encoding: "utf8",
+      env: commonEnv,
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim(),
+    build: {
+      command: "npm run build",
+      nodeEnv: "production",
+      allowMissingApiKeys: false,
+    },
+    credentials: Object.fromEntries(required.map((name) => [name, "present"])),
+    browserTarget: "next start",
+    browserConfig: "playwright.videos-production.config.ts",
+  };
+  const writeSummary = (result) =>
+    writeFile(
+      path.join(directory, "summary.json"),
+      JSON.stringify({ verification, ...result }, null, 2)
+    );
+  await writeSummary({});
   console.log(`Reports: ${directory}`);
   await run("Build", "npm", ["run", "build"], productionEnv);
   const server = await serve(productionEnv);
@@ -421,25 +442,15 @@ export async function verifyVideos({
       }
     ).catch(async () => {
       const diagnostic = await browserFailureDiagnostic(directory);
-      await writeFile(
-        path.join(directory, "summary.json"),
-        JSON.stringify(
-          {
-            browserFailure: diagnostic,
-            browser: await browserOutcomes(directory),
-          },
-          null,
-          2
-        )
-      );
+      await writeSummary({
+        browserFailure: diagnostic,
+        browser: await browserOutcomes(directory),
+      });
       throw new Error(`Browser smoke failed: ${diagnostic}`);
     });
     const browser = await browserOutcomes(directory);
     const runs = [];
-    await writeFile(
-      path.join(directory, "summary.json"),
-      JSON.stringify({ browser, runs }, null, 2)
-    );
+    await writeSummary({ browser, runs });
     for (let index = 1; index <= 3; index++) {
       const prefix = path.join(directory, `mobile-${index}`);
       await run(
@@ -468,10 +479,7 @@ export async function verifyVideos({
       }
       const metrics = mobileMetrics(report, index);
       runs.push(metrics);
-      await writeFile(
-        path.join(directory, "summary.json"),
-        JSON.stringify({ url: `${server.url}/videos`, runs, browser }, null, 2)
-      );
+      await writeSummary({ url: `${server.url}/videos`, runs, browser });
       console.log(`Run ${index}: CLS ${metrics.cls}; LCP ${metrics.lcpMs} ms`);
     }
     return directory;
