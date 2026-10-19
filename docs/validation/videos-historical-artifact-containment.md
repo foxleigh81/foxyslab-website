@@ -1,16 +1,19 @@
 # Historical artifact containment: unresolved operator dependency
 
-Recorded on 2026-10-19 for ticket #71, task T4, revision round 12.
+Recorded on 2026-10-19 for ticket #71, task T4, revision round 16.
 
 ## Bounded observations
 
 - Local HEAD and the public GitHub API for draft PR #79 both report
-  `29389ce69fbd7f8799ac0f8709321dadcf43e416`. The PR remains open and draft.
+  `6dd0e4899792831e26702ae8b54164d78e5d910d`. The PR remains open and draft.
+- The artifact metadata endpoint for artifact `12218763710` returns HTTP 200,
+  `expired: false`, creation time `2026-10-19T20:34:15Z`, and expiration time
+  `2026-11-02T20:34:13Z`.
 - The artifact metadata endpoint for artifact `12216535219` returns HTTP 200,
   `expired: false`, creation time `2026-10-19T19:23:57Z`, and expiration time
   `2026-11-02T19:23:56Z`. Metadata availability does not establish archive
   download permission or safe contents.
-- Reported repair commit `ca4719236f205ee33b35da575de5deff7c08ba00` is absent
+- Reported completed-run head `9eaae76fdda6d9b78aa0da6f93946de8cb8372cc` is absent
   from the local object database. GitHub's commit endpoint returns HTTP 422;
   comparison of that commit with the observed PR head returns HTTP 404.
   Its presence on the PR is therefore unconfirmed, not disproved by ancestry.
@@ -25,15 +28,23 @@ No credential value was obtained or included in this record.
 
 ## Finding and required handoff
 
-| Item | Recorded status |
-| --- | --- |
-| Artifact | `12216535219`, repository `foxleigh81/foxyslab-website` |
-| Matched file | Unknown; private inspection pending |
-| Matched field | Unknown; private inspection pending |
-| Classification | Unclassified sensitive-pattern report; real credential exposure is not established |
-| Removal | Unconfirmed; no deletion attempted |
-| Rotation | Undetermined pending classification; no rotation claimed |
-| Specific dependency | An authorized Actions operator with private artifact read access and authorized deletion capability, plus the credential owner if rotation is required |
+Both artifacts belong to `foxleigh81/foxyslab-website`. No matched values are
+recorded; unknown fields must remain unknown until private inspection.
+
+| Artifact | Matched file | Matched field | Classification | Disposition |
+| --- | --- | --- | --- | --- |
+| `12218763710` | Unknown; private inspection pending | Unknown; private inspection pending | Unclassified sensitive-pattern report; real credential exposure not established | Metadata available and not expired; removal unconfirmed, no deletion attempted; rotation undetermined pending classification |
+| `12216535219` | Unknown; private inspection pending | Unknown; private inspection pending | Unclassified sensitive-pattern report; real credential exposure not established | Metadata available and not expired; removal unconfirmed, no deletion attempted; rotation undetermined pending classification |
+
+| Missing access or capability | Operation blocked | Required handoff |
+| --- | --- | --- |
+| Authorized Actions operator interface and authenticated private artifact read access | Private inspection and classification of both archives | Marcus coordinates an authorized Actions operator outside this sandbox |
+| Authorized artifact deletion capability | Removal of unsafe retained content, if found, and confirmation of disposition for each artifact | Actions operator with repository Actions write permission |
+| Credential-owner access, if exposure is confirmed | Revocation/rotation and value-free completion confirmation | Operator coordinates the affected credential owner |
+| Accessible completed-run commit or equivalent reviewed source evidence | Establishing whether the reported retention repair is present at the observed live PR head | Marcus obtains the repair evidence and reconciles it with the live head |
+
+These are capability dependencies, not a permission refusal attributed to Alex.
+No operator messaging tool is available here, and no operator was contacted.
 
 Marcus's coordination with that operator remains pending; this local record is
 a handoff, not evidence that anyone was contacted or accepted the assignment.
@@ -44,8 +55,8 @@ path and an observable completion record. If it contains a real credential,
 the credential owner must confirm rotation without disclosing the value.
 Do not attach the archive, matching snippets, or credential values to that record.
 
-Reconciliation also requires an accessible repair commit or equivalent reviewed
-source evidence tied to the actual PR head. Containment is unresolved. Fresh
+The local checkout matches the observed live PR head, but inclusion of the
+reported completed-run repair remains unconfirmed. Containment is unresolved. Fresh
 head-bound website verification, independent reviews, and post-deployment API
 checks remain separate outstanding work; local checks cannot establish them.
 
@@ -53,7 +64,7 @@ checks remain separate outstanding work; local checks cannot establish them.
 
 This revision changes documentation only. There is no changed executable
 behavior for a meaningful red/green/refactor test; no red run is claimed.
-The following checks do not verify or remediate the retained artifact:
+The following checks do not verify or remediate the retained artifacts:
 
 - `npm ci --no-audit --no-fund`: exit 0; dependency deprecation and install-script
   warnings were reported.
