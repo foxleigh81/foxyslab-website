@@ -1,6 +1,66 @@
-import { readFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import path from "node:path";
 import { parse } from "yaml";
 import { expect, it } from "vitest";
+
+it.each(["matching", "checkout-moved", "pr-moved"])(
+  "limits credentials and requires the exact head: %s",
+  (scenario) => {
+    const workflow = parse(
+      readFileSync(".github/workflows/videos-verification.yml", "utf8")
+    );
+    const step = workflow.jobs.videos.steps.find(
+      (item: { name?: string }) =>
+        item.name === "Recheck exact head and run credentialed verification"
+    );
+    const directory = mkdtempSync(
+      path.join(process.cwd(), ".workflow-security-")
+    );
+    const sha = "a".repeat(40);
+    try {
+      for (const [name, script] of Object.entries({
+        git: 'printf "%s\\n" "$CHECKOUT_SHA"',
+        gh: 'test "$GH_TOKEN" = synthetic-github-token || exit 9\nprintf "%s\\n" "$LIVE_SHA"',
+        node: 'printf "node-token=%s\\n" "${GH_TOKEN-unset}" >&2\nprintf /synthetic/chromium',
+        npm: 'printf "npm-token=%s\\n" "${GH_TOKEN-unset}"',
+      })) {
+        writeFileSync(path.join(directory, name), `#!/bin/bash\n${script}\n`, {
+          mode: 0o700,
+        });
+      }
+      const result = spawnSync(
+        "/bin/bash",
+        ["-e", "-o", "pipefail", "-c", step.run],
+        {
+          encoding: "utf8",
+          env: {
+            NODE_ENV: "test",
+            PATH: directory,
+            GH_TOKEN: "synthetic-github-token",
+            EXPECTED_SHA: sha,
+            CHECKOUT_SHA: scenario === "checkout-moved" ? "b".repeat(40) : sha,
+            LIVE_SHA: scenario === "pr-moved" ? "b".repeat(40) : sha,
+            PR_NUMBER: "79",
+            GITHUB_REPOSITORY: "foxleigh81/foxyslab-website",
+          },
+        }
+      );
+      if (scenario !== "matching") {
+        expect(result.status).not.toBe(0);
+        expect(result.stdout + result.stderr).not.toMatch(
+          /node-token|npm-token/
+        );
+        return;
+      }
+      expect(result.status).toBe(0);
+      expect(result.stderr).toContain("node-token=unset");
+      expect(result.stdout).toContain("npm-token=unset");
+    } finally {
+      rmSync(directory, { recursive: true, force: true });
+    }
+  }
+);
 
 it("keeps PR-head jobs away from repository credentials", () => {
   const ci = readFileSync(".github/workflows/ci.yml", "utf8");
