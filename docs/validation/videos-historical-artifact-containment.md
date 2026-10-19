@@ -1,11 +1,13 @@
 # Historical artifact containment: unresolved operator dependency
 
-Recorded on 2026-10-19 for ticket #71, task T4, revision round 16.
+Rechecked on 2026-10-19 for ticket #71, task T4, revision round 20.
 
 ## Bounded observations
 
 - Local HEAD and the public GitHub API for draft PR #79 both report
-  `6dd0e4899792831e26702ae8b54164d78e5d910d`. The PR remains open and draft.
+  `a3c9a2056d17837566d37dd2abbffa85990695de`. The PR remains open and draft,
+  with head repository `foxleigh81/foxyslab-website` and branch
+  `eng/71-d38d08-fix-videos-layout-shift-and-slow-first-t`.
 - The artifact metadata endpoint for artifact `12218763710` returns HTTP 200,
   `expired: false`, creation time `2026-10-19T20:34:15Z`, and expiration time
   `2026-11-02T20:34:13Z`.
@@ -13,10 +15,12 @@ Recorded on 2026-10-19 for ticket #71, task T4, revision round 16.
   `expired: false`, creation time `2026-10-19T19:23:57Z`, and expiration time
   `2026-11-02T19:23:56Z`. Metadata availability does not establish archive
   download permission or safe contents.
-- Reported completed-run head `9eaae76fdda6d9b78aa0da6f93946de8cb8372cc` is absent
-  from the local object database. GitHub's commit endpoint returns HTTP 422;
-  comparison of that commit with the observed PR head returns HTTP 404.
-  Its presence on the PR is therefore unconfirmed, not disproved by ancestry.
+- Public metadata links artifact `12218763710` to run `39320260208`, head
+  `6dd0e4899792831e26702ae8b54164d78e5d910d`, and artifact `12216535219` to
+  run `39310545381`, head `29389ce69fbd7f8799ac0f8709321dadcf43e416`.
+  Both report repository and head-repository ID `1084398996` and the branch
+  above. These are historical artifacts, not artifacts of the current head.
+  This metadata does not establish archive contents or operator permissions.
 - `gh` is unavailable and neither `GH_TOKEN` nor `GITHUB_TOKEN` is configured
   (presence only was checked). No authorized Actions operator interface is
   available in this sandbox. Public metadata access is insufficient for the
@@ -41,13 +45,20 @@ recorded; unknown fields must remain unknown until private inspection.
 | Authorized Actions operator interface and authenticated private artifact read access | Private inspection and classification of both archives | Marcus coordinates an authorized Actions operator outside this sandbox |
 | Authorized artifact deletion capability | Removal of unsafe retained content, if found, and confirmation of disposition for each artifact | Actions operator with repository Actions write permission |
 | Credential-owner access, if exposure is confirmed | Revocation/rotation and value-free completion confirmation | Operator coordinates the affected credential owner |
-| Accessible completed-run commit or equivalent reviewed source evidence | Establishing whether the reported retention repair is present at the observed live PR head | Marcus obtains the repair evidence and reconciles it with the live head |
 
 These are capability dependencies, not a permission refusal attributed to Alex.
 No operator messaging tool is available here, and no operator was contacted.
 
 Marcus's coordination with that operator remains pending; this local record is
 a handoff, not evidence that anyone was contacted or accepted the assignment.
+Chris owns routing this dependency to Marcus and the authorized Actions
+operator. The operator needs authenticated artifact download access for
+`GET /repos/foxleigh81/foxyslab-website/actions/artifacts/{artifact_id}/zip`
+and, if removal is required, Actions write access for
+`DELETE /repos/foxleigh81/foxyslab-website/actions/artifacts/{artifact_id}`.
+Neither operation was attempted here. The driver must recheck PR identity,
+head, operator permissions and artifact provenance immediately before acting;
+this public metadata check is not that authorization check.
 The operator must privately identify the matched file and field, classify the
 finding, and return only those identifiers, the classification, and remediation
 status. If unsafe retained content exists, removal requires the authorized
@@ -55,8 +66,9 @@ path and an observable completion record. If it contains a real credential,
 the credential owner must confirm rotation without disclosing the value.
 Do not attach the archive, matching snippets, or credential values to that record.
 
-The local checkout matches the observed live PR head, but inclusion of the
-reported completed-run repair remains unconfirmed. Containment is unresolved. Fresh
+The local checkout matches the observed live PR head. No fresh exact-head
+failure evidence or concrete source defect was supplied in this round.
+Containment is unresolved. Fresh
 head-bound website verification, independent reviews, and post-deployment API
 checks remain separate outstanding work; local checks cannot establish them.
 
@@ -70,7 +82,7 @@ The following checks do not verify or remediate the retained artifacts:
   warnings were reported.
 - `npm run lint`: exit 0.
 - `npm run type-check`: exit 0.
-- `npm test`: exit 0; 38 files passed, 344 tests passed, one skipped.
+- `npm test`: exit 0; 38 files passed, 345 tests passed, one skipped.
 - `git diff --check`: exit 0.
 
 No production build, browser or Lighthouse measurements were performed in this
