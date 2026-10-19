@@ -1,30 +1,49 @@
-# PR #79 head-to-evidence reconciliation
+# PR #79 live-head evidence inventory
 
-Observed 2026-10-19. The local checkout and GitHub's live, open draft PR #79
-both point to `79cb880a44c382044bb97876d7043b36be8af71e` on
-`eng/71-d38d08-fix-videos-layout-shift-and-slow-first-t`. The PR targets
-`eca93e0605ecf22f3eb8943a5fc84a37a65e11b1` and lists 82 changed files;
-its file list matches the local base-to-head diff. This remains the single
-review path. No new workflow was dispatched for this reconciliation.
+Reconciled on 2026-10-19 against the checked-out branch
+`eng/71-d38d08-fix-videos-layout-shift-and-slow-first-t`. Local `HEAD` is
+`7d6303ff50aba52047141087bd52a475e377138c`, matching the live head supplied
+for draft PR #79. The worktree was clean before this inventory update. No new
+workflow was dispatched and no passing verification was repeated.
 
-| Evidence | Head binding | What it establishes |
-| --- | --- | --- |
-| [CI run 39290824396](https://github.com/foxleigh81/foxyslab-website/actions/runs/39290824396), jobs 118190717964, 118190717411, 118190717912 | All three job records name `79cb880a44c382044bb97876d7043b36be8af71e` and succeeded | Reusable exact-head lint/type-check/unit, E2E, and generic build/Lighthouse job results. The generic build sets `ALLOW_MISSING_API_KEYS=true`; it cannot establish populated `/videos` or valid build-time data credentials. |
-| CI artifacts `coverage` (12205338093) and `playwright-report` (12205965857) | Attached to run 39290824396 | Artifact metadata exists; anonymous download returned HTTP 401 and job logs returned HTTP 403. No `lighthouse-results` artifact was listed. Browser assertions, emitted thumbnail hint, and numeric CLS/LCP results cannot be read from these artifacts here. |
-| Reported thumbnail regression result from the completed implementation run | Reported as `3b5d7172d7c96c5a289e93cbe65c67a019ef7765` | Mismatched with the live PR head. This SHA is absent from the local object store and GitHub's commit lookup returned HTTP 422; its changed files and test output cannot be independently inspected here. It is not exact-head regression evidence. |
-| Earlier [populated videos run 39285022085](https://github.com/foxleigh81/foxyslab-website/actions/runs/39285022085) | `dc64483aca760a7ed7a6172212b8359defadc824` | Historical success only. The live PR includes later commits, so its results cannot verify the present head. |
+## Run and artifact binding
 
-GitHub's exact-head check list contains the three CI jobs and Vercel Preview
-Comments, but no credentialed `Populated Videos Verification` check. The
-Actions run search for the exact SHA returns only CI run 39290824396. PR #79's
-reviews API returns no reviews. These metadata checks do not substitute for
-Macklin's independent security review or Ashley's QA verdict.
+| Evidence | Subject / commit | Environment and credentials | Result | Reuse decision |
+| --- | --- | --- | --- | --- |
+| Run `r20261019-ce819ff2e489` | Reported head `e9ffc5db9dae6c81777c4c41a5bc20897404135c`; differs from live `7d6303f` | Run metadata supplied in the review packet; environment and credential use are not established by the available record | Reported completion, but no detailed result or artifact contents are available here | Stale for the live head; do not use as acceptance evidence |
+| Run `r20261019-44fd68af9bd3` | This is the current branch's round-7 commit `7d6303ff50aba52047141087bd52a475e377138c` | Local Engineering sandbox; Node 24.21.0 / npm 11.19.0. No live YouTube or Fourthwall credentials; a synthetic `FLAGS_SECRET` was used only by ordinary E2E | `npm ci`, lint, type-check, and unit tests passed on the pre-commit source tree (`752d8f3`); ordinary E2E passed 71 and skipped 5. `npm run verify:videos` stopped at credential preflight | The documentation-only commit adds no application behavior, but local commands were run before the final commit and are not exact-commit execution evidence. Reuse as implementation-level local checks only, not exact-head CI or populated verification |
+| CI jobs `118229510029`, `118229509827`, `118229509454` | Reported in the run evidence for live PR head `7d6303f` | GitHub Actions. Lighthouse/build job allows missing API keys; E2E log reports no YouTube key. No valid build-time data credentials are demonstrated | General CI is green | Reuse for the general CI checks it actually ran. It does not establish the credentialed build or populated gallery behavior |
+| Artifact `artifact-118229510029` | Associated with CI job `118229510029` and live-head CI evidence | GitHub Actions artifact; credentialed data availability is not established | Artifact reference exists in the supplied evidence, but its contents and measurements are not present in this checkout | Cannot reuse to assert browser observations or numeric measurements until an authorized reviewer inspects the artifact and confirms its head binding |
+| Existing draft PR #79 | `7d6303ff50aba52047141087bd52a475e377138c` | Live GitHub PR metadata as supplied for this reconciliation | Draft remains open; no exact-head failure evidence was supplied (`[]`) | Current subject for future evidence; no approval or verdict implied |
 
-Remaining ticket evidence: an approved, credentialed production-equivalent
-build and populated browser observations for initial cards and hydration/footer
-stability; search, playlist selection, forward/back pagination, direct playlist
-URLs, and labelled empty/error states; the emitted first-thumbnail priority
-hint; three numeric mobile CLS/LCP pairs with each CLS below 0.1; and a focused
-initial-layout regression tied to the resulting head. The existing CI run may
-be reused for its stated checks only. No new behavior defect is demonstrated by
-this reconciliation, so there is no meaningful red-green-refactor code test.
+The old reconciliation record described `79cb880` and CI run `39290824396`.
+Those identifiers do not match the current live head or the run evidence in
+this revision. Its artifact IDs and conclusions are historical and are not
+carried forward as current-head evidence.
+
+## Acceptance criteria inventory
+
+| Criterion | Current evidence bound to `7d6303f` | Environment / credentials | Status and reuse decision |
+| --- | --- | --- | --- |
+| Initial response includes first-page cards or stable reserved space; hydration does not move the footer through the viewport | The repository contains a focused server-render regression test and implementation. Local focused tests were reported passing before the final documentation-only commit; current-head CI is general CI only | Fixture-based local test; no populated production-equivalent browser observation | Regression coverage is present, but exact-head test output and populated hydration/footer observation are absent. Do not claim production stability |
+| Three production-equivalent mobile Lighthouse CLS values below 0.1; record LCP and inspect first-thumbnail priority hint | No per-run CLS/LCP values or populated-page thumbnail-hint observation are available from the supplied artifacts | Credentialed production-equivalent build/browser environment not established | Missing. The Lighthouse job's missing-key bypass cannot satisfy this criterion; no measurements may be reused |
+| Search, playlist filter, pagination, direct playlist URLs, and empty/error states retain behavior | Focused tests and ordinary E2E have been reported passing on the round-7 source tree; CI general checks also pass on the live PR head | Fixture/missing-data local environment; CI E2E specifically reports no YouTube key | Reuse as fixture/general-CI behavior evidence only. Populated data behavior remains unverified |
+| Focused layout regression, lint, type-check, unit/E2E, and build with valid build-time data credentials | Focused test, lint, type-check, unit, and ordinary E2E results exist from the pre-commit source tree; exact-head general CI is green. `verify:videos` locally failed before build because required credentials were absent | Local tests used no live data credentials; ordinary E2E used synthetic flags only. CI build allows missing API keys | Partial. General CI can be reused for checks it ran, but credentialed production-equivalent build and populated-browser checks are missing |
+| Independent review verdicts after prerequisites | No exact-head Ashley QA or Macklin security verdict is supplied | Not applicable | Missing. Green CI is not an independent review verdict |
+
+## Readiness
+
+General CI success and the production acceptance evidence are separate. The
+following remain outstanding on the live head: a valid credentialed build;
+populated browser evidence for initial layout, hydration/footer stability,
+search, playlist filtering, forward/back pagination, direct playlist URLs,
+and labelled empty/error states; observation of the emitted first-thumbnail
+priority hint; three production-equivalent mobile CLS/LCP pairs with every CLS
+below 0.1; and independent Ashley and Macklin verdicts after their respective
+prerequisites have new evidence. The historical ticket baseline (CLS 0.511 on
+each run; LCP 3.8, 4.3, and 11.8 seconds) is not a measurement of this head.
+No fixed LCP improvement is claimed.
+
+This round changes verification documentation only. The available evidence
+does not demonstrate a new behavior defect, so no behavior test has a
+meaningful red-green-refactor cycle. No new red run is claimed.
