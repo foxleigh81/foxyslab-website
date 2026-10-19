@@ -121,6 +121,47 @@ describe("VideoGallery", () => {
     expect(screen.getByLabelText("Page 2")).toBeInTheDocument();
   });
 
+  it("uses immediate scrolling on forward and back pagination", async () => {
+    const user = userEvent.setup();
+    const push = vi.fn();
+    const scrollTo = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+    vi.mocked(useRouter).mockReturnValue({
+      push,
+      replace: vi.fn(),
+      back: vi.fn(),
+      forward: vi.fn(),
+      refresh: vi.fn(),
+      prefetch: vi.fn(),
+    });
+    const videos = buildVideos(25);
+    const { rerender } = render(
+      <VideoGallery {...defaultProps} videos={videos} />
+    );
+
+    await user.click(screen.getByRole("button", { name: "Next page" }));
+    expect(push).toHaveBeenLastCalledWith("/videos?page=2", {
+      scroll: false,
+    });
+    expect(scrollTo).toHaveBeenNthCalledWith(1, { top: 0, behavior: "instant" });
+    rerender(<VideoGallery {...defaultProps} videos={videos} pageParam="2" />);
+    expect(screen.getByRole("button", { name: "Page 2" })).toHaveAttribute(
+      "aria-current",
+      "page"
+    );
+    expect(screen.getByRole("heading", { name: "Video 13" })).toBeVisible();
+
+    await user.click(screen.getByRole("button", { name: "Previous page" }));
+    expect(push).toHaveBeenLastCalledWith("/videos", { scroll: false });
+    expect(scrollTo).toHaveBeenNthCalledWith(2, { top: 0, behavior: "instant" });
+    rerender(<VideoGallery {...defaultProps} videos={videos} pageParam={null} />);
+    expect(screen.getByRole("button", { name: "Page 1" })).toHaveAttribute(
+      "aria-current",
+      "page"
+    );
+    expect(screen.getByRole("heading", { name: "Video 1" })).toBeVisible();
+    scrollTo.mockRestore();
+  });
+
   it("shows empty state when filtered playlist has no matching videos", () => {
     const urlProps = { activeSlug: "tutorials" };
 

@@ -113,7 +113,7 @@ export function VideoGallery({
 
   function handlePageChange(page: number) {
     updateUrl(activeSlug, page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "instant" });
   }
 
   // Generate page numbers with ellipsis for large ranges
