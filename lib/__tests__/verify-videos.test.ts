@@ -64,6 +64,117 @@ function harness(failBuild = false) {
 }
 
 describe("production videos verification command", () => {
+  it("reports playlist URL agreement without exposing its slug", async () => {
+    const h = harness();
+    h.run.mockImplementation(async (label) => {
+      if (label !== "Browser smoke") return;
+      const directory = path.join(h.outputRoot, readdirSync(h.outputRoot)[0]);
+      writeFileSync(
+        path.join(directory, "browser-smoke.json"),
+        JSON.stringify({
+          suites: [
+            {
+              specs: [
+                {
+                  line: 14,
+                  tests: [
+                    {
+                      projectName: "Mobile Chrome",
+                      annotations: [
+                        {
+                          type: "videos-outcome",
+                          description: JSON.stringify({
+                            source: "live",
+                            check: "playlist-selection",
+                            outcome: "failed",
+                            diagnostic: {
+                              cards: 12,
+                              urlHasPlaylist: false,
+                              controlMatchesUrl: false,
+                              slug: "private-slug",
+                            },
+                          }),
+                        },
+                      ],
+                      results: [{ status: "failed" }],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        })
+      );
+      throw new Error("Browser smoke failed");
+    });
+    const error = await verifyVideos({ ...h, env: credentials }).catch(
+      (error: Error) => error
+    );
+    expect(String(error)).toContain(
+      "urlHasPlaylist=false; controlMatchesUrl=false; visibleCards=12"
+    );
+    expect(String(error)).not.toContain("private-slug");
+  });
+
+  it("reports bounded pagination state without retaining page data", async () => {
+    const h = harness();
+    h.run.mockImplementation(async (label) => {
+      if (label !== "Browser smoke") return;
+      const directory = path.join(h.outputRoot, readdirSync(h.outputRoot)[0]);
+      writeFileSync(
+        path.join(directory, "browser-smoke.json"),
+        JSON.stringify({
+          suites: [
+            {
+              specs: [
+                {
+                  line: 14,
+                  tests: [
+                    {
+                      projectName: "Desktop Chrome",
+                      annotations: [
+                        {
+                          type: "videos-outcome",
+                          description: JSON.stringify({
+                            source: "live",
+                            check: "pagination-back",
+                            outcome: "failed",
+                            diagnostic: {
+                              urlPage: 1,
+                              activePage: 2,
+                              cards: 12,
+                              matchesInitial: false,
+                              url: "private-url",
+                            },
+                          }),
+                        },
+                      ],
+                      results: [
+                        {
+                          status: "failed",
+                          errors: [{ message: "private-title" }],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        })
+      );
+      throw new Error("Browser smoke failed");
+    });
+    const error = await verifyVideos({ ...h, env: credentials }).catch(
+      (error: Error) => error
+    );
+    expect(String(error)).toContain(
+      "urlPage=1; activePage=2; visibleCards=12; matchesInitial=false"
+    );
+    expect(String(error)).not.toContain("private-url");
+    expect(String(error)).not.toContain("private-title");
+  });
+
   it("names a failed mobile pagination assertion when no layout observation exists", async () => {
     const h = harness();
     h.run.mockImplementation(async (label) => {

@@ -75,6 +75,7 @@ function browserResultDiagnostic(spec, test, result) {
     /* Missing or malformed observations remain unclassified. */
   }
   let failedOutcome;
+  let transition;
   for (const annotation of test.annotations ?? []) {
     if (annotation.type !== "videos-outcome") continue;
     try {
@@ -89,8 +90,11 @@ function browserResultDiagnostic(spec, test, result) {
           "playlist-selection",
           "direct-playlist",
         ].includes(value.check)
-      )
+      ) {
         failedOutcome = value.check;
+        if (value.diagnostic && typeof value.diagnostic === "object")
+          transition = value.diagnostic;
+      }
     } catch {
       /* Untrusted annotation content is never retained. */
     }
@@ -153,7 +157,15 @@ function browserResultDiagnostic(spec, test, result) {
     Number.isSafeInteger(spec.line) && spec.line > 0 && spec.line <= 100000
       ? spec.line
       : "unknown";
-  return `line ${line}: ${result.status}; ${classification}; project=${project}; cards=${cards}; headings=${headings}; documentCards=${documentCards}; documentHeadings=${documentHeadings}; http=${httpStatus}; assertion=${assertion}; initialCards=${initialCards}; initialDocumentCards=${initialDocumentCards}`;
+  const pageNumber = (value) =>
+    Number.isInteger(value) && value >= 1 && value <= 17 ? value : null;
+  let transitionDetail = "";
+  if (transition && failedOutcome?.startsWith("pagination-")) {
+    transitionDetail = `; urlPage=${pageNumber(transition.urlPage)}; activePage=${pageNumber(transition.activePage)}; visibleCards=${boundedCount(transition.cards)}; matchesInitial=${typeof transition.matchesInitial === "boolean" ? transition.matchesInitial : null}`;
+  } else if (transition && failedOutcome === "playlist-selection") {
+    transitionDetail = `; urlHasPlaylist=${typeof transition.urlHasPlaylist === "boolean" ? transition.urlHasPlaylist : null}; controlMatchesUrl=${typeof transition.controlMatchesUrl === "boolean" ? transition.controlMatchesUrl : null}; visibleCards=${boundedCount(transition.cards)}`;
+  }
+  return `line ${line}: ${result.status}; ${classification}; project=${project}; cards=${cards}; headings=${headings}; documentCards=${documentCards}; documentHeadings=${documentHeadings}; http=${httpStatus}; assertion=${assertion}; initialCards=${initialCards}; initialDocumentCards=${initialDocumentCards}${transitionDetail}`;
 }
 
 async function browserFailureDiagnostic(directory) {

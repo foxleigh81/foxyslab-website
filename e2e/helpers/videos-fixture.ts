@@ -96,6 +96,18 @@ export type VideoOutcome = {
   check: string;
   outcome: "passed" | "failed" | "not-applicable" | "observed";
   fetchPriority?: string;
+  diagnostic?:
+    | {
+        urlPage: number | null;
+        activePage: number | null;
+        cards: number;
+        matchesInitial: boolean;
+      }
+    | {
+        cards: number;
+        urlHasPlaylist: boolean;
+        controlMatchesUrl: boolean;
+      };
 };
 
 export async function checkPopulatedInteractions(
@@ -103,12 +115,68 @@ export async function checkPopulatedInteractions(
   record: (outcome: VideoOutcome) => void
 ) {
   const { expect } = await import("@playwright/test");
+  let initialTitles: string[] = [];
   const check = async (name: string, action: () => Promise<void>) => {
     try {
       await action();
       record({ source: "live", check: name, outcome: "passed" });
     } catch {
-      record({ source: "live", check: name, outcome: "failed" });
+      let diagnostic: VideoOutcome["diagnostic"];
+      if (name.startsWith("pagination-")) {
+        try {
+          const currentTitles = await page
+            .locator("main article h2")
+            .allTextContents();
+          const rawPage = new URL(page.url()).searchParams.get("page") ?? "1";
+          const urlPage = Number(rawPage);
+          const active = await page
+            .locator('[aria-current="page"]')
+            .first()
+            .getAttribute("aria-label", { timeout: 1000 })
+            .catch(() => null);
+          const activePage = Number(active?.match(/^Page (\d+)$/)?.[1]);
+          diagnostic = {
+            urlPage:
+              Number.isInteger(urlPage) && urlPage >= 1 && urlPage <= 17
+                ? urlPage
+                : null,
+            activePage:
+              Number.isInteger(activePage) &&
+              activePage >= 1 &&
+              activePage <= 17
+                ? activePage
+                : null,
+            cards: Math.min(200, currentTitles.length),
+            matchesInitial:
+              currentTitles.length === initialTitles.length &&
+              currentTitles.every(
+                (title, index) => title === initialTitles[index]
+              ),
+          };
+        } catch {
+          // Navigation can destroy the old execution context; the check still fails.
+        }
+      } else if (name === "playlist-selection") {
+        try {
+          const slug = new URL(page.url()).searchParams.get("playlist");
+          const selected = await page
+            .getByLabel("Playlist", { exact: true })
+            .inputValue();
+          diagnostic = {
+            cards: Math.min(200, await page.locator("main article").count()),
+            urlHasPlaylist: Boolean(slug),
+            controlMatchesUrl: Boolean(slug) && selected === slug,
+          };
+        } catch {
+          // The page may be navigating while the failed state is inspected.
+        }
+      }
+      record({
+        source: "live",
+        check: name,
+        outcome: "failed",
+        ...(diagnostic ? { diagnostic } : {}),
+      });
       // Assertion details can include data titles and URLs.
       throw new Error(`Populated gallery check failed: ${name}`);
     }
@@ -117,6 +185,7 @@ export async function checkPopulatedInteractions(
   const cards = page.locator("main article h2");
   await expect(cards.first()).toBeVisible();
   const titles = await cards.allTextContents();
+  initialTitles = titles;
   const image = page.locator("main article img:visible").first();
   await expect(image).toBeVisible();
   const hint = await image.getAttribute("fetchpriority");
