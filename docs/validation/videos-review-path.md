@@ -1,11 +1,12 @@
 # PR #79 review-path capability check
 
-Checked 2026-10-19 for plan generation 1, run
-`r20261019-24ff8443f141`. GitHub's pull-request API and local `HEAD` both
-report draft PR #79 at `bd7079e747fb68e0d80f9a88807d7d7a98326fd7`; its
-base is `eca93e0605ecf22f3eb8943a5fc84a37a65e11b1`. The recorded Ashley
-operation returned HTTP 500, `Paid QA prompt is too large; split the change for
-review`. This is an invocation failure, not a QA verdict.
+Rechecked 2026-10-19 for plan generation 2, run
+`r20261019-f0c59c76a596`. GitHub's pull-request API and local `HEAD` both
+report draft PR #79 at `8b1d7c54301d0ffb71b4c472f061dead48f3dd63`; its
+base is `eca93e0605ecf22f3eb8943a5fc84a37a65e11b1`. The earlier recorded
+Ashley operation returned HTTP 500, `Paid QA prompt is too large; split the
+change for review`. This is an invocation failure, not a QA verdict. No Ashley
+operation was invoked for the current head.
 
 ## Inspected interface and payload evidence
 
@@ -25,17 +26,29 @@ alone does not establish its contents or size. This is the specific unsupported
 inspection operation, not evidence that bounded submission succeeds.
 
 For scale, `git diff --binary <base> <head> | wc -c` measures the _possible_
-base-to-head patch at **364,999 bytes** across 76 files (5,677 insertions and
-102 deletions). The `docs/validation/**` portion is **193,831 bytes**; the
+base-to-head patch at **369,189 bytes** across 76 files (5,781 insertions and
+102 deletions). The `docs/validation/**` portion is **195,388 bytes**; the
 `docs/validation/videos-round-*.md` history alone is **158,927 bytes**. The
-single `bfe8d1e..bd7079e` commit patch is **3,623 bytes**. These are Git patch
+single `bd7079e..8b1d7c5` commit patch is **4,989 bytes**. These are Git patch
 sizes, not serialized Ashley payload sizes. Historical logs exist in the
 cumulative patch, but their presence in the failed Ashley request is unknown.
 
-The same-head Vercel Preview is deployment `7175465605`. Its `/videos` URL
-returns HTTP 302 to Vercel SSO without a personal session, so it is not a
-populated-page verification. CI status or artifact inspection cannot replace
-an Ashley verdict.
+The same-head Vercel Preview is deployment `7176658402`, with a successful
+status recorded at `2026-10-19T14:35:28Z`. Its environment URL is
+`https://foxyslab-website-ha1gcztyu-foxleighco.vercel.app`; `/videos` returns
+HTTP 302 to Vercel SSO without a personal session, so it is not a populated-page
+verification from this sandbox. GitHub Actions run `39269981337`, job
+`118119422275`, reports success for the credentialed build, populated-gallery
+browser check, and three mobile measurement step. It lists artifact
+`videos-verification-8b1d7c54301d0ffb71b4c472f061dead48f3dd63` (ID
+`12194602532`). The anonymous artifact download returns HTTP 401 and the run-log
+download returns HTTP 403. Thus this sandbox cannot independently quote the
+per-run CLS/LCP values or inspect the browser observations; an authorized
+reviewer must read the job summary or artifact. CI status and artifact metadata
+cannot replace those measurements or an Ashley verdict.
+The build, browser, and Lighthouse commands, mobile settings, secret source,
+and `.lighthouseci/videos/run-*/summary.json` artifact path are recorded in
+`docs/validation/videos-production-checks.md`.
 
 ## Required driver check before review resumes
 
