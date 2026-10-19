@@ -22,10 +22,19 @@ it.each(["matching", "checkout-moved", "pr-moved"])(
       for (const [name, script] of Object.entries({
         git: 'printf "%s\\n" "$CHECKOUT_SHA"',
         gh: 'test "$GH_TOKEN" = synthetic-github-token || exit 9\nprintf "%s\\n" "$LIVE_SHA"',
-        node: 'printf "node-token=%s\\n" "${GH_TOKEN-unset}" >&2\nprintf /synthetic/chromium',
-        npm: 'printf "npm-token=%s\\n" "${GH_TOKEN-unset}"',
+        node: `
+          printf 'node-token=%s\\nnode-data=%s,%s,%s\\n' \\
+            "\${GH_TOKEN-unset}" "\${YOUTUBE_API_KEY-unset}" \\
+            "\${FOURTHWALL_STOREFRONT_TOKEN-unset}" "\${FLAGS_SECRET-unset}" >&2
+          printf /synthetic/chromium`,
+        npm: `
+          test "$YOUTUBE_API_KEY" = synthetic-youtube-key
+          test "$FOURTHWALL_STOREFRONT_TOKEN" = synthetic-storefront-token
+          test "$FLAGS_SECRET" = synthetic-flags-secret
+          test "$CHROME_PATH" = /synthetic/chromium
+          printf 'npm-token=%s\\n' "\${GH_TOKEN-unset}"`,
       })) {
-        writeFileSync(path.join(directory, name), `#!/bin/bash\n${script}\n`, {
+        writeFileSync(path.join(directory, name), `#!/bin/bash -e\n${script}\n`, {
           mode: 0o700,
         });
       }
@@ -38,6 +47,9 @@ it.each(["matching", "checkout-moved", "pr-moved"])(
             NODE_ENV: "test",
             PATH: directory,
             GH_TOKEN: "synthetic-github-token",
+            YOUTUBE_API_KEY: "synthetic-youtube-key",
+            FOURTHWALL_STOREFRONT_TOKEN: "synthetic-storefront-token",
+            FLAGS_SECRET: "synthetic-flags-secret",
             EXPECTED_SHA: sha,
             CHECKOUT_SHA: scenario === "checkout-moved" ? "b".repeat(40) : sha,
             LIVE_SHA: scenario === "pr-moved" ? "b".repeat(40) : sha,
@@ -55,6 +67,7 @@ it.each(["matching", "checkout-moved", "pr-moved"])(
       }
       expect(result.status).toBe(0);
       expect(result.stderr).toContain("node-token=unset");
+      expect(result.stderr).toContain("node-data=unset,unset,unset");
       expect(result.stdout).toContain("npm-token=unset");
     } finally {
       rmSync(directory, { recursive: true, force: true });

@@ -62,7 +62,10 @@ jobs:
           actual=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" --jq '.head.sha')
           test "$actual" = "$EXPECTED_SHA"
           unset GH_TOKEN
-          export CHROME_PATH="$(node -p 'require("@playwright/test").chromium.executablePath()')"
+          export CHROME_PATH="$(
+            unset YOUTUBE_API_KEY FOURTHWALL_STOREFRONT_TOKEN FLAGS_SECRET
+            node -p 'require("@playwright/test").chromium.executablePath()'
+          )"
           npm run verify:videos
 
       - name: Retain minimal measurement evidence
