@@ -11,6 +11,23 @@ import glob from "fast-glob";
 import { parse } from "yaml";
 import { expect, it } from "vitest";
 
+it("does not retain source-bearing coverage from PR CI", () => {
+  const workflow = parse(readFileSync(".github/workflows/ci.yml", "utf8"));
+  const qualitySteps = workflow.jobs.quality.steps as {
+    run?: string;
+    uses?: string;
+  }[];
+
+  expect(
+    qualitySteps.some((step) => step.run === "npm run test:coverage")
+  ).toBe(true);
+  expect(
+    qualitySteps.filter((step) =>
+      step.uses?.startsWith("actions/upload-artifact@")
+    )
+  ).toEqual([]);
+});
+
 it.each([true, false])(
   "uploads only numeric summaries, including on failure (summary exists: %s)",
   (hasSummary) => {
