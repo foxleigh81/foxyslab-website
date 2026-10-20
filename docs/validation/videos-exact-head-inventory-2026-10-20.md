@@ -1,9 +1,41 @@
 # PR #79 pre-merge verification route
 
-Updated 2026-10-20, T4 task 1 of 4, round 1. **Blocked: no supported,
+Updated 2026-10-20, revision round 2, T4 task 2 of 4. **Blocked: no supported,
 credential-safe pre-merge dispatch route has been established.** This replaces
 the previous setup inventory. It is a handoff for Marcus's independent review,
 not evidence that the handoff or workflow has been approved.
+
+## Operations inspection status (revision round 2)
+
+The local subject for this revision is committed HEAD
+`ed34334b4c65d24665f4a4ef7988e458435440e3` on
+`eng/71-d38d08-fix-videos-layout-shift-and-slow-first-t`. The GitHub reads
+below belong to the previous revision; they are historical observations,
+not a revalidation of the live PR head. No new remote inspection was performed.
+The harness-created head after this edit must be independently revalidated.
+
+The requested authorized operations inspection is outside the website
+sandbox. This run is restricted to `/work/repo` and cannot perform that
+inspection or establish Studio permissions, ticket provenance or terminal-run
+status. Repeating local tests or public metadata reads cannot establish these
+controls. The following is a blocked handoff, not a completed operations record.
+
+| Control | Evidence available in this revision | Specific next action outside this sandbox |
+| --- | --- | --- |
+| Pre-merge execution route | Previous public inspection found no verification workflow on main; no approved controller is evidenced | Marcus's separately reviewed workflow-integration deliverable must identify an existing trusted pre-merge controller or record the unsupported capability; a main merge requires separate authorization |
+| Independent exact-head approval and recheck | Local candidate compares the live PR SHA before checkout and again before verification; no independent approval record is available | Record reviewer identity, approved PR SHA and immutable controller revision; revalidate the live SHA before delegation and credential release, invalidating approval on changes |
+| Effective environment protection | Local YAML names `videos-verification`; historical unauthenticated 404 establishes no protection settings | Authorized operator records actual required reviewers, self-review prevention, administrator bypass and deployment-ref restrictions, with observation time and settings evidence |
+| Equivalent secret bypasses | Local candidate references `VIDEOS_VERIFY_*`; current local general CI permits missing API keys and does not reference repository data secrets. Historical main observations below are a separate revision | Inspect current repository and organization secret-name inventories, environment placement, repository access policies and every consumer; remove or restrict equivalent ungated credential paths before release |
+| Restricted credential access | No issuer-side restriction or effective access policy is evidenced | Record credential owner, permitted API/resource scope and runner access policy without exporting secret values; establish restrictions at the issuer and controller |
+| Populated saved-video data provenance | Local verifier requires API credentials; no approved saved-data capture identifier, digest or production ingestion route is evidenced | Supply the authorized saved dataset's source, capture time, digest, counts, playlist membership and pagination coverage, and establish how the exact build consumes it |
+| Safe artifact retention | Local candidate requests only `run-*/summary.json` for 14 days; verifier suppresses child output and removes raw reports | Inspect effective retention and access for artifacts, logs and job summaries, including historical artifacts and other upload paths; record evidence URLs, expiration and any required containment |
+| Independent assessment | No Macklin receipt, current-head approval or block clearance is available | Coordinator submits the completed operations record to Macklin and records receipt and his independent decision against the revalidated head |
+
+Macklin's reported credential-release block remains unresolved. No credentialed
+PR execution, settings mutation or reviewer notification was performed. This
+file is prepared for coordinator handoff; it does not establish that Macklin
+received it. The task's effective-controls and independent-review acceptance
+criteria remain blocked until the external actions above are evidenced.
 
 ## Observed subject and dispatch capability
 
@@ -20,7 +52,7 @@ Read-only public GitHub API inspection on 2026-10-20 UTC (local timestamp
 | `GET /actions/workflows` | HTTP 200; verification workflow ID `384502981` listed as active; CI and dynamic Copilot/Dependabot entries also listed |
 | `GET /environments/videos-verification` | HTTP 404 to the unauthenticated reader; effective protections cannot be determined |
 
-Local HEAD matches the observed PR head. Local `origin/main` matches the
+At that inspection, local HEAD matched the observed PR head. Local `origin/main` matched the
 observed main commit; its tree contains only `ci.yml` under workflows.
 The remote is a local harness mirror and `gh` is unavailable. No authenticated
 settings inspection or dispatch was performed. The harness will create a new
@@ -103,13 +135,18 @@ supplied empty failure list establishes no new application regression.
 
 ## Local checks and remaining evidence
 
-Fresh local checks on this working tree:
+Fresh local checks for revision round 2 on this working tree (all exit 0):
 
 - `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: exit 0,
   987 packages installed; existing npm configuration/deprecation warnings.
 - `npm run lint`: exit 0.
 - `npm run type-check`: exit 0.
 - `npm test`: exit 0; 38 files passed, 345 tests passed, 1 skipped.
+
+This revision changes only this handoff document. No production behavior was
+changed, so no meaningful automated behavior test, red run, production fix or
+refactor rerun applies. No red run is claimed. Local checks do not establish
+effective remote controls or populated production measurements.
 
 No credentialed build, browser or Lighthouse run was attempted. The historical live mobile baseline
 remains CLS 0.511 on each run, with LCP 3.8, 4.3 and 11.8 seconds; these are not
