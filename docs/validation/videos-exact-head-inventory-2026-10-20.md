@@ -1,21 +1,23 @@
 # PR #79 pre-merge verification route
 
-## Revision round 5: populated exact-head verification remains blocked
+## Revision round 6: T4 task 1 operations prerequisite blocked
 
-On 2026-10-20 at 15:23:44 UTC, fresh unauthenticated GitHub REST reads
+On 2026-10-20 at 15:45:56 UTC, fresh unauthenticated GitHub REST reads
 against `https://api.github.com/repos/foxleigh81/foxyslab-website` returned:
 
 | Read | Result |
 | --- | --- |
-| `GET /pulls/79` | 200; open draft, head `f3a188c507b90856371f02949d0e49f6524e6da4`, matching local HEAD |
+| `GET /pulls/79` | 200; open draft, head `99d5a43bde286b2b8cc0092c57201451a62369fe`, matching local HEAD |
 | `GET /contents/.github/workflows?ref=main` | 200; only `ci.yml` |
 | `GET /environments/videos-verification` | 404; effective protections remain unknown to this reader |
+| `GET /actions/secrets` | 401; equivalent repository credentials and their consumers cannot be established by this reader |
 
 These reads used Python's `urllib.request`, without authentication, with
 `Accept: application/vnd.github+json`; no workflow was dispatched. The local
 branch is `eng/71-d38d08-fix-videos-layout-shift-and-slow-first-t` and was clean
 before this documentation update. This records the inspected commit, not the
-future harness commit. The round 4 observations below are historical.
+future harness commit. This section replaces the round 5 status; earlier
+observations below are historical.
 
 No authorized operations surface or independent clearance receipt is available
 in this session. The branch-local workflow requires dispatch on main, where it
@@ -25,6 +27,27 @@ reported block. Studio incident provenance, permissions and terminal run status
 cannot be independently verified through the available tools. The operations
 handoff described below remains outstanding; this record does not complete it.
 
+The specific unsupported capability is an authorized pre-merge controller
+outside the website runner that binds an approved immutable controller revision
+and freshly revalidated PR head to restricted credential release. No controller
+revision, permitted caller, entry point or changed-head/unapproved-controller
+rejection receipt can be established through this session's tools. A public
+workflow listing and the branch-local YAML cannot demonstrate that capability.
+
+Task acceptance disposition:
+
+| Criterion | Current evidence and disposition |
+| --- | --- |
+| Operations receipt identifying PR head, controller and rejection checks | Blocked: PR identity freshly observed, but no authorized controller or rejection-test receipt available |
+| Effective controls independently cleared by Macklin | Blocked: reviewer/self-review/bypass settings, equivalent repository/organization credential consumers, issuer restrictions, approved saved-data provenance, artifact access/retention and independent clearance are unverified |
+| Unsupported capability named; no credentialed dispatch | Recorded above; no dispatch or secret release performed in this run |
+
+Marcus's operations prerequisite remains non-dispatchable to this website
+runner. The separate post-deployment obligation requires an authorized viewer
+to identify the deployed revision and record live API-backed loading and
+interactions; draft-PR preview results cannot close it. Neither obligation is
+completed by this record, and no external handoff message was sent.
+
 Fresh local checks against the recorded source revision:
 
 - `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: exit 0;
@@ -33,6 +56,7 @@ Fresh local checks against the recorded source revision:
 - `npm run type-check`: exit 0.
 - `npm test`: exit 0; 38 files passed, 345 tests passed, 1 skipped.
   This includes the existing populated-fixture layout regression.
+- `git diff --check`: exit 0.
 
 No executable behavior changed and no current-head application failure was
 supplied or reproduced. This documentation-only update has no meaningful new
