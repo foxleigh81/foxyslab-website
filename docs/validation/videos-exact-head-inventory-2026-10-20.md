@@ -1,5 +1,56 @@
 # PR #79 pre-merge verification route
 
+## Revision round 3: T4 verification disposition
+
+Local checks on 2026-10-20 tested committed application source
+`ef533c901128cc31378fa1b6184cca5fe2fab97a` on the requested branch. The only
+revision change is this evidence record. This SHA identifies the local subject,
+not a freshly revalidated live PR head or the later harness-created commit.
+No remote inspection, credential release, workflow dispatch or deployment was
+performed. The round 2 operations handoff below remains unresolved; the supplied
+current-head failure list is empty and supplies no application repair to make.
+
+| Ticket criterion | Status in this revision | Evidence and remaining work |
+| --- | --- | --- |
+| Initial populated layout and hydration/footer stability | Blocked for production; synthetic regression observed | Focused page tests render first-page and direct-playlist cards before hydration using 25 synthetic videos. They do not measure browser footer movement with approved saved data. |
+| Three mobile CLS values below 0.1, LCP values and first-thumbnail priority | Blocked | No approved populated build or measurement route is established. Card priority unit checks pass; no production DOM priority inspection or new CLS/LCP values are available. |
+| Search, playlist filtering, pagination, direct URLs, empty/error states | Observed in unit fixtures; populated production checks blocked | Focused gallery/page/card tests pass. Production behavior still needs the approved dataset and exact-head browser run. |
+| Install, lint, type-check, unit/E2E tests and valid-credential populated build | Partial; production build blocked | Local command results below. General development-server checks cannot establish populated production acceptance. |
+| Independent current-head Ashley and Macklin reviews | Blocked | No current-head review or clearance of the reported credential-release block is evidenced. |
+| Live API integration after deployment | Blocked | Requires an authorized deployment and subsequent integration check. |
+
+Fresh local command results:
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: exit 0;
+  987 packages installed, with npm configuration/deprecation warnings.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0; 38 files passed, 345 tests passed, 1 skipped.
+- `npm test -- app/videos/__tests__/page.test.tsx components/VideoGallery/__tests__/VideoGallery.test.tsx components/VideoCard/__tests__/VideoCard.test.tsx`:
+  exit 0; 3 files and 49 tests passed.
+- `env -u YOUTUBE_API_KEY -u FOURTHWALL_STOREFRONT_TOKEN FLAGS_SECRET=BwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwc npm run test:e2e -- --max-failures=1 --workers=1 --reporter=line`:
+  exit 0; 71 passed, 5 skipped, in 4.6 minutes. The flags value is the existing
+  synthetic CI fixture. Desktop Chromium and iPhone WebKit used the development
+  server; the server reported no YouTube API key. Controlled state fixtures were
+  not supplied and the configured suite excludes production-tagged checks.
+  Synthetic interaction/streaming checks passed; these are not saved-data
+  production evidence. Watcher/cache warnings did not fail the run.
+- `git diff --check`: exit 0.
+
+No executable behavior changed, so this documentation-only revision has no
+meaningful new automated behavior test, red/green repair or refactor cycle.
+No red run is claimed. Existing passing regressions are supporting evidence,
+not new TDD cycles or production measurements.
+
+The next required action remains external: establish the separately reviewed
+pre-merge controller and effective credential/data/artifact controls, clear the
+independent credential-release block, and revalidate the live PR head. Only then
+can an authorized runner execute populated build/browser/Lighthouse verification
+and obtain independent current-head reviews. No credential values are needed in
+this sandbox. Release readiness remains **no**.
+
+## Prior revision evidence
+
 Updated 2026-10-20, revision round 2, T4 task 2 of 4. **Blocked: no supported,
 credential-safe pre-merge dispatch route has been established.** This replaces
 the previous setup inventory. It is a handoff for Marcus's independent review,
