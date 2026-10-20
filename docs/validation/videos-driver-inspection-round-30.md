@@ -1,5 +1,62 @@
 # Supported driver inspection research: round 30
 
+## Round 31 follow-up: inspection remains blocked
+
+Rechecked on 2026-10-20 for task 2 of 4, T4 round 1. The diagnostic target
+remains generation 14, run `r20261020-39cac83c2a0e`, repository
+`foxleigh81/foxyslab-website`, PR #79, head
+`2cceb96ac7b70a46617bd27341a8d0c0dec2bcd0`. The current local checkout is
+`dc68c27603ba2e747b92df66a1c5f799865431dc`, matching the current brief's
+previous checked head, but differing from the diagnostic target. The original
+round-30 identity statement below is historical, not a current head check.
+Live PR identity/head have not been revalidated. Do not interpret evidence for
+one of these heads as evidence for the other.
+
+The existing research result does not identify a supported operation. Fresh
+tracked-file inventory finds only this research document for driver/operation
+ownership filenames; searching `scripts`, `lib`, `app`, and `.github` for
+`evidence[._-]lookup`, `Studio driver`, and the target run finds no call site
+or operation contract. The tools exposed in this session include no Studio
+evidence inspection operation. The supplied current exact-head failure list
+is still `[]`, which supplies neither a rejection trace nor a passing verdict.
+No diagnostic, substitute GitHub evidence lookup, or website run was invoked.
+
+The capability repair request for Engineering is to provide an authorized
+read-only interface or exported records containing the ownership citation,
+lookup call site, supported operation contract and status, and its permission
+and provenance requirements. The inspection result must expose the selected
+subject and query keys, verification revision, and rejected predicate/response,
+bound to the full generation/run/repository/PR/head tuple above. Those are
+required record contents, not an invented API or a confirmed driver defect.
+
+Next technical action: Marcus/Chris must obtain an Engineering repair-owner
+assignment and the missing operation/access records through the external
+research work. No owner assignment or external delivery is claimed here.
+Once available, the authorized driver must reconcile the target with the live
+PR identity/head and revalidate permissions, provenance and operation status
+before inspection. A changed head requires explicit identity reconciliation;
+it must not silently replace the historical rejection subject. Whether repair
+requires provisioning access or changing driver code remains undetermined.
+
+This documentation update cannot complete the external inspection acceptance
+criteria. All product verification and independent gates listed below remain
+open; no review pass, merge authority, or release readiness is asserted.
+There is no executable behavior change and therefore no meaningful automated
+red-green-refactor test, red run, production fix, or refactor to report.
+
+Round-31 local validation (all exit 0):
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: 987 packages installed.
+- `npm run lint`.
+- `npm run type-check`.
+- `npm test`: 38 files passed; 345 tests passed, 1 skipped.
+
+Production build, browser and Lighthouse checks were not run for this
+documentation-only investigation. These local results do not verify the
+diagnostic subject, live PR head, or future harness commit.
+
+## Original round-30 record
+
 Recorded 2026-10-20 for plan generation 14, run `r20261020-39cac83c2a0e`,
 repository `foxleigh81/foxyslab-website`, draft PR #79, supplied head
 `2cceb96ac7b70a46617bd27341a8d0c0dec2bcd0`. Local `git rev-parse HEAD`
