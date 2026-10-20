@@ -1,5 +1,56 @@
 # PR #79 pre-merge verification route
 
+## Revision round 5: populated exact-head verification remains blocked
+
+On 2026-10-20 at 15:23:44 UTC, fresh unauthenticated GitHub REST reads
+against `https://api.github.com/repos/foxleigh81/foxyslab-website` returned:
+
+| Read | Result |
+| --- | --- |
+| `GET /pulls/79` | 200; open draft, head `f3a188c507b90856371f02949d0e49f6524e6da4`, matching local HEAD |
+| `GET /contents/.github/workflows?ref=main` | 200; only `ci.yml` |
+| `GET /environments/videos-verification` | 404; effective protections remain unknown to this reader |
+
+These reads used Python's `urllib.request`, without authentication, with
+`Accept: application/vnd.github+json`; no workflow was dispatched. The local
+branch is `eng/71-d38d08-fix-videos-layout-shift-and-slow-first-t` and was clean
+before this documentation update. This records the inspected commit, not the
+future harness commit. The round 4 observations below are historical.
+
+No authorized operations surface or independent clearance receipt is available
+in this session. The branch-local workflow requires dispatch on main, where it
+is absent. Public metadata does not establish a safe alternate route, effective
+credential controls, approved saved-data provenance, or clearance of Macklin's
+reported block. Studio incident provenance, permissions and terminal run status
+cannot be independently verified through the available tools. The operations
+handoff described below remains outstanding; this record does not complete it.
+
+Fresh local checks against the recorded source revision:
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: exit 0;
+  987 packages installed, with npm configuration/deprecation/install-script warnings.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0; 38 files passed, 345 tests passed, 1 skipped.
+  This includes the existing populated-fixture layout regression.
+
+No executable behavior changed and no current-head application failure was
+supplied or reproduced. This documentation-only update has no meaningful new
+behavior test, red/green cycle or refactor; no red run is claimed.
+
+No populated production build, E2E run or Lighthouse measurement was attempted
+in this revision. Initial response/footer stability, the three mobile CLS/LCP
+measurements, emitted thumbnail priority and populated gallery interactions
+remain unverified against approved saved data. Local unit results do not satisfy
+those criteria. No new production artifacts or report links exist.
+
+The next action remains the external operations handoff: establish a usable
+reviewed route and effective controls, obtain independent clearance, then
+revalidate the live head before populated verification. Live API integration
+requires a separate authorized post-deployment viewer. No secrets were copied,
+credentialed execution performed, or external messages sent. Release readiness
+remains **no**.
+
 ## Revision round 4: operations capability remains unavailable
 
 **Blocked operations handoff; not completed operations verification.** On
