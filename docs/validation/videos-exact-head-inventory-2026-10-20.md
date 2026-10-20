@@ -1,5 +1,81 @@
 # PR #79 pre-merge verification route
 
+## Revision round 4: operations capability remains unavailable
+
+**Blocked operations handoff; not completed operations verification.** On
+2026-10-20 at 15:16:07 UTC, fresh unauthenticated GitHub REST inspection began
+against `https://api.github.com/repos/foxleigh81/foxyslab-website`:
+
+| Read | Result |
+| --- | --- |
+| `GET /pulls/79` | 200; open draft, head `9025a4de337fdaf1e6c6652a47e2f3bde949ee38`, base `eca93e0605ecf22f3eb8943a5fc84a37a65e11b1` |
+| `GET /contents/.github/workflows?ref=main` | 200; only `ci.yml`, no populated-verification entry point |
+| `GET /actions/workflows` | 200; populated verification ID `384502981` is listed as active; listing does not demonstrate dispatchability |
+| `GET /environments/videos-verification` | 404; effective protections unknown to this reader |
+| `GET /actions/secrets` | 401; secret-name inventory unavailable to this reader |
+
+The observed head matches local HEAD and the supplied previous checked head.
+It does not verify the future harness commit. Available session tools expose
+no Studio operations, approval, or dispatch interface; `gh` is not installed,
+and origin is the local harness mirror. Public reads cannot establish Studio
+permissions, source-evidence provenance or terminal status for the supplied
+runner incident. No authenticated operations inspection was possible.
+
+The precise missing capability remains a trusted pre-merge controller that
+binds an independently approved immutable controller revision and live PR head
+to restricted credential release. The branch-local workflow is a candidate,
+not that capability: it requires dispatch on main, where it is absent. No
+dispatch was attempted. This task cannot establish the external route by
+editing website documentation or by passing local tests.
+
+Availability must be observed on an authorized operations surface: Marcus
+records the controller identifier, immutable revision, permitted caller and
+pre-merge entry point, with a credential-free capability receipt identifying
+PR #79 and its freshly read head. That receipt must demonstrate acceptance of
+the approved subject and rejection of changed-head/unapproved-controller
+subjects. A workflow listing or a successful ordinary CI run is insufficient.
+This is an outstanding handoff, not a request delivered to Marcus.
+
+Before any credentialed dispatch, the same operations record must provide:
+
+- Independent exact-head approval and recheck evidence, including reviewer,
+  approved controller revision, approval invalidation on changes, and the
+  live-head check immediately before credential release.
+- Effective environment reviewers, self-review prevention, administrator
+  bypass and allowed deployment refs; repository/organization secret-name
+  inventories and consumers that could bypass the environment gate. The
+  404/401 responses above prove neither protection nor absence of bypasses.
+- Credential owner and issuer-enforced resource restrictions, runner access,
+  and approved saved-data source, capture time, digest, counts, playlist and
+  pagination coverage, plus the build ingestion route. None is established
+  here; the existing verifier's live API path is not saved-data provenance.
+- Effective artifact, log and job-summary access and expiry, including
+  historical artifact containment. The candidate's numeric summaries and
+  14-day retention are configured intent, not verified remote policy.
+- Macklin's independent decision on those effective controls and the exact
+  subject. His reported secret-release block remains in force.
+
+No secrets were requested or copied, and no credentialed PR execution,
+deployment, settings mutation or external message was performed. Populated
+build/browser/Lighthouse evidence and independent current-head reviews remain
+blocked. Live API integration remains a separate post-deployment handoff for
+an authorized viewer, not a check for this SSO-blocked website sandbox.
+
+This revision changes only the capability record; there is no executable
+behavior to test with a meaningful red/green/refactor cycle. No red run or
+application repair is claimed. Fresh local checks against this working tree:
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: exit 0,
+  987 packages installed; npm configuration/deprecation/install-script warnings.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0; 38 files passed, 345 tests passed, 1 skipped.
+- `git diff --check`: exit 0.
+
+These checks cannot clear the operations block. No populated production build,
+browser run or Lighthouse measurement was attempted in this revision.
+Release readiness remains **no**.
+
 ## Revision round 3: T4 verification disposition
 
 Local checks on 2026-10-20 tested committed application source
