@@ -1,5 +1,9 @@
 # T4 task 1, round 1: populated verification disposition
 
+Historical record, superseded by [the revision round 4 controls inventory](videos-t4-controls-round-4.md).
+The scheduler investigation mentioned below is separate Engineering work, not
+a website premerge prerequisite. No scheduler outcome is established here.
+
 Recorded 2026-10-20. Local source HEAD is
 `3b06fd1b7a9c20707e1262c8ada588a5fb27eb96` on
 `eng/71-d38d08-fix-videos-layout-shift-and-slow-first-t`. An unauthenticated
