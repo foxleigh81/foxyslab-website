@@ -1,128 +1,124 @@
-# PR #79 exact-head evidence inventory
+# PR #79 populated-data verification setup
 
-Updated 2026-10-20, revision round 28, T4 task 1. This replaces the earlier
-inventory for `e3899a89681d201f2199c10a11d2f1eb919b4ea9`.
+Updated 2026-10-20, T4 task 1 of 2, round 1. Setup is **blocked**.
+This record supersedes the older-head inventory previously in this file.
 
-## Subject and acceptance boundary
+## Revalidated subject and environment
 
-The public GitHub PR API and local `git rev-parse HEAD` both identify
-`535361428d97a111aafebf7b21f35558a5f0eb8a` on
-`eng/71-d38d08-fix-videos-layout-shift-and-slow-first-t`. PR #79 is open and
-draft. This confirms the public head, not driver revalidation of permissions,
-provenance, or accepted evidence. The supplied current failure list is `[]`;
-that is not proof that checks passed. No driver-accepted result is available
-in this sandbox.
+During this run, the public GitHub API at
+<https://api.github.com/repos/foxleigh81/foxyslab-website/pulls/79> returned
+an open, draft PR with head `eed0d2774c61d21f75f9a5aa13277dd48deb73e6` and branch
+`eng/71-d38d08-fix-videos-layout-shift-and-slow-first-t`.
+Local `git rev-parse HEAD` and `git branch --show-current` matched those values.
+Observation date: 2026-10-20 UTC (local check timestamp 10:56:10Z).
+The worktree was clean before this documentation change.
 
-For plan generation 12 / run `r20261020-62383644dbb7`, the supplied incident
-reports a runner subject of `fa61feefd63631a9d9eb6a17fa532d2968d00afc`.
-That subject differs from the PR head and cannot establish PR acceptance.
-The serialized request, verification revision, lookup keys, rejected records,
-and request size remain unavailable. Chris owns coordination with an authorized
-review-driver maintainer outside this website sandbox. Resolution requires the
-actual rejection trace and either a demonstrated/tested driver repair or a
-specific technical dependency, followed by driver revalidation of the live
-head. No driver lookup was repeated and no website code was changed.
+The environment is `/work/repo`, Linux, Node v24.21.0, npm 11.19.0.
+The existing protected workflow specifies Node 22; this sandbox is not that
+production verification environment. Network access is restricted to GitHub
+and npm/PyPI registries; production APIs, thumbnail origins and Preview hosts
+are outside the permitted destinations.
 
-## Public evidence inspected for the subject
+Public head identity does not establish independent approval, driver provenance,
+permissions, or terminal status of a previous Studio run. This sandbox exposes
+no authorized Studio inspection surface or identified maintainer for those
+checks. Chris's coordination and an authorized Studio maintainer's inspection
+remain external prerequisites, with no Studio repair assigned to this website
+worktree. The supplied current exact-head failure list is empty; no website
+regression has been established. The reported historical runner SHA
+`877560b67a3762c4cda4c11b0f8cf6b2391d01fa` is not evidence for this PR head.
+The harness will create a new head from this change; these observations do not
+verify that future head.
 
-The following metadata was fetched directly from GitHub during this round.
-It is an inventory of observed results, not driver acceptance.
+## Data provenance and setup attempt
 
-| Result                      | Identity and observed outcome                                                                                         | Acceptance limit                                                                                                               |
-| --------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| Quality                     | [Job 118398727897](https://github.com/foxleigh81/foxyslab-website/actions/runs/39352202844/job/118398727897), success | General lint, type-check and unit-test metadata only.                                                                          |
-| E2E                         | [Job 118398728070](https://github.com/foxleigh81/foxyslab-website/actions/runs/39352202844/job/118398728070), success | General workflow has no YouTube/Fourthwall credentials; not populated behavior proof.                                          |
-| Build & Lighthouse          | [Job 118398728059](https://github.com/foxleigh81/foxyslab-website/actions/runs/39352202844/job/118398728059), success | General CI sets `ALLOW_MISSING_API_KEYS=true`. Log endpoint returned HTTP 403; no populated measurements inspected.            |
-| Playwright artifact         | Artifact `12233109962`, `playwright-report`, not expired, run `39352202844`                                           | Metadata binds it to the subject; archive endpoint returned HTTP 401. Contents uninspected. No Lighthouse artifact was listed. |
-| Preview                     | Deployment `7188981437`, status `20062814764`, success                                                                | Deployment is bound to the subject, but a deployment badge is not a populated-page observation.                                |
-| Preview comment integration | Check `118399312796`, success                                                                                         | Comment integration only.                                                                                                      |
-
-All three CI jobs and the comment check report the full subject SHA above.
-The Actions runs endpoint filtered by that SHA listed only general CI run
-`39352202844`; no credentialed verification run was listed.
-Preview URL: <https://foxyslab-website-5k1cs0kaj-foxleighco.vercel.app>.
-Preview was not fetched because the sandbox network permits only GitHub and
-npm/PyPI registries. No content or performance inference is made from its URL.
-
-## Concrete setup check
-
-`npm run verify:videos` exited 1 before building:
+`npm run verify:videos` exited 1 at credential preflight, before creating reports,
+building, starting a browser target, or measuring Lighthouse:
 
 ```text
 Missing required credentials: YOUTUBE_API_KEY, FOURTHWALL_STOREFRONT_TOKEN, FLAGS_SECRET
 ```
 
-Only presence was checked; no credential values were printed or copied.
-`GH_TOKEN` and `GITHUB_TOKEN` are also absent, and `gh` is not installed.
-Credential validity cannot be tested here. Production APIs, thumbnail hosts,
-and the Preview host are outside the permitted network.
+Only missing variable names were emitted. No credentials were obtained, copied,
+logged, or committed. No populated dataset was obtained and no dataset provenance
+can be attested. No empty-data or permissive build was substituted.
 
-Inspection of `scripts/lib/verify-videos.mjs`, `lib/youtube.ts`,
-`playwright.videos-production.config.ts`, and the page/browser tests confirms:
+Inspection of `lib/youtube.ts` and `scripts/lib/verify-videos.mjs` shows that the
+production path fetches live YouTube data with Next's fetch cache. The verifier
+has no configured saved-dataset input. Its synthetic unit/state fixtures do not
+populate the production build and cannot establish saved-data acceptance.
+The intended browser target is the production build served by `next start`,
+using `playwright.videos-production.config.ts` for desktop/mobile Chromium.
+Neither build nor browser readability of populated saved data was demonstrated.
 
-- The runner requires credentials, disables the missing-key bypass, builds
-  production output, serves it with `next start`, runs browser checks, and
-  records three mobile CLS/LCP pairs plus browser outcomes in `summary.json`.
-- The production data path fetches YouTube data through Next's fetch cache.
-  No saved production-shaped dataset input is configured in this runner.
-  Page tests use synthetic video fixtures; generated browser fixtures cover
-  empty/error markup. Those fixtures do not populate the production build.
-- The protected workflow already links a SHA-named summary artifact and prints
-  measurements to its job summary. It checks the PR head before checkout and
-  again before verification. Environment protection, independent approval of
-  that exact head, valid secrets, and workflow availability on main were not
-  verified by public metadata. The YAML alone does not prove those settings.
-- Numeric CLS results still need assessment against the strict `< 0.1` criterion;
-  a successful runner exit alone is insufficient.
+## Access path and artifact handling
 
-Setup outcome: **blocked, not confirmed usable** for credentialed saved-data
-acceptance. Marcus owns arranging an authorized verification environment with
-API/image access and a populated data source. Resolution must identify the
-saved dataset/provenance and how the PR build consumes it (or obtain an explicit
-accepted equivalent), then demonstrate populated cards and interactions. The
-verification-environment maintainer must confirm exact-head independent approval
-and protected credentials before running PR code with secrets. Do not import
-secrets into this sandbox or substitute permissive CI for this check.
+The existing `.github/workflows/videos-verification.yml` describes a manual
+workflow on `main`, an exact-head comparison before checkout and verification,
+and the `videos-verification` environment. Restricted environment secret names
+are `VIDEOS_VERIFY_YOUTUBE_API_KEY`, `VIDEOS_VERIFY_FOURTHWALL_STOREFRONT_TOKEN`,
+and `VIDEOS_VERIFY_FLAGS_SECRET`. No workflow or credential handling was changed.
 
-## Missing acceptance results and owners
+The YAML is a candidate access path, not proof of an approved one. Independent
+approval of the exact head, required reviewers, restriction to trusted `main`,
+workflow availability there, and restricted credential provisioning have not
+been established in this run. No credentialed workflow was dispatched.
 
-| Criterion                   | Missing result / observable resolution                                                                                                           | Owner                                       |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------- |
-| Initial layout              | Populated initial response, hydration and footer stability on the revalidated head                                                               | Marcus / authorized verification operator   |
-| Mobile performance          | Three production-equivalent CLS values below 0.1, paired LCP values, first-thumbnail priority observation and linked report                      | Marcus / authorized verification operator   |
-| Behavior                    | Populated search, playlist selection, forward/back pagination and direct playlist URL results; separately identified empty/error fixture results | Marcus / authorized verification operator   |
-| Regression and checks       | Populated-layout regression and credentialed production build/browser evidence; general CI and local tests alone do not close this criterion     | Marcus / authorized verification operator   |
-| Driver diagnostic           | Actual generation-12 rejection trace and resulting resolution; no website workaround                                                             | Chris / authorized review-driver maintainer |
-| Independent reviews         | Ashley and Macklin's head-bound verdicts                                                                                                         | Respective reviewers, coordinated by Chris  |
-| Post-deployment integration | Live API integration after deployment                                                                                                            | Deployment/API verification operator        |
+The existing verifier suppresses credentialed subprocess output, separates
+browser credentials from build/server credentials, and deletes raw browser and
+Lighthouse artifacts on stage exit. The workflow uploads only numeric
+`run-*/summary.json` artifacts under a SHA-specific name for 14 days and links
+those reports in its job summary. No measurement artifact or report link was
+produced by this preflight failure. Raw datasets, API responses, screenshots,
+traces and credential-bearing URLs must not be added to the shared handoff.
 
-The historical live CLS/LCP baseline and historical artifact containment remain
-separate; no historical result is promoted to this head. See
-`videos-historical-artifact-containment.md` for that unresolved record.
+## Observable conditions for resuming
 
-## Delivery and local validation
+Marcus / the authorized verification operator needs an independently approved
+restricted-credential environment for the newly revalidated PR head, with
+production API and image access. Its owner must establish the protection and
+approval settings above before releasing credentials to PR code. Credentials
+must remain outside this sandbox.
 
-This documentation is the concrete PR inventory handoff. It was not posted as
-a GitHub comment: authenticated GitHub tooling is unavailable, and this run is
-restricted to workspace changes. Marcus/Studio must attach this record to draft
-PR #79 and record the driver-accepted inventory after revalidation. The harness
-will create a new head from this change; these observations apply only to the
-subject above, not to that future head.
+The operator also needs a permitted, production-shaped saved dataset and a
+supported way for the build and browser target to consume it, or an explicitly
+accepted live-data equivalent. The provenance record must identify its source,
+capture date, non-sensitive identifier/digest, video and playlist counts,
+playlist membership sufficient for filtering/direct URLs, and enough eligible
+videos for pagination. Demonstrate populated initial cards from that source in
+both the built response and browser before performance measurement. No such
+dataset or ingestion path is supplied here; inventing synthetic provenance
+would not resolve this condition.
 
-This is a documentation-only task. No executable behavior changed, so there is
-no meaningful new automated behavior test, red/green cycle, or refactor. No red
-run is claimed; the credential preflight failure is a setup result.
+Chris must separately establish the prior run's terminal status and provenance
+through an authorized Studio inspection surface. That surface and its authorized
+maintainer are currently unspecified. A specific website failure observed on the
+revalidated head can then be routed to a focused test-first repair.
 
-Local configured-check results are recorded below after execution.
+| Criterion | Current observation | Required evidence |
+| --- | --- | --- |
+| Head identity | Observed: GitHub and checkout match | Revalidate the next head before approval and execution |
+| Populated saved-data build/browser setup | Blocked: absent credentials, dataset and consumption path | Approved environment, provenance, successful populated build and browser target |
+| Initial layout and hydration/footer stability | Blocked on populated target | Initial cards or stable reservation and footer observations |
+| Mobile performance | Blocked; no CLS/LCP measurements | Three mobile CLS values each below 0.1, paired LCP and first-thumbnail priority inspection, linked reports |
+| Search, playlists, pagination, direct URLs, empty/error states | Unit tests only; populated browser evidence blocked | Head-bound browser results, with fixture states identified separately |
+| Checks and regression | Local checks below; populated build/E2E blocked | Populated layout regression and successful production verification |
+| Live API integration | Not performed | Check after independently authorized deployment |
+| Independent QA/security | Not established here | Current-head verdicts from the respective reviewers |
 
-- `npm ci --cache /work/repo/.npm-cache --no-audit --no-fund`: exit 0,
-  987 packages installed (cache subsequently moved inside `.git`).
+## Local checks and delivery scope
+
+This change updates only the setup record. There is no executable behavior
+change and therefore no meaningful new automated behavior test, red/green cycle,
+or refactor. The failed credential preflight is not a TDD red run.
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: exit 0;
+  987 packages installed. npm emitted existing dependency/configuration warnings.
 - `npm run lint`: exit 0.
 - `npm run type-check`: exit 0.
-- `npm test`: exit 0; 38 files passed, 345 tests passed, 1 skipped.
-- `npm run verify:videos`: exit 1 at the missing-credential preflight above;
-  production build, browser and Lighthouse stages did not run.
+- `npm test`: exit 0; 38 test files passed, 345 tests passed, 1 skipped.
+- `npm run verify:videos`: exit 1 at credential preflight as recorded above;
+  production build, populated E2E and three Lighthouse runs did not execute.
 
-No credentialed production build, populated browser run, or Lighthouse metric
-is claimed. Release readiness remains **no** pending the setup, driver,
-measurement, independent review, and integration gates above.
+Release readiness remains **no** until the blocked setup and ticket verification
+criteria are observed. No later PR head, deployment, or release is certified.
