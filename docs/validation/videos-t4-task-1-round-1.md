@@ -1,6 +1,126 @@
 # T4 task 1, round 1: populated verification disposition
 
-## Current task-1 inspection: 2026-10-21
+## Revision round 4: task-1 control handoff, 2026-10-21
+
+Inspected local source HEAD `6122a7351342ce7e2ad2b2d18889e2229d829aa9` on
+the assigned branch, initially clean. This matches the brief's previous checked
+head. No remote head lookup was performed in this revision; this is not an
+attestation of the then-live PR head or the future harness commit. This section
+supersedes earlier task-1 dispositions below and the historical controls packet.
+
+**Task 1 remains blocked; task 2 must not start.** The supplied current-head
+failure list is empty. No reproduced website defect warrants a repair. The
+source-owner approval, approved immutable saved source and Macklin assessment
+are absent from the supplied evidence and inspected records. This sandbox
+provides no owner-contact interface, and no authorization to send external
+messages was supplied. No approval or owner identity can be inferred from a
+channel handle, repository ownership or an earlier passing CI run.
+
+### Source and coverage record
+
+The application producer is `lib/youtube.ts`: YouTube v3 channel, video,
+playlist and playlist-membership responses for the configured channel handle.
+`app/videos/page.tsx` requests up to 200 eligible videos and playlist membership;
+the gallery paginates by 12. This identifies the live producer, not a saved
+snapshot or its authorized data owner. Existing synthetic fixtures do not meet
+the saved-data provenance requirement.
+
+Marcus is the coordination owner named in the brief; the **data owner is still
+unidentified**. The following is a receipt specification, not fabricated
+evidence. All values remain pending and belong in an approved private store:
+
+| Required receipt field | Evidence needed to close it |
+| --- | --- |
+| Owner and approval | Identified source owner, approval receipt, approval time, permitted purpose, permitted principals and access expiry. |
+| Immutable source | Private versioned object identifier, capture time in UTC, SHA-256 of the exact saved bytes, format/schema and capture provenance. Do not put raw payloads or private object URLs in this repository. |
+| Coverage | Raw and eligible video counts, playlist count and eligible membership counts per playlist, with the eligibility rules used. More than 12 eligible videos must support forward/back pagination; populated membership and a proper subset must demonstrate a filter changes results. Record a stable direct playlist slug and a search match privately. |
+| Access | Approved private retrieval method and a credential-free capability receipt naming the principal and result. A successful access attempt involving saved data follows independent clearance, not this draft. |
+
+The private manifest must also describe thumbnail delivery and whether image
+responses are captured or fetched from approved origins, since that changes the
+interpretation of LCP. Empty and error scenarios must be identified separately
+from the populated snapshot; synthetic state checks cannot be reported as
+populated-data observations.
+
+### Private route contract awaiting an executable implementation
+
+The existing `npm run verify:videos` builds, starts Next, runs browser checks and
+three Lighthouse runs. It has no saved-source input and cannot establish this
+route. No executable private controller or ingestion command is currently
+identified. A preliminary website merge and driver-handoff investigation are
+not prerequisites for this task.
+
+The route owner must supply these concrete subjects for Macklin's assessment:
+
+1. An independently controlled private controller at an immutable revision,
+   executable invocation, permitted caller and private runner/access receipt.
+   Resolve the live PR #79 head and bind the source digest, controller revision,
+   run ID and exact PR SHA. Recheck these subjects before release; any change
+   invalidates the clearance and requires reassessment.
+2. An explicit saved-source ingestion mechanism for both `npm run build` and
+   the runtime serving `/videos`, including cached/revalidated requests. Verify
+   the digest before each delivery and prevent silent fallback to live or empty
+   data. Specify other build dependencies and permitted image origins. This
+   mechanism is missing; setting a live API key is not a substitute.
+3. A private, isolated execution environment whose release control operates
+   before credentials or saved data reach PR-controlled code. Keep retrieval
+   credentials outside that code where possible. Include installation hooks,
+   build, server and child processes in the assessment. A shell check after
+   environment-secret injection cannot establish this boundary.
+4. Private browser access and storage for raw data, build/cache output, logs,
+   HTML, screenshots, traces and Lighthouse reports. Record actual authorized
+   readers, storage locations and expiry timestamps before release. Do not use
+   temporary public Lighthouse storage or ordinary CI uploads for these runs.
+5. A named cleanup owner and finite retention policy approved by the data
+   owner and Macklin. Destroy runner scratch data and caches on success, failure
+   and cancellation, with an external expiry/reaper for runner termination.
+   Record deletion/expiry receipts for every retained copy; cleanup failures
+   remain open findings. Actual retention values and effective controls are
+   pending, not established by this document.
+
+### Non-secret control record and independent decision
+
+Current control record: source SHA as recorded above; dataset, controller and
+run IDs **unassigned**; source approval **missing**; permitted access **not
+established**; independent assessment **missing**; credential/data release
+**not performed**; next-task disposition **blocked**. No raw data, credentials,
+private reports or new measurement links were produced.
+
+The eventual sanitized control receipt must link opaque private approval and
+assessment references, the reviewed PR SHA, controller revision, run ID,
+dataset-manifest reference, coverage pass/fail, release decision/time and
+retention/cleanup outcomes. Keep the immutable dataset identifier, capture time,
+digest and counts in the private manifest; publish only independently approved
+non-secret fields and access-controlled report links. PR-generated output alone
+cannot certify its own safe publication.
+
+Macklin's independent receipt must name those exact subjects and assess source
+permission, credential release, effective private access, retention and cleanup
+before any credentialed use or saved-data release. No such decision is recorded
+here. Marcus must obtain the source-owner receipt and executable route, then
+Macklin's independent decision through the authorized coordination path. Any
+unresolved finding blocks the next task. No driver receipt is required by this
+task, and no external task graph or hold was changed here.
+
+### Local validation
+
+Documentation only: no executable behavior changed, so there is no meaningful
+new automated red/green/refactor test. No red run or refactor is claimed.
+Fresh configured checks:
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: exit 0;
+  987 packages installed, with configuration/deprecation/install-script warnings.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0; 38 files passed, 346 tests passed, 1 skipped; existing
+  Vite configuration-loader warning.
+- `git diff --check`: exit 0.
+
+Populated production build/browser/Lighthouse verification remains blocked by the missing source,
+route and assessment; later live API verification requires an identified
+Production deployment. Passing local checks cannot close these requirements.
+
+## Previous task-1 inspection: 2026-10-21
 
 Inspected local HEAD `fa51ccc90dee5fdffdd4b9346f61a4adef16ec6f` on the
 requested branch, with an initially clean working tree. Fresh unauthenticated
