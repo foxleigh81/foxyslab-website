@@ -11,20 +11,16 @@ import glob from "fast-glob";
 import { parse } from "yaml";
 import { expect, it } from "vitest";
 
-it("does not retain source-bearing coverage from PR CI", () => {
+it.each([
+  ["e2e", "npm run test:e2e"],
+  ["quality", "npm run test:coverage"],
+])("runs %s checks without retaining raw reports", (job, command) => {
   const workflow = parse(readFileSync(".github/workflows/ci.yml", "utf8"));
-  const qualitySteps = workflow.jobs.quality.steps as {
-    run?: string;
-    uses?: string;
-  }[];
+  const steps = workflow.jobs[job].steps as { run?: string; uses?: string }[];
 
+  expect(steps.some((step) => step.run === command)).toBe(true);
   expect(
-    qualitySteps.some((step) => step.run === "npm run test:coverage")
-  ).toBe(true);
-  expect(
-    qualitySteps.filter((step) =>
-      step.uses?.startsWith("actions/upload-artifact@")
-    )
+    steps.filter((step) => step.uses?.startsWith("actions/upload-artifact@"))
   ).toEqual([]);
 });
 
