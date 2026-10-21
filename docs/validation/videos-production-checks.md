@@ -7,10 +7,12 @@ It does not implement saved-video-data replay or establish a performance result.
 
 ## Entry gate for private populated-data verification
 
-**Blocked as of 2026-10-21 at PR head
-`0b5ec39c2361be7af3d8c93403328b0e4d56e1fb`.** See the
-[current private-controls record](videos-t4-private-controls.md) for observations
-and the missing owner receipts. The commands below are conditional reproduction
+**Blocked before credentialed dispatch.** See the
+[current private-controls record](videos-t4-private-controls.md#task-2-recheck-revision-round-12)
+for the inspected local SHA, observations and missing owner receipts, including
+Dennis's tested dispatch gate and Macklin's independent assessment. Both receipt
+links must be recorded before dispatch; this runbook does not enforce the
+external gate or approve a PR head. The commands below are conditional reproduction
 instructions, not authorization to release credentials or publish reports.
 
 Before a credentialed PR-code run, Marcus's controls inventory and Macklin's

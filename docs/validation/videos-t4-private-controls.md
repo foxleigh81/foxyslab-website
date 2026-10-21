@@ -1,5 +1,62 @@
 # T4 task 2: private saved-data route disposition
 
+## Task 2 recheck, revision round 12
+
+Recorded 2026-10-21 at local source HEAD
+`8d3251e54e038a2ef3f4a3a8de084c2bab551653` on the assigned branch. This
+matches the brief's previous checked head; the then-live remote PR head was not
+queried. This section is the current local coordination record; older sections
+retain historical observations only.
+
+**Disposition: blocked before credentialed dispatch.** Inspection of
+`lib/youtube.ts`, `scripts/verify-videos.mjs`, its library and the candidate
+workflow still identifies a live-API build/browser route, not immutable saved
+data ingestion. No data-owner approval, approved source identifier/digest,
+access-check receipt, Macklin assessment or Dennis tested-gate receipt was
+supplied. The empty current-head failure evidence does not establish an
+application defect. No website repair, CI change or new verification launch is
+justified by these observations.
+
+| Required durable receipt | Current evidence and accountable continuation |
+| --- | --- |
+| Data-owner approval and immutable populated source | Missing. Marcus must obtain the owner's approval reference, private immutable source ID/digest, capture time and coverage counts without recording payloads or credentials here. |
+| Source access check | Not performed: no approved source or authorized access route is available. Marcus must record a credential-free capability result and the authorized private access-check receipt. A synthetic fixture is not this evidence. |
+| Executable private route and run command | Existing `npm run verify:videos` builds, serves and browses live data; it accepts no saved-source input. Marcus must identify the private controller repository/revision and exact invocation that supplies the approved source to both build and runtime, plus required network access. No executable saved-data command can presently be recorded. |
+| Head binding | Local source SHA above is observed only. Before dispatch, the controller must resolve the live PR #79 SHA and bind source digest, controller revision and independent approval to that exact SHA; a mismatch requires renewed assessment. |
+| Independent controls assessment | Missing. Macklin must assess credential release before PR-code execution, effective access, log/artifact retention and cleanup on success, failure and cancellation for the same source/controller/head. The candidate's shell SHA recheck occurs after secret injection and does not establish independent approval. |
+| Tested dispatch gate | Missing. [Dennis's round-11 investigation](videos-driver-gate-round-11.md) records that the actual driver repository and tested gate remain unidentified. It is a blocker record, not a tested-gate receipt. |
+| Sanitized receipt location | This file records local coordination only. No external private receipt location or published issue #71 coordination link was supplied. Marcus must record the approved private receipt URI and sanitized report link; Dennis must link the gate receipt from its owning repository, and Macklin must link the independent assessment before dispatch. |
+
+The current task cannot close any of its three acceptance criteria: source
+approval/access remain unavailable, the saved-data route is not established,
+and both independent prerequisite receipts are absent. No credentialed dispatch
+was attempted. No applied hold in the external driver, owner contact, approval,
+source accessibility or cleanup result is claimed by this local record.
+
+The [production runbook](videos-production-checks.md) describes the conditional
+live-data commands and their limitations. Its historical head is not approval
+for this checkout or the later harness commit. The next authorized private run
+must publish sanitized, exact-head results for populated initial layout and
+hydration/footer stability, browser behavior, three mobile CLS/LCP pairs and
+thumbnail priority. Post-deployment API evidence must separately identify the
+Production revision and observation time. None was measured in this round.
+
+This update changes documentation only; there is no executable behavior for a
+meaningful red/green/refactor cycle. No red run or production refactor is claimed.
+Local configured checks (all exit 0):
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: 987 packages
+  installed; npm configuration, deprecation and install-script warnings.
+- `npm run lint`.
+- `npm run type-check`.
+- `npm test`: 38 files passed, 346 tests passed and 1 skipped; existing Vite
+  configuration-loader warning.
+- `git diff --check`.
+
+These local checks do not prove source access, independent approval or populated
+production behavior. Release readiness remains **no** until the missing receipts
+and the remaining ticket verification are complete.
+
 ## Task 1 recheck, revision round 7
 
 Inspected locally on 2026-10-21 at source HEAD
