@@ -1,5 +1,66 @@
 # T4 task 2: private saved-data route disposition
 
+## Task 1 recheck, revision round 7
+
+Inspected locally on 2026-10-21 at source HEAD
+`11346443c345565e30107c96f0424e623925a580`, on the assigned branch. This
+matches the previous checked head supplied in the brief; the live PR head and
+external controls were not revalidated in this round. The round 6 observations
+below remain historical evidence, not fresh API results.
+
+**Disposition: blocked before credential release.** Local inspection still
+finds a live YouTube v3 producer and no approved saved-data ingestion route.
+The candidate workflow requires a `main` dispatch and injects credentials before
+its shell recheck; neither its presence nor a shell SHA comparison establishes
+effective independent approval. No approved dataset manifest, executable private
+controller receipt or Macklin assessment was supplied. This sandbox has no
+owner-contact interface and its network excludes the application data/image
+origins. No credentials were requested, copied or released, and no workflow was
+dispatched. No application defect is established by the supplied empty failure
+evidence, so no website repair or CI change is justified by this task.
+
+Resolution must be observable as Marcus's route receipt identifying the immutable
+saved-data source/digest and ingestion command, private runner/controller revision,
+exact PR SHA, and effective access/retention/cleanup controls, followed by
+Macklin's independent assessment of those same subjects before credential
+injection. Unresolved findings block execution. The receipt must include a
+credential-free capability check and an executable invocation that binds build
+and runtime to that dataset; the current live-data verifier alone cannot do so.
+Subsequent results must identify the actual tested SHA and report links. This
+implementer record is not an owner receipt or independent assessment.
+
+Containment remains unresolved for the previously inventoried artifacts
+`12308356111`, `12218763710` and `12216535219`; their current remote existence,
+contents and disposition were not checked. The linked historical records require
+an authorized operator's private classification and, if unsafe, removal and any
+necessary credential-owner remediation. No deletion or safe-content finding is
+claimed. Local inspection found no `.lighthouseci`, `playwright-report`,
+`test-results` or `.next` directory before checks, so there is no local generated
+verification output to contain. Ordinary Lighthouse still uses public temporary
+storage; the candidate's PR-generated summaries and job logs still need effective
+private retention and independent publication validation. A filename allowlist
+does not establish safe content.
+
+This is a blocker-record update only. There is no changed executable behavior
+for a meaningful red/green/refactor test; none is claimed. Populated production
+build, browser and Lighthouse checks remain blocked. The separate post-deployment
+API observation still requires an identified Production revision.
+
+Local configured checks for this round:
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: exit 0,
+  987 packages installed; configuration/deprecation/install-script warnings.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0, 38 files passed, 346 tests passed and 1 skipped;
+  existing Vite configuration-loader warning.
+- `git diff --check`: exit 0.
+
+These checks do not establish private-route approval or populated measurements.
+Release readiness remains **no**.
+
+## Historical round 6 record
+
 Revision round 6, inspected 2026-10-21. Credential release remains **blocked**.
 This replaces the earlier task-2 inventory with current observations. It is an
 implementer record for Marcus and Macklin, not either owner's approval receipt.
