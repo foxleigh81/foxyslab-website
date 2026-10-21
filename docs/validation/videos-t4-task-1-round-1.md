@@ -1,5 +1,48 @@
 # T4 task 1, round 1: populated verification disposition
 
+## Current task-1 inspection: 2026-10-21
+
+Inspected local HEAD `fa51ccc90dee5fdffdd4b9346f61a4adef16ec6f` on the
+requested branch, with an initially clean working tree. Fresh unauthenticated
+GitHub REST reads returned HTTP 200 for `/repos/foxleigh81/foxyslab-website/pulls/79`
+(open draft, same head) and `/repos/foxleigh81/foxyslab-website/contents/.github/workflows?ref=main`
+(only `ci.yml`). These observations bind this inspection to the current PR
+source; they do not verify the future harness commit.
+
+| Task-1 criterion | Current result and precise blocker |
+| --- | --- |
+| Source identifier, coverage, approval and access receipt | Blocked. No approved immutable saved-video source or owner/access receipt is supplied or identified in the inspected repository records. `lib/youtube.ts` reads live YouTube v3; synthetic unit fixtures do not establish source provenance. The gallery uses 12 cards per page: the source needs more than 12 eligible videos and populated playlist membership to exercise pagination and filtering. Actual counts, immutable identifier/digest and approval remain unknown. |
+| Executable private build/browser route and exact PR SHA | Blocked. `npm run verify:videos` is an existing live-data verifier, not a saved-source ingestion route. It builds, serves, runs dedicated browser checks and three Lighthouse measurements, but accepts no immutable saved-data source. Its branch-local workflow requires dispatch on `main`, where the fresh API listing shows it absent. No approved private controller revision, invocation or access receipt was supplied. The inspected SHA above is not a verified build SHA. |
+| Macklin's independent credential-handling assessment | Blocked. No independent assessment receipt for the source, controller and current head is available in this session. Effective credential release, private report access, retention and cleanup on success/failure/cancellation remain unassessed here. The workflow's shell SHA check runs after step secrets enter the environment; source inspection cannot attest to an independent release gate. |
+
+The required continuation is an owner-provided sanitized source/coverage/access
+receipt and an executable private route bound to the then-live PR SHA, followed
+by Macklin's independent assessment of release, retention and cleanup before
+use. YouTube, Fourthwall, thumbnail and Preview origins are outside this
+sandbox's permitted network destinations. No credentials, private saved data,
+workflow dispatch or external messages were used for this inspection. No
+driver investigation or CI change is part of this task.
+
+This is a documentation-only blocker update. There is no changed executable
+behavior for a meaningful new red/green/refactor test; no red run or refactor
+is claimed. Fresh local validation:
+
+- `npm ci --no-audit --no-fund`: exit 0; 987 packages installed, with
+  configuration, deprecation and install-script warnings.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0; 38 files passed, 346 tests passed, 1 skipped. Vite emitted
+  a configuration compatibility warning.
+- `git diff --check`: exit 0.
+
+These checks cannot substitute for the blocked populated build,
+browser/Lighthouse measurements or later Production API observation. No
+populated production build, browser or Lighthouse run was attempted, and no
+new measurement report links exist. Task 1 remains blocked on all three
+prerequisites above; release readiness remains **no**.
+
+## Historical inspection
+
 Historical record, superseded by [the revision round 4 controls inventory](videos-t4-controls-round-4.md).
 The scheduler investigation mentioned below is separate Engineering work, not
 a website premerge prerequisite. No scheduler outcome is established here.
