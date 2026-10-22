@@ -2,8 +2,9 @@
 
 ## Current task-2 control disposition, 2026-10-22
 
-This section supersedes the historical acceptance collection below. The local
-starting HEAD is `03839293a0c5c4cd35d3de71d23852c60a4a68a9`, matching the
+This section supersedes the historical acceptance collection below, including
+its statement that dispatch proof is not a prerequisite. The local
+starting HEAD is `bcbd9f9591148001ed6ac8ce4e39a18434061c4c`, matching the
 brief's previous checked head, with an initially clean tree on the assigned
 branch. The live PR head was not queried; the later harness commit is untested.
 This task establishes controls before private verification, not acceptance
@@ -15,20 +16,40 @@ or independent assessment receipts. No discovered executable saved-data route
 receipt was supplied. Historical candidate-route descriptions are not approval.
 The current-head failure evidence is empty and does not justify a website repair.
 
+The required dispatch boundary is also unproven. No generation-48 successor
+graph, persisted selector trace or exclusion-test receipt was supplied. The
+tracked driver/selector/graph search finds historical driver documentation,
+not an executable Studio scheduler or persisted state. This session has no
+driver inspection or mutation interface. The reported resolution of run
+`r20261022-66453e2ff9be` cannot be confirmed here. This record neither changes
+eligibility nor proves that the external driver fails closed.
+
 | Required control | Current disposition and precise missing evidence |
 | --- | --- |
+| Dispatch prerequisite | Blocked before private setup. The external driver owner must provide the persisted generation-48 successor graph and selector test/trace showing populated verification excluded without validated setup receipts and the Production observation excluded without an authorized deployed revision. If the driver cannot express these prerequisites, its owner must exclude website tasks while repairing the selector separately. No exclusion is claimed applied here. |
 | Dataset, custodian and approver | Unidentified. Marcus must supply the source-owner identity and dataset-use approval receipt, including authorized purpose, principals and expiry. Marcus is the coordination owner, not an inferred data custodian. |
 | Immutable identity and coverage | Missing approved source ID/version, capture time, exact-byte digest and schema. Record eligible video counts, playlist membership counts, more than 12 eligible videos for pagination, a playlist subset, direct playlist URL and search coverage. Identify thumbnail delivery and separate empty/error scenarios. Synthetic fixtures do not supply this receipt. |
 | Private route and access | Missing immutable controller revision, executable saved-source ingestion for both build and runtime, authorized caller and private runner/browser access receipt. The prior handoff describes a live-data verifier without saved-source input. The sandbox network excludes Preview, application API and image origins. External operations inventory and its custodian were not supplied; no specific undisclosed resource or permission is invented here. |
 | Exact-head binding and independent approval | Only the local source SHA above is observed. Before release, bind run ID, dataset digest, controller revision and then-live PR SHA to source-owner approval and Macklin's independent assessment. Neither receipt is supplied. Approval must precede data/credential exposure to PR code; changed subjects require reassessment. |
 | Retention and cleanup | Missing approved private storage locations, permitted readers, expiry, cleanup owner and success/failure/cancellation handling, including runner termination and build caches. Require cleanup receipts and independently validated sanitized publication. Historical retention settings do not prove effective controls for this run. |
 
-The precise stopping condition is missing dataset-use authorization and
-Macklin's assessment of the identified source, route, head and artifact controls.
+The first stopping condition is the missing dispatch-boundary proof. Dataset-use
+authorization and Macklin's assessment of the identified source, route, head and
+artifact controls are also missing.
 No credentialed run, external contact or new operations-discovery attempt was
 made. Marcus's external source/route research remains the continuation; this
 local record cannot substitute for it. Ashley's and Macklin's independent blocks
-remain unresolved. No driver research or preliminary merge is added as a gate.
+remain unresolved. Driver inspection and repair belong outside this website
+checkout; no preliminary merge is proposed.
+
+Source inspection confirms that `lib/youtube.ts` reads live YouTube v3 and
+`scripts/lib/verify-videos.mjs` accepts no approved saved-source input. The
+candidate workflow requests 14-day summary retention, but does not establish
+effective private readers, cleanup or independent exact-head approval. Its
+shell head recheck occurs after step credentials enter the environment. No
+credentials were inspected or copied, and credential validity is unverified.
+The local source SHA is not a tested private build SHA. No private build/browser
+route or sanitized report link can truthfully be recorded as established.
 
 Task criterion 1 remains blocked: an approved dataset, custodian, approver,
 private route and effective retention/cleanup cannot yet be identified.
