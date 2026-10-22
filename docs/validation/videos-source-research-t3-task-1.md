@@ -3,6 +3,60 @@
 This is a read-only source and access inventory for task 1. It does not
 approve dataset use, release credentials, or verify populated website behavior.
 
+## Revision round 3: private operations gate, 2026-10-22
+
+Local checkout HEAD is `7b39956eca9d8bd7286dba82fb75b17626f507b3`,
+matching the brief's previous checked PR #79 head. The working tree was clean.
+The live remote head was not queried; this record does not validate the future
+harness commit. Reused the research below, the
+[source reconciliation](videos-source-reconciliation-round-5.md), and the
+[current control handoff](videos-t4-task-1-round-1.md).
+
+**Gate status: blocked; operations validation is incomplete.** The requested
+authorized operations path outside the website runner is not exposed by this
+session. No source-owner or operations contact interface, private inventory
+locator, approval receipt or independent assessment was supplied. Repository
+documentation cannot establish those external facts.
+
+| Required gate item | Evidence status at this checkout |
+| --- | --- |
+| Source custodian and use approval | Blocked: unidentified owner; no source-owner approval receipt. Marcus is the named coordinator, not an established custodian. |
+| Immutable dataset version/digest and coverage | Blocked: no approved manifest or measured video, playlist or membership counts. Coverage must include pagination beyond 12 eligible videos, playlist filtering and direct playlist URLs. Synthetic fixtures and live API reads do not establish this. |
+| Permitted private exact-head build/browser route | Blocked: no authorized controller locator, immutable revision, executor or invocation receipt. The recorded branch workflow is a candidate, not an established private route; the existing verifier has no saved-source input. |
+| Credential source and validity | Blocked: no approved credential-source reference or validity attestation. No secret values were requested, inspected or copied; a missing-key runner was not dispatched. |
+| Retention and cleanup | Blocked: no effective audience, expiry, storage, cleanup owner or deletion receipts covering success, failure, cancellation and runner loss. Existing proposed controls are not validated settings. |
+| Exact PR SHA and Macklin assessment | Blocked: the local SHA above is observed, but live-head binding and an independent assessment of that head, dataset and controller are absent. Ashley's and Macklin's blocks remain unresolved. |
+
+The precise private resource locator and its permission model remain unknown.
+No private-resource access request was made and no refusal was observed in this
+round. The historical GitHub issue-comment HTTP 401 below concerns publication
+only; it is not evidence of denied access to the dataset or operations inventory.
+An authorized operations owner must provide the locator and required permission,
+then record the actual access outcome through that route. An observed refusal
+must name the resource, requested permission, time and sanitized response; an
+unknown resource must not be represented as a denied request.
+
+Acceptance criterion 1 remains blocked by the missing receipts in the table.
+For criterion 2, no credentialed execution occurred in this session; external
+gate enforcement remains unverified. All gate items must be validated together
+against the then-live PR SHA before credentialed execution. No workflow,
+deployment, external message or driver change was made. Populated build/browser
+checks, three mobile CLS/LCP measurements and report links remain outstanding.
+
+This is documentation only: no executable behavior changed, so no meaningful
+automated red-green-refactor test applies. No red run or refactor is claimed.
+Fresh local checks all exited 0:
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: 987 packages
+  installed, with npm configuration, deprecation and install-script warnings.
+- `npm run lint`.
+- `npm run type-check`.
+- `npm test`: 38 files passed, 346 tests passed and 1 skipped; Vite emitted
+  its configuration-loader compatibility warning.
+
+These checks cannot validate the private operations gate or populated
+performance. Release readiness remains **no**.
+
 ## Revision round 2: T4 task 2 handoff
 
 Inspected local source HEAD `4b0826fec11f5cd2ee66f9cebcefceaf1f771808`
