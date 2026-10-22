@@ -1,4 +1,59 @@
-# T4 task 2, revision 2: verification evidence
+# T4 task 2: verification evidence
+
+## Revision round 8, 2026-10-22
+
+Local source HEAD and a fresh anonymous GitHub PR #79 API response both identify
+`5a4273529b93f82215906e913547f1f16198ae94`. The PR is open and draft. The
+assigned branch was initially clean. These observations do not verify the later
+harness commit.
+
+Populated verification remains **blocked**. No approved saved-data source/digest,
+private executable route, or independent exact-head approval receipt is supplied.
+The inspected private-controls record still identifies those prerequisites as
+missing. The existing verifier builds against live APIs and has no saved-source
+input; the sandbox network excludes those API origins. No credentialed build,
+production browser run or Lighthouse run was attempted, and no measurement
+artifact or report link was generated. The supplied current-head failure list is
+empty; no reproduced website defect supports a production-code repair.
+
+| Issue #71 criterion | Status for this SHA | Evidence or remaining observation |
+| --- | --- | --- |
+| Initial cards/reserved layout and mobile footer through hydration | Blocked | Synthetic initial-layout regression passes; approved saved-data response and mobile hydration observations are missing. |
+| Three mobile CLS values below 0.1 with paired LCP | Blocked | Runs 1, 2 and 3 were not performed; all CLS/LCP values are unmeasured. No LCP improvement is claimed. |
+| First visible thumbnail priority hint | Blocked | No emitted production HTML inspected. |
+| Search, playlist filtering, pagination and direct playlist URLs | Blocked for populated acceptance | Local fixture tests do not establish behavior with approved saved data. |
+| Separate empty/error states | Observed in synthetic unit tests only | Focused regression covers `empty` and `fetch-failed`; production observation remains blocked. |
+| Focused regression, lint, types, unit/E2E tests and valid-data build | Local checks below; populated portion blocked | No valid-credential saved-data build or production E2E evidence. |
+| Live API integration after deployment | Blocked pending authorized Production revision | No deployment or live API observation performed. |
+
+Local commands against the SHA above:
+
+- `npm ci --no-audit --no-fund`: exit 0; 987 packages installed.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0; 38 files passed, 346 tests passed, 1 skipped.
+- `npm test -- app/videos/__tests__/page.test.tsx`: exit 0; 10 tests passed.
+- `FLAGS_SECRET=BwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwc npm run test:e2e -- --max-failures=1 --workers=1 --reporter=line`:
+  exit 0; 71 passed, 5 skipped across desktop Chromium and mobile WebKit (3.8m).
+  This uses the existing public synthetic flag value. The development server
+  reported no YouTube key; production-tagged checks are excluded. These are
+  smoke/fixture results, not populated production acceptance.
+- `git diff --check`: exit 0.
+
+Install emitted configuration/deprecation/install-script warnings; Vitest emitted
+its configuration-loader compatibility warning. E2E emitted webpack cache and
+`/work` watcher permission warnings without failing. This revision changes only this
+evidence record. There is no executable behavior change for a meaningful
+red-green-refactor test; no red run, repair or refactor is claimed.
+
+Ashley's and Macklin's independent review blocks remain unresolved. The external
+driver's prerequisite eligibility and prior-run resolution cannot be established
+from this checkout; no scheduler change or enforced suspension is claimed.
+The approved source, private route and independent assessment must be supplied
+before populated verification can proceed. Studio must bind subsequent sanitized
+results and report links to the exact tested head. Release readiness remains no.
+
+## Historical revision 2
 
 Inspected on 2026-10-22 at local source HEAD
 `aa7b8815f0ee5409d94e0570d9480a042939651d`, with an initially clean tree on
