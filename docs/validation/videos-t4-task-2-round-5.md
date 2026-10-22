@@ -1,5 +1,62 @@
 # T4 task 2: revision round 5 acceptance evidence
 
+## Current task-2 control disposition, 2026-10-22
+
+This section supersedes the historical acceptance collection below. The local
+starting HEAD is `03839293a0c5c4cd35d3de71d23852c60a4a68a9`, matching the
+brief's previous checked head, with an initially clean tree on the assigned
+branch. The live PR head was not queried; the later harness commit is untested.
+This task establishes controls before private verification, not acceptance
+measurements in the absence of those controls.
+
+**Blocked before credentialed execution.** The supplied evidence and existing
+[task-1 handoff](videos-t4-task-1-round-1.md) do not contain the required owner
+or independent assessment receipts. No discovered executable saved-data route
+receipt was supplied. Historical candidate-route descriptions are not approval.
+The current-head failure evidence is empty and does not justify a website repair.
+
+| Required control | Current disposition and precise missing evidence |
+| --- | --- |
+| Dataset, custodian and approver | Unidentified. Marcus must supply the source-owner identity and dataset-use approval receipt, including authorized purpose, principals and expiry. Marcus is the coordination owner, not an inferred data custodian. |
+| Immutable identity and coverage | Missing approved source ID/version, capture time, exact-byte digest and schema. Record eligible video counts, playlist membership counts, more than 12 eligible videos for pagination, a playlist subset, direct playlist URL and search coverage. Identify thumbnail delivery and separate empty/error scenarios. Synthetic fixtures do not supply this receipt. |
+| Private route and access | Missing immutable controller revision, executable saved-source ingestion for both build and runtime, authorized caller and private runner/browser access receipt. The prior handoff describes a live-data verifier without saved-source input. The sandbox network excludes Preview, application API and image origins. External operations inventory and its custodian were not supplied; no specific undisclosed resource or permission is invented here. |
+| Exact-head binding and independent approval | Only the local source SHA above is observed. Before release, bind run ID, dataset digest, controller revision and then-live PR SHA to source-owner approval and Macklin's independent assessment. Neither receipt is supplied. Approval must precede data/credential exposure to PR code; changed subjects require reassessment. |
+| Retention and cleanup | Missing approved private storage locations, permitted readers, expiry, cleanup owner and success/failure/cancellation handling, including runner termination and build caches. Require cleanup receipts and independently validated sanitized publication. Historical retention settings do not prove effective controls for this run. |
+
+The precise stopping condition is missing dataset-use authorization and
+Macklin's assessment of the identified source, route, head and artifact controls.
+No credentialed run, external contact or new operations-discovery attempt was
+made. Marcus's external source/route research remains the continuation; this
+local record cannot substitute for it. Ashley's and Macklin's independent blocks
+remain unresolved. No driver research or preliminary merge is added as a gate.
+
+Task criterion 1 remains blocked: an approved dataset, custodian, approver,
+private route and effective retention/cleanup cannot yet be identified.
+Criterion 2's no-run condition is respected, but the approvals remain missing.
+After those receipts exist, Studio must verify the new exact head and publish
+sanitized build/browser/Lighthouse report links and measurements. Populated
+layout, browser behavior, three CLS/LCP pairs and thumbnail priority remain
+unobserved here. Post-deployment API/gallery observations must separately name
+the Production revision and time. No release verification or review pass is claimed.
+
+This is documentation only, so no meaningful automated behavior change exists
+for red-green-refactor. No red run, production change or refactor is claimed.
+Fresh local checks (all exit 0):
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: 987 packages
+  installed; npm configuration, deprecation and install-script warnings.
+- `npm run lint`.
+- `npm run type-check`.
+- `npm test`: 38 files passed, 346 tests passed and 1 skipped; existing Vite
+  configuration-loader compatibility warning.
+- `git diff --check`.
+
+These checks cannot establish populated acceptance or independent approval.
+Populated production build, browser and Lighthouse checks remain blocked by
+the missing receipts. Release readiness remains **no**.
+
+## Historical acceptance record, 2026-10-21
+
 Inspected on 2026-10-21 at approximately 22:33 UTC. Source SHA:
 `c4fb3085a48b2105d014b385c7ab7331b9f733bf`, on the assigned
 `eng/71-d38d08-fix-videos-layout-shift-and-slow-first-t` branch with an
