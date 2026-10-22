@@ -1,5 +1,58 @@
 # T4 task 1, round 1: populated verification disposition
 
+## Current admission review, 2026-10-22 15:16 UTC
+
+This section supersedes the historical task dispositions below. Fresh anonymous
+`GET https://api.github.com/repos/foxleigh81/foxyslab-website/pulls/79`
+succeeded and identified an open draft with head
+`863a16f700c04296c1bde9574e3017c0b84d0b94`, matching `git rev-parse HEAD`
+on the assigned branch. The initial working tree was clean. This identifies
+the inspected source only; it does not verify the subsequent harness commit.
+
+**Admission and task completion remain blocked.** The supplied current-head
+failure array is empty. Neither the supplied evidence nor the inspected task
+records establishes a demonstrated, approved route for this subject. No
+credentialed or populated run was started, and no credential or saved dataset
+was copied into the sandbox.
+
+| Required binding or control | Current disposition |
+| --- | --- |
+| Previous run terminal state and driver authority | Unverified. The supplied run identifier `r20261022-a62382b6fc93` is not a terminal-state receipt; no driver interface is available in this session. |
+| Inventory-backed tooling owner, supported route, permitted caller and controller revision | Unverified; no admission receipt supplied. The website's candidate verifier is not proof of an authorized external route. |
+| Redacted validator diagnostic | Unavailable; no authorized route validator was invoked. The successful public PR metadata read is not a route diagnostic. |
+| Approved saved-data provenance and digest | Unavailable; no source-owner approval or immutable dataset identity supplied. No digest was invented or derived from synthetic fixtures. |
+| Video/playlist counts and pagination coverage | Unverified; requires approved-source counts, playlist membership and coverage beyond the first page, bound to the same digest. |
+| Macklin's independent credential, data and artifact clearance | Unavailable for this head, dataset and controller. An implementation or local test result cannot provide that clearance. |
+
+Marcus's next handoff needs the driver admission receipt and demonstrated route,
+then an independently reviewed subject binding the freshly read PR head,
+dataset provenance/digest/coverage, permitted caller and controller revision.
+Macklin's review must cover effective credential release, saved-data access,
+artifact/log readership, retention and cleanup before credentialed execution.
+Missing or mismatched evidence keeps verification blocked. No contact, accepted
+handoff, external capability-defect filing or scheduler-state change is claimed;
+this sandbox exposes no authorized Engineering inventory/coordination interface.
+Tooling discovery and repair remain outside this website task.
+
+The three mobile CLS/LCP measurements, production thumbnail priority inspection,
+populated build/browser and interaction checks, and authorized post-deployment
+API observation remain outstanding. Historical green missing-key checks do not
+satisfy them. No production measurement or report link was generated here.
+
+This update changes documentation only: there is no executable behavior for a
+meaningful automated red/green/refactor test. No red run, production fix or
+refactor is claimed. Fresh local checks (all exit 0):
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: 987 packages
+  installed; npm configuration, deprecation and install-script warnings.
+- `npm run lint`.
+- `npm run type-check`.
+- `npm test`: 38 files passed; 348 tests passed, 1 skipped. Vite emitted its
+  configuration-loader compatibility warning.
+- `git diff --check`.
+
+These checks do not establish populated access. Release readiness remains **no**.
+
 ## Revision round 7 inspection, 2026-10-22
 
 Local source HEAD is `deeb62679754894088d3dd0b8a4e2560243ba58a` on the
