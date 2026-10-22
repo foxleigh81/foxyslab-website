@@ -1,5 +1,50 @@
 # T4 task 1, round 1: populated verification disposition
 
+## Revision round 7 inspection, 2026-10-22
+
+Local source HEAD is `deeb62679754894088d3dd0b8a4e2560243ba58a` on the
+assigned branch, matching the brief's previous checked head. The starting tree
+was clean. This section supersedes older local task dispositions; historical
+GitHub reads below are not fresh evidence for this round or the next harness
+commit.
+
+**Task 1 remains blocked.** No source-owner receipt, private controller access
+or independent assessment was supplied. Sanitized receipt references and an
+authorized coordination channel were requested from the user; no contact with
+Marcus or Macklin, approval, or external dispatch-state change is claimed.
+
+| Task criterion | Current evidence and remaining work |
+| --- | --- |
+| Marcus confirms approved nonempty source, credentials and exact-head private route | Blocked. Local inspection of `lib/youtube.ts` and `scripts/lib/verify-videos.mjs` confirms live YouTube ingestion, with no immutable saved-data input. Marcus's source-owner approval, dataset identity/coverage, credential capability receipt and executable private route are still needed. |
+| Macklin assesses credential handling, retention and cleanup before execution | Blocked. No assessment binding the dataset, controller and revalidated PR head is available. The candidate workflow's SHA checks do not prove independent approval before credential release. |
+| Safe artifact location and cleanup recorded and exercised | Blocked. The candidate requests 14-day summary retention, and the verifier removes raw reports in its server-stage cleanup. Neither proves effective private access or an exercised, owner-approved cleanup procedure. No private route was exercised or measurement artifact created. |
+
+The supplied generation-49 selector investigation and prior-run resolution
+remain external Engineering-tooling work. This checkout cannot establish their
+persisted state; this record does not make dependent dispatch eligible. No
+current-head website failure was supplied or reproduced to justify a repair.
+Populated build/browser/Lighthouse verification remains pending the receipts;
+post-deployment live API observation additionally needs an independently
+authorized Production revision. No CLS/LCP result or later-head verification
+is claimed.
+
+This revision updates documentation only. There is no changed executable
+behavior for a meaningful red/green/refactor cycle; none was performed.
+
+Local checks for this revision (all exit 0):
+
+- `npm ci --cache /work/repo/.npm-cache --no-audit --no-fund`: 987 packages
+  installed, with npm configuration, deprecation and install-script warnings.
+  The generated cache was moved under `.git` after installation.
+- `npm run lint`.
+- `npm run type-check`.
+- `npm test`: 38 files passed; 346 tests passed, 1 skipped. Vite emitted its
+  configuration-loader compatibility warning.
+- `git diff --check`.
+
+These local results do not establish populated access or satisfy the three
+task criteria. Release readiness remains **no**.
+
 ## Current inspection at c2105b1, 2026-10-22 08:06 UTC
 
 This section supersedes the current-task disposition below. The initially clean
