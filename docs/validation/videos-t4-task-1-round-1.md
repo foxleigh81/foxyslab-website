@@ -1,5 +1,93 @@
 # T4 task 1, round 1: populated verification disposition
 
+## Current inspection at a049dc0, 2026-10-22
+
+This section supersedes the historical dispositions below for this sandbox run.
+The initially clean checkout is on the assigned branch at
+`a049dc027791b86609a41f890228c3f6b832d60c`. A fresh anonymous GitHub REST
+read of `/repos/foxleigh81/foxyslab-website/pulls/79` returned HTTP 200,
+an open draft, and the same head. This records the inspected source, not the
+subsequent harness commit or an approved execution subject.
+
+**Populated saved-data verification remains blocked.** No approved dataset,
+source-owner receipt, supported Engineering intake invocation, or independent
+exact-head approval was supplied. This session exposes shell/file tools but no
+Engineering intake or approval interface. No credentials or private data were
+requested, copied, or used, and no credentialed workflow was dispatched.
+The supplied empty failure-evidence array does not establish a website defect.
+
+### Dataset shape and missing inputs
+
+Source inspection of `types/youtube.ts`, `lib/youtube.ts` and
+`app/videos/page.tsx` establishes the consumed shape, not an approved dataset:
+
+- Videos have string fields `id`, `title`, `description`, `thumbnail`,
+  `publishedAt`, `viewCount`, `likeCount`, `commentCount`, `duration`, and `url`.
+  The page requests up to 200 videos and displays 12 per page; an approved
+  dataset needs more than 12 eligible videos to exercise both pagination
+  directions, with representative thumbnail assets and metadata.
+- Playlists have `id`, `title`, `description`, `thumbnail`, and numeric
+  `itemCount`, plus video-ID membership used to derive slugs and filtered cards.
+  At least one playlist must overlap the loaded videos for filter and direct-URL
+  checks. Record actual counts and coverage without titles, IDs or private URLs.
+- The existing page regression uses 25 synthetic videos. It is useful local
+  coverage, but has no saved-source provenance or approval receipt.
+- Required external inputs remain a source-owner-approved immutable dataset
+  reference/digest, capture time, aggregate counts and membership coverage,
+  approved build/runtime ingestion capability, and an independently approved
+  controller/caller bound to the freshly checked PR head. None is established
+  by this inspection; no synthetic digest or approval is substituted.
+
+### Candidate artifact route and capability blocker
+
+`scripts/lib/verify-videos.mjs` accepts live API credentials, builds the checkout,
+serves it with `next start`, runs the production Playwright configuration, and
+collects three mobile Lighthouse CLS/LCP pairs. It has no saved-dataset replay
+input. Its unique `.lighthouseci/videos/run-*/summary.json` records local HEAD,
+build settings, bounded browser outcomes and numeric measurements. Raw reports
+are removed in `finally`; production Playwright disables traces/screenshots.
+These are source observations, not an exercised approved populated route.
+
+The candidate `.github/workflows/videos-verification.yml` checks the PR head,
+requests the `videos-verification` environment, uploads only summary JSON with
+14-day retention, and links the artifact in the job summary. A fresh HTTP-200
+read of `/repos/foxleigh81/foxyslab-website/contents/.github/workflows?ref=main`
+listed only `ci.yml`. Thus the candidate, which requires dispatch on `main`,
+is not available there. Environment reviewer enforcement, approved readers,
+effective retention/cleanup, and independent approval before credential release
+also cannot be established from this checkout. The general Lighthouse public
+upload route is not an approved substitute.
+
+The actionable blocker is the missing authorized external intake/controller
+and saved-data/approval receipts, compounded by the unavailable main-branch
+candidate workflow. An owner must supply the supported invocation and sanitized
+receipt references, including the approved artifact destination and access/
+retention controls. No external contact, intake diagnostic, rejection-control
+test, or controller repair is claimed. CI and credential handling are unchanged.
+
+No populated build/browser run or retained measurement artifact was produced.
+Initial layout/footer observations, all three CLS/LCP pairs, thumbnail priority,
+populated interactions and post-deployment live API verification remain pending.
+The later harness head will need fresh independent approval and verification.
+
+This is a documentation-only inspection: no executable behavior changed, so
+there is no meaningful new red/green/refactor test and no red run is claimed.
+Fresh local validation (all exit 0):
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: 987 packages
+  installed; npm configuration, deprecation and install-script warnings.
+- `npm run lint`.
+- `npm run type-check`.
+- `npm test`: 38 files passed; 348 tests passed, 1 skipped.
+- `npm test -- app/videos/__tests__/page.test.tsx lib/__tests__/verify-videos.test.ts lib/__tests__/videos-artifact-retention.test.ts`:
+  3 files and 46 tests passed, covering synthetic layout and verifier retention.
+  Both test invocations emitted the Vite configuration-loader warning.
+- `git diff --check`.
+
+These checks do not prove approved saved-data access or production performance.
+Release readiness remains **no** pending the external inputs and populated
+exact-head verification described above.
+
 ## Current admission review, revision round 2, 2026-10-22 16:16 UTC
 
 This section supersedes the historical task dispositions below. Fresh anonymous
