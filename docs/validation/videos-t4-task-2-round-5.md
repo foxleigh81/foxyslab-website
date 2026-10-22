@@ -1,5 +1,49 @@
 # T4 task 2: revision round 5 acceptance evidence
 
+## Current task-2 disposition, revision round 6, 2026-10-22
+
+This section supersedes the historical dispositions below for this dispatch
+(task 2 of 5, round 1 on T4, plan generation 57). The initially clean assigned
+branch is at `c8a0502c861d2e16480d2119fa29fade4391fb80`, matching the brief's
+previous checked head. This is a local source observation, not verification of
+the live PR head or the future harness commit.
+
+**Populated execution remains blocked before data or credential release.** No
+approved saved dataset or Macklin independent clearance was supplied. The
+current exact-head failure evidence is empty. Non-sensitive approval and route
+references were requested in-session; no secret values or private payloads were
+requested. The implementer cannot issue the independent clearance.
+
+| Task criterion | Observed state and required continuation |
+| --- | --- |
+| Approved pagination-capable saved data and digest | Blocked. Marcus must coordinate the custodian's approved immutable dataset, exact-byte digest, schema/capture identity and coverage counts. More than 12 eligible videos, playlist membership and search coverage must be demonstrated against that source. Existing synthetic tests are not approved saved-data evidence. |
+| Build/runtime supply without credential exposure | Blocked. `lib/youtube.ts` fetches live YouTube v3; `scripts/lib/verify-videos.mjs` has no saved-source ingestion argument. Both build and server receive the selected application environment; browser children receive a separate environment without those application credentials. This does not demonstrate saved data reaching either process or prove that served content is credential-free. The approved source and executable ingestion route remain missing. |
+| Exact-head controller, private retention and cleanup | Unestablished. The candidate workflow accepts `expected_sha` and checks the PR head, but credentials enter the step environment before its second check. No independent exact-head approval receipt or immutable external controller identity is supplied. Its 14-day summary retention request does not prove private readership or deletion. The verifier removes raw reports in `finally`; this does not establish cleanup of build caches, cancellation or runner termination. Marcus must coordinate the controller, storage/access/expiry and cleanup receipts with their owners. |
+| Macklin clearance before populated execution | Blocked as required. The receipt must bind the approved source/digest, exact PR head, controller, credential boundary and retention/cleanup controls. No populated build, browser or Lighthouse execution is authorized by the evidence available here. |
+| Test-first configuration change | No configuration change made: the approved source and route needed to define it are unavailable. Once specified, first observe a focused test fail for delivery to both build and browser without credential exposure, then implement and run the required checks. |
+
+Engineering-driver checkout and redacted handoff lookup diagnosis are separate
+work, outside this website task. Historical generation-48 selector requirements
+below are not an admission condition invented for this dispatch. No driver
+inspection, repair or terminal-state claim is made here.
+
+No meaningful automated red-green-refactor test applies to this documentation
+change. No failing test, production repair or refactor rerun is claimed. Fresh
+local checks all exited 0:
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: 987 packages
+  installed; npm configuration, deprecation and install-script warnings.
+- `npm run lint`.
+- `npm run type-check`.
+- `npm test`: 38 files passed; 348 tests passed, 1 skipped. Existing Vite
+  configuration-loader compatibility warning.
+- `git diff --check`.
+
+Populated production build, browser checks, three mobile CLS/LCP measurements, first-thumbnail
+priority and hydration/footer observations remain blocked. No sanitized report
+links exist for this run. Independent review and the live API check after an
+authorized deployment remain outstanding; release readiness is **no**.
+
 ## Current task-2 control disposition, 2026-10-22
 
 This section supersedes the historical acceptance collection below, including
