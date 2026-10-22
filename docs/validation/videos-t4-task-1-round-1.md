@@ -1,5 +1,59 @@
 # T4 task 1, round 1: populated verification disposition
 
+## Admission recheck, revision round 4, 2026-10-22
+
+This section supersedes the older admission dispositions below. **Admission
+remains blocked; no credentialed dry run was performed.** The initially clean
+assigned checkout and a fresh anonymous GitHub `GET /pulls/79` (HTTP 200,
+open draft) both identify `504c51035b20111ba766a4a291e052c51d2517e8`.
+The head-filtered deployments endpoint returned HTTP 200 and Preview deployment
+`7264453571`, created `2026-10-22T21:45:01Z`, at that same SHA. This is a
+candidate identity only: its content, build inputs and data binding were not
+observed. Neither it nor this record verifies the later harness commit.
+
+| Admission field | Current evidence and missing prerequisite |
+| --- | --- |
+| Authorized controller | Not established. Marcus is the coordinator named in the brief, not an authorization receipt. An approved controller identity, immutable revision, permitted caller and invocation are required. This session has no Engineering intake/approval interface. |
+| Approved saved-video source and digest | Not supplied. Requires source-owner approval, private immutable snapshot reference, capture time and digest. No digest is invented from synthetic fixtures or application source. |
+| Pagination coverage and ingestion | Not established. Requires digest-bound aggregate counts exceeding 12 eligible videos, playlist membership coverage, representative thumbnails, and evidence that build and runtime consume that same snapshot. The inspected producer still uses live YouTube data; the verifier does not establish an approved saved-snapshot binding. |
+| Exact head and build identity | Local/live head match and candidate Preview identity observed above. A retained production-equivalent build bound to the approved data digest and reviewed head remains missing. Revalidate the eventual harness head before admission. |
+| Artifact location and retention | No approved private destination or effective retention receipt supplied. Candidate source uploads `.lighthouseci/videos/run-*/summary.json` with a requested 14 days; this is not evidence of private access or enforced expiry. The owner must identify the actual private location, permitted readers, expiration time and policy covering logs and job summaries as well as artifacts. |
+| Credential handling | Blocked before release. Requires independent approval of the exact head, controller and dataset before credentials reach PR-controlled install/build/runtime code; document scope, issuer restrictions and revocation without recording secret values. No credentials were copied or used here. |
+| Cleanup procedure | Required owner procedure: terminate build/server/browser processes; destroy the isolated runner and saved data, `.next`, scratch reports and caches on success, failure or cancellation; expire retained private evidence and record deletion receipts. Local verifier `finally` cleanup alone does not prove those external controls. Effective cleanup remains unverified. |
+| Macklin's independent outcome | Not obtained. No assessment receipt is supplied for this head, controller or dataset. This is absence of clearance, not a rejection attributed to Macklin. Credentialed verification remains blocked. |
+| Authorized reachability dry run | Blocked on the preceding source, route and clearance receipts. Sandbox network access excludes the application data/image origins. Public GitHub identity reads are not a populated-source reachability test. |
+
+After admission, the authorized controller must privately verify source access
+and digest, aggregate pagination/playlist coverage, and build/runtime binding.
+Retain the exact-head build identity and sanitized outcome in the approved
+private store. Publish only independently checked, permitted metadata and report
+links; omit payloads, credentials, private URLs and raw browser/network output.
+Record cleanup and expiry receipts even on failure. This describes the required
+dry run; it does not claim it happened or authorize its execution.
+
+Acceptance criteria 1, 2 and 3 remain blocked respectively on the incomplete
+route record, independent clearance, and populated-source dry run. Supplied
+generation-61/terminal-run claims have no independently retrieved Studio receipt
+here. No dispatch state or external plan was changed, and no owner was contacted.
+The empty current failure-evidence array establishes no website defect.
+
+This revision updates documentation only, with no executable behavior change;
+there is no meaningful automated red/green/refactor test and none is claimed.
+Fresh local checks all exited 0:
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: 987 packages
+  installed; npm configuration, deprecation and install-script warnings.
+- `npm run lint`.
+- `npm run type-check`.
+- `npm test`: 38 files passed, 348 tests passed and 1 skipped; Vite emitted
+  its configuration-loader compatibility warning.
+- `git diff --check`.
+
+No missing-key build substitutes for populated verification. Initial layout/footer behavior, three
+mobile CLS/LCP pairs, thumbnail priority, populated interactions/build/E2E,
+independent review and deployed-revision live API observation remain pending.
+Release readiness remains **no**.
+
 ## Current capability inventory, revision round 2, 2026-10-22
 
 This section supersedes older capability dispositions in this document. The
