@@ -1,5 +1,80 @@
 # T4 task 1, round 1: populated verification disposition
 
+## Current inspection at c2105b1, 2026-10-22 08:06 UTC
+
+This section supersedes the current-task disposition below. The initially clean
+checkout is on the assigned branch at
+`c2105b1ad747284d64578af08279350f60e976db`. Fresh anonymous GitHub REST reads
+returned:
+
+| Read | Result | Interpretation |
+| --- | --- | --- |
+| `/repos/foxleigh81/foxyslab-website/pulls/79` | 200; open, draft, head matches local SHA above | Source identity only; not an approved or tested private build. |
+| `/repos/foxleigh81/foxyslab-website/contents/.github/workflows?ref=main` | 200; only `ci.yml` | The branch candidate `videos-verification.yml`, restricted to dispatch on `main`, is not available there. |
+| `/repos/foxleigh81/foxyslab-website/environments/videos-verification` | 404 | This reader cannot establish environment availability or effective approval controls. |
+| `/repos/foxleigh81/foxyslab-website/actions/permissions/artifact-and-log-retention` | 401 | Effective retention and private readership remain unverified. |
+
+**Task 1 is blocked; populated verification was not dispatched.** No approved
+saved-source identity, source-owner approval, credential-availability receipt,
+private controller invocation, or Macklin assessment is present in the supplied
+evidence or inspected task records. These missing receipts cannot be replaced
+by an implementer's approval. No authorized owner-contact channel is supplied.
+Credential values and saved data were neither requested nor copied.
+
+Fresh source inspection confirms the following containment limits:
+
+- `lib/youtube.ts` reads live YouTube data. `scripts/lib/verify-videos.mjs`
+  accepts no immutable saved-source input. Synthetic fixtures do not demonstrate
+  access to an owner-approved nonempty saved dataset.
+- The candidate workflow checks the live PR SHA before checkout and again in
+  its credential-bearing step. The verifier records local HEAD in its summary.
+  These identify source; they do not establish independent approval before
+  secrets enter PR-controlled execution, or bind build and browser to a saved
+  dataset digest. Approval must cover the eventual harness head.
+- The candidate requests 14-day summary retention and copies summary contents
+  into the job summary. Effective readers, log retention, approved expiry and
+  independent sanitization remain unknown. The ordinary Lighthouse route uses
+  temporary public storage and uploads `.lighthouseci/`; it is unsuitable for
+  this private setup check.
+- Production Playwright disables screenshots and traces but writes browser
+  JSON and an artifact directory. The verifier deletes raw reports in its
+  server-stage `finally`. Build/startup precede that scope; build caches,
+  runner-loss cleanup and deletion of retained summaries need externally
+  established controls and cleanup receipts.
+
+Acceptance criterion 1 remains blocked on the missing source, credential,
+private-route and independent-assessment receipts, including effective artifact
+retention and cleanup. Criterion 2 remains blocked before execution: no approved
+route can be exercised here to demonstrate populated saved-data access and bind
+build/browser artifacts to an exact PR SHA. The sandbox network also excludes
+the live application data and image origins. No controlled populated setup
+check, measurement artifact or report link was produced.
+
+The next actionable input is Marcus's sanitized receipt reference for an
+owner-approved immutable source and executable private route, together with
+credential availability, exact-head binding, access, retention and cleanup
+evidence; Macklin must independently assess those subjects before credentialed
+use. The detailed receipt specification below remains applicable. No external
+plan or dispatch gate was changed or claimed enforced by this documentation.
+The separate live API/gallery check remains deferred until an independently
+authorized Production revision containing the change exists; its absence is
+not the reason this draft is blocked.
+
+This update changes documentation only. There is no executable behavior for a
+meaningful automated red/green/refactor test, and none is claimed. Local check
+results (all exit 0) do not prove populated access:
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: 987 packages
+  installed; npm configuration, deprecation and install-script warnings.
+- `npm run lint`.
+- `npm run type-check`.
+- `npm test`: 38 files passed, 346 tests passed, 1 skipped; Vite emitted its
+  configuration-loader compatibility warning.
+- `git diff --check`.
+
+No populated build/browser/Lighthouse check ran without its prerequisites.
+Release readiness remains **no** pending the receipts and populated verification.
+
 ## Current task-1 inspection, 2026-10-22
 
 Inspected clean local source HEAD
