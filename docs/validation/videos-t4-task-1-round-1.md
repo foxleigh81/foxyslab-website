@@ -1,5 +1,86 @@
 # T4 task 1, round 1: populated verification disposition
 
+## Current capability inventory, revision round 2, 2026-10-22
+
+This section supersedes older capability dispositions in this document. The
+initially clean assigned branch and a fresh anonymous GitHub `GET /pulls/79`
+(HTTP 200, open draft) both identify
+`0ea5a2a7ef5c04d59aaaa9d59ad6a8fea3cb62d0`. The brief associates this subject
+with plan generation 56 and run `r20261022-1bbcb3b31a06`; neither a driver
+terminal-state receipt nor ready-for-dev provenance was available to validate
+that association. The later harness commit is outside this inspection.
+
+### Capability evidence and accountable handoff
+
+| Capability | Classification and evidence at the inspected head | Responsible Engineering owner / missing evidence |
+| --- | --- | --- |
+| Private saved-video snapshot approval | Blocked: no source-owner approval receipt or approved snapshot reference in the supplied evidence or inspected records. Synthetic page fixtures are not a saved-source receipt. | Marcus: obtain source-owner approval and capture provenance through the authorized private route. |
+| Immutable dataset digest | Blocked: no approved dataset digest supplied; verifier summary records HEAD but no dataset binding. Source-file hashes below are not dataset hashes. | Marcus: provide immutable snapshot digest bound to the approval. |
+| Pagination-capable contents | Unverified: page requests up to 200 videos; gallery paginates by 12. Page tests contain 25 synthetic videos. No approved-source aggregate counts or playlist overlap were evidenced. | Marcus: supply digest-bound counts, more than 12 eligible videos, representative thumbnails, and playlist membership coverage without publishing private IDs/titles. |
+| Build and runtime supply | Blocked: `lib/youtube.ts` uses live YouTube fetches; `verifyVideos` supplies the production environment to both build and server, but accepts no immutable saved-snapshot input. | Marcus: identify the approved ingestion route for both stages and demonstrate the same digest is used. |
+| Exact-head controller | Candidate source available, operational route blocked: workflow checks expected SHA before checkout and again before verification; summary records local HEAD. Fresh `GET /contents/.github/workflows?ref=main` returns 200 with only `ci.yml`, while the candidate requires `main`. | Marcus: identify an authorized premerge controller, immutable revision, permitted caller and supported invocation without assuming a preliminary protected-branch merge. |
+| Independent credential clearance | Blocked: no Macklin receipt binding head, dataset and controller. Fresh environment metadata request returns 404; effective protection cannot be established by this reader. Credentials enter the step environment before its shell SHA check. | Macklin: assess independent exact-head approval before credential release, reviewers/bypass controls and execution boundary. A YAML environment name is not clearance. |
+| Private summary retention | Source mechanism available; effective privacy blocked. Candidate uploads only `run-*/summary.json`, includes hidden files, requests 14 days, links the artifact and copies JSON into the job summary. Fresh retention-policy request returns 401. PR-controlled summary contents are not independently validated by a filename allowlist. | Marcus: establish approved readers/expiry for artifacts, logs and job summaries; Macklin: assess publication boundary. |
+| Failure cleanup | Source mechanism available, operational coverage unverified. Current `try/finally` encloses build, startup, browser and Lighthouse; nested cleanup removes run-directory files other than summary even if server stop throws. Production browser traces/screenshots are off. | Marcus: evidence private runner cleanup on success/failure/cancellation, including `.next`, caches, abrupt runner loss and retained artifacts. These are outside the demonstrated local run-directory cleanup. |
+| Separate Engineering-driver checkout | Unavailable in this session: `git worktree list` lists only `/work/repo`; scope authorizes only the website checkout. This does not establish whether another driver checkout exists elsewhere. | Dennis: identify authorized separate driver repository, revision, access and owner. Do not dispatch driver diagnosis to the website runner. |
+| Redacted handoff request and lookup trace | Unavailable: supplied failure evidence is `[]`; inspected driver records describe missing access, not an actual current request or trace. No Engineering messaging/intake tool is exposed. | Dennis, coordinated through Chris: supply request, selected subject/query keys, lookup response/predicate, provenance and terminal-state receipt bound to generation 56/run/head, or record the external capability blocker. |
+
+This is a concrete local handoff for Dennis, not a claim that Dennis was
+contacted or accepted it. External coordination remains blocked by the missing
+authorized channel. No separate checkout was searched outside the permitted
+workspace, and no driver diagnosis was sent to this website runner.
+
+### Retention repair reconciliation
+
+Fresh GitHub contents reads at the inspected SHA returned HTTP 200 and bytes
+identical to local files:
+
+| Source | SHA-256 |
+| --- | --- |
+| `.github/workflows/ci.yml` | `2e5bc7a168aa9f7d170ff9db21027bdc5a6d5f9369e5dff34923c29980d12c0c` |
+| `.github/workflows/videos-verification.yml` | `7659c3440ab0593c9219cd32de987327963f79887c88aea47d97d0a36b6a5344` |
+| `scripts/lib/verify-videos.mjs` | `d75c7a701f0e73d384b26634facdbba1b30c687e6ef252f7ffe1fbfc8b14a4d6` |
+
+The removal of ordinary CI Playwright/coverage uploads is present on the live
+head. `git merge-base --is-ancestor 0b5ec39 HEAD` exits 0 for the recorded
+round-5 repair. The separately claimed repair commit
+`958e232270fb34479c36068aaf8b55688a026381` remains unverifiable:
+`git cat-file -t` exits 128 and a fresh GitHub comparison against the inspected
+head returns 404. Marcus must reconcile that commit's identity/content; similar
+behavior is not proof of its ancestry.
+
+Older statements that build/startup precede cleanup are superseded: the current
+verifier includes them within `try/finally`. This establishes source coverage,
+not exercised private-run cleanup. Ordinary CI still uploads `.lighthouseci/`,
+and `lighthouserc.js` still selects temporary public storage; neither is an
+approved private snapshot route. Historical artifact containment is not proven
+by source changes, and no archives or private logs were retrieved here.
+
+### Scope and validation
+
+This inventory changes documentation only. There is no executable behavior for
+a meaningful red/green/refactor test; no red run or refactor is claimed. No
+production build, browser, Lighthouse, live API or populated verification run
+was started. No credentials or private saved-video data were obtained or
+published. Fresh configured checks all exited 0:
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: 987 packages
+  installed; npm configuration, deprecation and install-script warnings.
+- `npm run lint`.
+- `npm run type-check`.
+- `npm test`: 38 files passed, 348 tests passed, 1 skipped; existing Vite
+  configuration-loader compatibility warning.
+- `git diff --check`.
+
+These checks cannot establish populated-data acceptance.
+
+Inventory classifications are recorded, but external coordination and capability
+receipts remain blocked as named above. Initial populated layout/footer
+stability, three mobile CLS/LCP pairs (each CLS below 0.1), emitted thumbnail
+priority, populated interactions and build/E2E verification remain unobserved.
+Ashley's and Macklin's independent reviews and the authorized post-deployment
+live API check remain outstanding. Release readiness is **no**.
+
 ## Current inspection at a049dc0, 2026-10-22
 
 This section supersedes the historical dispositions below for this sandbox run.
