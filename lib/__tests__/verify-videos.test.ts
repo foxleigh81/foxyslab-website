@@ -71,6 +71,34 @@ function harness(failBuild = false) {
 }
 
 describe("production videos verification command", () => {
+  it.each(["build", "startup"])(
+    "removes raw output when %s fails before browser verification",
+    async (stage) => {
+      const h = harness();
+      const reportDirectory = () =>
+        path.join(h.outputRoot, readdirSync(h.outputRoot)[0]);
+      const failWithRawOutput = async () => {
+        writeFileSync(
+          path.join(reportDirectory(), "raw-output.json"),
+          "private-payload"
+        );
+        throw new Error("Verification stage failed");
+      };
+      if (stage === "build") h.run.mockImplementation(failWithRawOutput);
+      else h.serve.mockImplementation(failWithRawOutput);
+
+      await expect(verifyVideos({ ...h, env: credentials })).rejects.toThrow(
+        "Verification stage failed"
+      );
+
+      const directory = reportDirectory();
+      expect(readdirSync(directory)).toEqual(["summary.json"]);
+      expect(readFileSync(path.join(directory, "summary.json"), "utf8"))
+        .not.toContain("private-payload");
+      expect(h.stop).not.toHaveBeenCalled();
+    }
+  );
+
   it("binds retained evidence to the checkout and production configuration even when the build fails", async () => {
     for (const failBuild of [false, true]) {
       const h = harness(failBuild);

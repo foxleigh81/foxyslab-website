@@ -405,9 +405,10 @@ export async function verifyVideos({
     );
   await writeSummary({});
   console.log(`Reports: ${directory}`);
-  await run("Build", "npm", ["run", "build"], productionEnv);
-  const server = await serve(productionEnv);
+  let server;
   try {
+    await run("Build", "npm", ["run", "build"], productionEnv);
+    server = await serve(productionEnv);
     const fixtureDirectory = path.join(directory, "state-fixtures");
     await mkdir(fixtureDirectory);
     await run(
@@ -485,7 +486,7 @@ export async function verifyVideos({
     return directory;
   } finally {
     try {
-      await server.stop();
+      await server?.stop();
     } finally {
       await discardRawReports(directory);
     }
