@@ -1,5 +1,70 @@
 # T4 task 2: private saved-data route disposition
 
+## Task 2 recheck, revision round 10, 2026-10-22
+
+This section supersedes earlier dispositions below for this sandbox run. The
+initially clean checkout is on the assigned branch at
+`776078026f8ad8c34cea20d486cbbdd7ffeaf830`, matching the brief's previous
+checked head. This is a local source identity, not a refreshed live PR or
+Preview identity. The later harness commit needs its own verification.
+
+**Blocked before private populated-data verification.** The supplied current
+exact-head failure evidence is `[]`. The [task-1 investigation](videos-lead-handoff-round-9.md)
+records an unavailable Studio ownership inventory and original lookup trace;
+it does not resolve operation `r20261022-400067055107`. No terminal-state
+receipt or driver revalidation of permissions, provenance and live PR #79 was
+supplied for this run. This sandbox exposes no Studio inventory/operation or
+owner-contact tool. A sanitized receipt/reference was requested in-session;
+no owner contact, external hold, dispatch or independent approval is claimed.
+
+### Inspected route and outstanding receipts
+
+Inspected both workflows, the verifier entry point and library, ordinary and
+production Playwright configurations, `e2e/videos-gallery.spec.ts`,
+`lib/youtube.ts`, Lighthouse configuration and artifact-retention tests before
+considering changes. These observations establish local implementation facts,
+not the effective controls of an external runner.
+
+| Boundary | Observed implementation | Specific remaining dependency |
+| --- | --- | --- |
+| Saved populated source | YouTube data comes from live API fetches. The verifier accepts no saved-source identifier or digest. Empty/error browser fixtures use synthetic page-test markup. | Marcus must obtain data-owner approval, immutable source ID/digest and capture time, coverage for search/playlists and more than one page, plus an approved ingestion command shared by build and runtime. No private payload belongs in this record. |
+| Exact-head private route | The candidate workflow requires a dispatch on `main`, compares the supplied SHA with PR head, and checks out that SHA. The verifier records local Git HEAD, builds and serves on loopback. | Driver resolution/revalidation receipt, immutable accessible controller identity, private runner/access receipt, exact PR head and actual build/Preview identity. This run neither revalidated the live PR nor executed a build. |
+| Credential release | The candidate names the `videos-verification` environment and injects dedicated secrets into the verification step before its shell recheck. Install and browser setup run earlier on the same runner. | Macklin's independent assessment must cover the exact head, controller and source, including effective approval before credential release and PR-code execution. A named environment or SHA comparison is not proof of those controls. Valid credentials must remain with their approved owner/runner. |
+| Retention | Production browser traces/screenshots are off. The verifier suppresses child output and removes raw browser/Lighthouse reports in its browser-stage cleanup. The candidate uploads summaries for 14 days and prints them in the job summary. Ordinary Lighthouse uses `temporary-public-storage`. | Independently assessed readership, allowed summary content, log/artifact expiry and cleanup of build caches/scratch data on success, failure and cancellation. PR-generated summaries and filename allowlists alone do not establish safe publication. Ordinary Lighthouse is unsuitable for private data without approved containment. |
+
+The existing conditional command is `npm run verify:videos`: it runs the
+production build, loopback server, production browser checks and three mobile
+Lighthouse runs. It is a live-data command, not an executable saved-data route.
+No credentialed command was launched and no data, key, raw artifact or new
+measurement report was published. Network access here excludes application
+API, thumbnail and Preview origins. Source access and valid-credential behavior
+remain untested.
+
+### Acceptance and local validation
+
+Task criterion 1 remains blocked on Macklin's review and effective private
+retention controls. Criterion 2 has the specific external dependencies recorded
+above; it does not yet have an approved route or populated results. Criterion 3
+has no setup-code change to validate: no new setup defect was reproduced from
+the available evidence. This documentation-only update has no meaningful
+automated behavior red/green/refactor cycle; none is claimed.
+
+Fresh local checks:
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: exit 0;
+  987 packages installed, with npm configuration/deprecation/install-script warnings.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0; 38 files passed, 346 tests passed, 1 skipped, including
+  the existing verifier, workflow-security and artifact-retention checks.
+  Vite emitted its configuration-loader compatibility warning.
+
+These checks cannot replace approved populated build/browser evidence, three mobile CLS values
+below 0.1 with paired LCP and thumbnail-priority observations, or the authorized
+post-deployment live API check. The recorded baseline remains CLS 0.511 for
+all three runs and LCP 3.8, 4.3 and 11.8 seconds. Release readiness remains
+**no**.
+
 ## Task 2 recheck, revision round 12
 
 Recorded 2026-10-21 at local source HEAD
