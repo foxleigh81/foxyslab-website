@@ -3,17 +3,59 @@
 ## Current task-1 inspection, 2026-10-22
 
 Inspected clean local source HEAD
-`629ac5ade1c12225f8b7d870067eb2b6d4d92e47` on the assigned branch. This
-matches the brief's previous checked head; no fresh remote-head lookup or
-verification of the future harness commit is claimed. This section supersedes
-the earlier task-1 dispositions for this run.
+`4333ff00e769a4107a2f56a1af2b5a958e0b347f` on the assigned branch. Fresh
+unauthenticated GitHub REST reads on 2026-10-22 (approximately 05:15 UTC)
+returned HTTP 200 for `/repos/foxleigh81/foxyslab-website/pulls/79`: open draft,
+same head. The workflow listing at
+`/repos/foxleigh81/foxyslab-website/contents/.github/workflows?ref=main`
+returned HTTP 200 with only `ci.yml`. These observations identify the current
+source, not an approved execution head or the future harness commit. This
+section supersedes the earlier task-1 dispositions for this run.
 
 **Task 1 remains blocked.** The supplied current-head failure evidence is empty.
-The task asks for source and route work outside the website sandbox, while this
-run permits work only inside `/work/repo`. No external inventory locator,
+No supported private execution route was identified by the inspected source or
+fresh default-branch workflow listing. No external inventory locator,
 owner-contact interface, source-owner receipt or Macklin assessment is available
 in the supplied evidence or inspected records. Repeating local checks cannot
 obtain those external approvals. No website repair is supported by this task.
+
+### Route availability and control record
+
+- **Candidate runner:** the branch-local `videos-verification.yml` declares
+  `ubuntu-latest`, dispatch restricted to `main`, and environment
+  `videos-verification`. The workflow is absent from the fresh `main` listing,
+  so this is not currently a dispatchable route there. No approved alternative
+  private runner/controller or executable invocation was supplied. Installing
+  or changing CI is outside this task.
+- **Credential source:** the candidate names environment secrets
+  `VIDEOS_VERIFY_YOUTUBE_API_KEY`, `VIDEOS_VERIFY_FOURTHWALL_STOREFRONT_TOKEN`
+  and `VIDEOS_VERIFY_FLAGS_SECRET`. Their existence, scope and independent
+  required-reviewer settings are unverified. No values were read or supplied.
+- **Exact-head and bypass controls:** the candidate compares the requested SHA
+  with the live PR head before checkout and again before verification, and
+  compares local HEAD. The verifier rejects `ALLOW_MISSING_API_KEYS=true` and
+  sets it to `false` for build/server children. This is source inspection only;
+  no exact-head credentialed execution is confirmed. The second SHA check runs
+  inside a secret-bearing step and cannot itself approve secret release.
+- **Origin reachability:** live producers use `www.googleapis.com` and
+  `storefront-api.fourthwall.com`; thumbnail delivery adds image origins. These
+  are outside this sandbox's GitHub/npm/PyPI network allowance. No approved
+  runner connectivity receipt or saved-data delivery route is available, so
+  data-origin reachability is unverified. No credentialed probe was attempted.
+- **Artifact access and retention:** the candidate uploads only summaries and
+  requests 14-day retention. Effective private readers, approved retention and
+  cleanup ownership are unknown. Raw browser/measurement output is deleted in
+  the verifier's server-stage `finally`; build output, caches and runner-loss
+  cleanup still need an approved external procedure and deletion receipts.
+- **Approvals:** Marcus's data/runner/credential/access/retention/cleanup
+  receipts and Macklin's assessment binding this exact head are unavailable.
+  No dependent build, populated browser or Lighthouse check was launched.
+
+The next actionable prerequisite is an owner-provided executable private route
+and its sanitized control receipts, including origin-access evidence, followed
+by independent approval of the exact execution subjects. This record neither
+requests dispatcher repair nor authorizes Production deployment. General CI and
+missing-key builds do not satisfy populated-data verification.
 
 | Acceptance criterion | Observed evidence and external condition | How resolution will be observed |
 | --- | --- | --- |
