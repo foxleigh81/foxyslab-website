@@ -1,11 +1,11 @@
 # T4 task 1, round 1: populated verification disposition
 
-## Current admission review, 2026-10-22 15:16 UTC
+## Current admission review, revision round 2, 2026-10-22 16:16 UTC
 
 This section supersedes the historical task dispositions below. Fresh anonymous
 `GET https://api.github.com/repos/foxleigh81/foxyslab-website/pulls/79`
 succeeded and identified an open draft with head
-`863a16f700c04296c1bde9574e3017c0b84d0b94`, matching `git rev-parse HEAD`
+`858d6f882dca34302222a03671a41a24d7b47c26`, matching `git rev-parse HEAD`
 on the assigned branch. The initial working tree was clean. This identifies
 the inspected source only; it does not verify the subsequent harness commit.
 
@@ -17,10 +17,10 @@ was copied into the sandbox.
 
 | Required binding or control | Current disposition |
 | --- | --- |
-| Previous run terminal state and driver authority | Unverified. The supplied run identifier `r20261022-a62382b6fc93` is not a terminal-state receipt; no driver interface is available in this session. |
-| Inventory-backed tooling owner, supported route, permitted caller and controller revision | Unverified; no admission receipt supplied. The website's candidate verifier is not proof of an authorized external route. |
+| Previous run terminal state and driver authority | Unverified. The supplied run identifier `r20261022-4886757f0447` is not a terminal-state receipt; no driver interface is available in this session. |
+| Inventory-backed tooling owner, supported route, permitted caller and controller revision | Unverified; no admission receipt supplied identifying an immutable controller revision, entry point, permitted caller, or demonstrated rejection of changed-head and unapproved-controller requests. The website's candidate verifier is not proof of an authorized external route. |
 | Redacted validator diagnostic | Unavailable; no authorized route validator was invoked. The successful public PR metadata read is not a route diagnostic. |
-| Approved saved-data provenance and digest | Unavailable; no source-owner approval or immutable dataset identity supplied. No digest was invented or derived from synthetic fixtures. |
+| Approved saved-data provenance and digest | Unavailable; no source-owner approval, capture time, immutable dataset digest, permitted build ingestion route or sanitized artifact destination supplied. No digest was invented or derived from synthetic fixtures. |
 | Video/playlist counts and pagination coverage | Unverified; requires approved-source counts, playlist membership and coverage beyond the first page, bound to the same digest. |
 | Macklin's independent credential, data and artifact clearance | Unavailable for this head, dataset and controller. An implementation or local test result cannot provide that clearance. |
 
@@ -33,6 +33,35 @@ Missing or mismatched evidence keeps verification blocked. No contact, accepted
 handoff, external capability-defect filing or scheduler-state change is claimed;
 this sandbox exposes no authorized Engineering inventory/coordination interface.
 Tooling discovery and repair remain outside this website task.
+
+These are specific Engineering capability defects in the admission handoff:
+the authorized controller cannot be identified or invoked from a supplied
+receipt, the approved saved-data ingestion capability cannot be established,
+and independent clearance of effective credential/data/artifact controls is
+absent. They are not product questions or reproduced website failures. The
+admission check stops here without dispatch or secret release; local quality
+checks below do not invoke the populated verification route.
+
+Fresh anonymous GitHub REST metadata reads returned HTTP 200 for this source:
+
+| Identity | Observed metadata |
+| --- | --- |
+| CI | [Run 39804348365](https://github.com/foxleigh81/foxyslab-website/actions/runs/39804348365); successful checks `119913437185` (lint/types/unit), `119913437666` (E2E), `119913437701` (build/Lighthouse), all at the SHA above |
+| Preview | Deployment `7256214853`, environment `Preview`, same SHA; successful Vercel status `57003828997`, target identity `38HPDCLnBy2B7Di2SqPWKbz3362U`; successful Preview Comments check `119914592636` |
+| CI artifact inventory | Run artifacts endpoint reports `total_count: 0`, empty artifact list |
+
+These identities do not establish a populated build, admitted controller or
+independent approval. No Preview content was accessed. The prior Studio run's
+terminal state cannot be inferred from successful website checks.
+
+| Task acceptance criterion | Current disposition |
+| --- | --- |
+| 1. Receipts, head, check and Preview bindings; reject changed head/controller | Blocked on admission receipts and demonstrated rejection controls; only public source/check/Preview metadata observed. |
+| 2. Initial populated response and footer through mobile hydration | Blocked; no admitted dataset/build/browser observation or shift evidence. |
+| 3. Three mobile CLS/LCP pairs and thumbnail priority | Blocked; no measurements or emitted production hint inspected. No LCP improvement claimed. |
+| 4. Search, playlists, forward/back pagination, direct URLs, empty/error states | Blocked for approved populated data; local unit fixtures are separate evidence only. |
+| 5. Focused regression, lint, types, unit/E2E and valid-data build | Local focused fixture regression and quality checks recorded below; populated E2E and valid-data build blocked by admission. |
+| 6. Sanitized, head-bound outcomes | This record contains only public metadata and local outcomes at the inspected source. No reproduced website failure; no later harness head or populated result verified. |
 
 The three mobile CLS/LCP measurements, production thumbnail priority inspection,
 populated build/browser and interaction checks, and authorized post-deployment
@@ -47,6 +76,8 @@ refactor is claimed. Fresh local checks (all exit 0):
   installed; npm configuration, deprecation and install-script warnings.
 - `npm run lint`.
 - `npm run type-check`.
+- `npm test -- app/videos/__tests__/page.test.tsx`: 10 tests passed using
+  synthetic populated, empty and error fixtures; not an approved saved dataset.
 - `npm test`: 38 files passed; 348 tests passed, 1 skipped. Vite emitted its
   configuration-loader compatibility warning.
 - `git diff --check`.
