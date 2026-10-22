@@ -1,5 +1,69 @@
 # T4 task 2: private saved-data route disposition
 
+## Task 2 recheck, revision round 13, 2026-10-22
+
+This section is the current disposition for task 2 of 3 on T4; sections below
+are historical. **Setup remains blocked; populated verification was not run.**
+The initially clean assigned branch is at
+`448500d3c7545176829a7977047c1d5a7146e2de`. A fresh anonymous GitHub REST
+`GET /repos/foxleigh81/foxyslab-website/pulls/79` returned HTTP 200 and an
+open draft at that same SHA. This verifies a public source identity only,
+not driver permissions, data provenance, independent approval or the later
+harness commit.
+
+The [round-12 handoff investigation](videos-handoff-generation-51-round-12.md)
+does not contain a terminal receipt for prerequisite `r20261022-448a2a74b146`.
+No such receipt, Studio inventory access, approved dataset or independent
+boundary assessment is supplied in this session. The current failure-evidence
+array is empty. No lookup or website defect has been reproduced.
+
+### Setup evidence and accountable continuation
+
+| Required boundary | Fresh local observation and missing evidence | Continuation owner |
+| --- | --- | --- |
+| Dataset provenance | `lib/youtube.ts` fetches live YouTube v3. `verifyVideos` has no saved-source input. No approved immutable dataset ID/digest, capture time, custodian or usage approval is available. Synthetic fixtures cannot establish production-shaped source provenance. | Marcus coordinates the data custodian's approval, coverage counts for search/playlists/pagination, thumbnail source and a source-bound build/runtime ingestion command. |
+| Valid build credentials | The candidate workflow references dedicated environment secrets; the verifier checks their presence. Neither observation proves validity or authorized release. No values were inspected or copied. | Marcus identifies the credential custodian and approved private capability-check receipt; Macklin independently reviews release before PR code receives credentials. |
+| Build and browser identities | The candidate checks an expected PR SHA and the verifier records Git HEAD, builds and serves on loopback. No private controller revision, runner identity, populated build ID or browser run ID is available. The sandbox network excludes API, thumbnail and Preview origins. | Marcus supplies the executable private route and its immutable controller identity; the driver resolves prerequisite state and revalidates the subject before dispatch. Tooling ownership remains unidentified. |
+| Retention location | Candidate summaries go to `.lighthouseci/videos/run-*/summary.json`, a GitHub artifact and the job summary, with requested artifact retention of 14 days. No approved private remote location, effective readership or log expiry is established. Ordinary Lighthouse uses `temporary-public-storage`. | Marcus supplies the storage/access/expiry receipt; Macklin reviews permitted retained fields and publication controls. |
+| Cleanup procedure | Browser screenshots/traces are off and the verifier's browser-stage `finally` removes raw reports. This does not establish cleanup of build caches, earlier failures or cancellation/runner termination. | The private runner owner must document cleanup of data, caches, scratch files, logs and artifacts on success/failure/cancellation, with expiry and deletion receipts. Owner identity remains missing. |
+| Independent boundary verdict | No Macklin verdict or approval reference binds the dataset, credentials, controller, retention and exact SHA. The named GitHub environment is not an independent approval receipt. | Macklin's independent assessment remains required before populated execution. This implementer cannot supply that verdict. |
+
+Sanitized references were requested in-session, without requesting secret
+values or private payloads. No external message, workflow dispatch, credentialed
+build or artifact publication was performed. These are setup dependencies,
+not an observed credential rejection or failed populated build. No missing-key
+CI result is substituted for acceptance evidence.
+
+Task criterion 1 is blocked on the approved populated source and private route.
+Criterion 2 remains incomplete: the table records candidate implementation and
+precise missing receipts, not established provenance, identities, retention or
+Macklin's verdict. Criterion 3 is addressed by recording the setup failure and
+coordination owners; the actual tooling, data and runner owners still require
+discovery outside this website checkout.
+
+### Local validation
+
+This revision changes documentation only. There is no executable behavior
+change for a meaningful automated red-green-refactor test; no red run, green
+repair or refactor rerun is claimed. Fresh local checks:
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: exit 0;
+  987 packages installed, with npm configuration/deprecation/install-script warnings.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0; 38 files passed, 346 tests passed and 1 skipped;
+  existing Vite configuration-loader compatibility warning.
+
+Production build, populated E2E and Lighthouse were not run because the source,
+private route and independent assessment remain unavailable. These local checks
+do not establish populated acceptance or verify the future PR head.
+
+Release readiness remains **no**. Approved populated build/browser verification,
+three mobile CLS values below 0.1 with paired LCP and thumbnail-priority
+observations, gallery behavior and hydration/footer evidence, independent
+exact-head assessment and the authorized post-deployment live API observation
+remain outstanding. No populated measurement or report link was generated.
+
 ## Task 2 recheck, revision round 10, 2026-10-22
 
 This section supersedes earlier dispositions below for this sandbox run. The
