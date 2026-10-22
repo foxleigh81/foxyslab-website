@@ -1,7 +1,7 @@
 # T4 task 2, revision 2: verification evidence
 
 Inspected on 2026-10-22 at local source HEAD
-`bbe961135c85d4734598c06e50e430c1a9780c2f`, with an initially clean tree on
+`aa7b8815f0ee5409d94e0570d9480a042939651d`, with an initially clean tree on
 `eng/71-d38d08-fix-videos-layout-shift-and-slow-first-t`. This matches the
 brief's previous checked head. The live PR head was not queried; these results
 do not verify the future harness commit. This record supersedes older task-2
@@ -22,6 +22,11 @@ sanitized production summary or measurement report links were generated. This
 is a blocked observation, not a verifier failure or a reproduced website defect.
 No website repair is supported by the available evidence.
 
+The ticket's recorded live baseline remains CLS 0.511 on all three mobile
+runs, paired with first-thumbnail LCP of 3.8, 4.3 and 11.8 seconds. These are
+historical 2026-10-12 readings, not measurements of this source SHA. No
+retrospective baseline run is needed.
+
 | Ticket criterion | Status | Evidence and remaining work |
 | --- | --- | --- |
 | Initial cards or reserved layout; footer stable through hydration | Blocked on approved saved data | The existing synthetic populated initial-layout regression passes (10 tests). It does not observe saved-data HTML or footer position through hydration on a production build. |
@@ -30,7 +35,7 @@ No website repair is supported by the available evidence.
 | Three mobile CLS values below 0.1, each paired with numeric LCP | Blocked | No Lighthouse runs or measurements collected. No LCP improvement is claimed. |
 | First-thumbnail priority hint | Blocked for emitted production HTML | Source inspection finds `priority={index === 0}` in the gallery and `fetchPriority` in the card. This is not inspection of the emitted hint on the required build. |
 | Focused regression, lint, type-check, unit/E2E tests and valid-credential build | Local results below; populated portion blocked | Synthetic regression and local checks cannot establish a valid-credential saved-data build. |
-| Live API integration after deployment | Blocked | No authorized Production revision or post-deployment observation is supplied. |
+| Live API integration after deployment | Deferred post-deployment obligation | Eligible only after an independently authorized Production revision containing the change is identified. Its absence is not a pre-release readiness blocker. |
 
 ## Local checks
 
@@ -66,3 +71,11 @@ the then-live SHA and rerun affected checks after a head change. Any reproduced
 website behavior failure needs a separately scoped test-first repair by Thomas.
 Ashley's and Macklin's independent review blocks remain unresolved. Dispatcher
 research belongs outside this website checkout. Release readiness remains no.
+
+The prerequisite task is the only actionable stage until its receipts are
+validated. Populated verification depends on those receipts; a repair depends
+on a reproduced website defect and requires verification of the changed head.
+The post-deployment check depends separately on an authorized Production
+revision. These are continuation requirements, not a claim that this checkout
+changes or enforces the external scheduler's persisted plan or selection trace.
+No scheduler interface or validated setup receipts were supplied for this run.
