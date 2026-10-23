@@ -1,6 +1,6 @@
-# PR #79 populated-verification admission, revision 7
+# PR #79 populated-verification admission, revision 9
 
-Inspected 2026-10-23 at 03:23 UTC. Disposition: **BLOCKED; not admitted**. This is the
+Inspected 2026-10-23 at 04:35 UTC. Disposition: **BLOCKED; not admitted**. This is the
 current admission record for the supplied task, superseding the subject binding
 in `videos-t4-controls-round-4.md`; historical observations remain historical.
 No approved source or independent clearance is inferred from passing CI.
@@ -8,10 +8,17 @@ No approved source or independent clearance is inferred from passing CI.
 ## Exact subject and fresh observations
 
 Local HEAD and a fresh unauthenticated GitHub `GET /pulls/79` both identify
-`10390917958aacbdbd0f6afa89d90b2cacbbcf59`; the API returned 200, open and draft.
+`0f92321d6eb7acbe78837c163b4d88656a1c1fc3`; the API returned 200, open and draft,
+with base `main` and the expected head branch.
 The checked-out branch is
 `eng/71-d38d08-fix-videos-layout-shift-and-slow-first-t`, initially clean.
 These observations do not verify the later harness commit.
+
+The supplied successful-run head
+`1d8aa8843623cb73ab926d761f7677b24c19a0e0` differs from this live PR head.
+The mismatch is confirmed, but its cause and the run's actual subject remain
+unresolved: no authoritative run/operation receipt is available in this session.
+Do not associate that run's success with this PR head.
 
 Fresh unauthenticated metadata reads also returned:
 
@@ -48,8 +55,9 @@ evidence that Marcus or Macklin has received or accepted it.
 
 ## Next task boundary
 
-The caller retains revalidation of ready-for-dev provenance, generation 66 and
-terminal state of `r20261023-5197c446491c`; those control-plane receipts are not
+The caller retains revalidation of ready-for-dev provenance, generation 67 and
+terminal state of `r20261023-c267f619cac5`, unresolved operation status and caller
+permissions; those control-plane receipts are not
 available here. The supplied empty current-head failure list provides no
 reproduced website defect requiring a speculative code change.
 
@@ -61,6 +69,25 @@ record neither changes dispatch eligibility nor proves an external hold. Chris
 and Natalya's proposed boundary change requires an external owner receipt;
 Marcus's admission and Macklin's independent clearance remain separate missing
 receipts. No external assignment or contact is claimed.
+
+The precise missing route is an authorized Studio control-plane interface that
+can expose the raw rejected response, validator detail, persisted task
+eligibility and actual dispatch predicate, and record a routing test. None is
+exposed by this session's tools. Repository workflow inspection cannot identify
+the rejected schema field or test that external predicate. Dennis's diagnosis,
+Marcus's dispatch-boundary test and admission, and the post-deployment API check
+remain external dependencies, not executable website work. This record does
+not create a scheduler hold, dispatch another revision or resolve the operation.
+
+Credential-free inspection confirms only the candidate wiring: the workflow
+checks out `expected_sha`, compares both local and live heads before invoking
+the verifier, and the verifier builds then serves the local build for browser
+and Lighthouse checks. It does not establish an executed common-head target or
+bind an approved saved-data digest. The retained summary path and 14-day request
+are visible in YAML; effective private access, output approval, expiry and
+cleanup are not established. Admission acceptance criteria 1 and 2 remain
+blocked; criterion 3's local non-dispatching blocker record is provided here,
+without claiming an external scheduling exclusion.
 
 After admission, measurement must bind every result to the same head, build and
 source digest: initial cards/reserved space and hydration/footer stability;
@@ -87,7 +114,7 @@ merge or independent review verdict is claimed.
 
 Documentation only: no executable behavior changed, so a new automated
 red/green/refactor behavior test is not meaningful. No red run or refactor is
-claimed. Fresh revision 7 local checks:
+claimed. Fresh revision 9 local checks:
 
 - `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: exit 0;
   987 packages installed, with npm configuration/deprecation/install-script
