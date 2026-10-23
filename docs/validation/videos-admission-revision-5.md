@@ -1,6 +1,6 @@
-# PR #79 populated-verification admission, revision 5
+# PR #79 populated-verification admission, revision 7
 
-Inspected 2026-10-23. Disposition: **BLOCKED; not admitted**. This is the
+Inspected 2026-10-23 at 03:23 UTC. Disposition: **BLOCKED; not admitted**. This is the
 current admission record for the supplied task, superseding the subject binding
 in `videos-t4-controls-round-4.md`; historical observations remain historical.
 No approved source or independent clearance is inferred from passing CI.
@@ -8,7 +8,7 @@ No approved source or independent clearance is inferred from passing CI.
 ## Exact subject and fresh observations
 
 Local HEAD and a fresh unauthenticated GitHub `GET /pulls/79` both identify
-`c0ac87935f6d0b730b48fe6e56fbe7e49e52d534`; the API returned 200, open and draft.
+`10390917958aacbdbd0f6afa89d90b2cacbbcf59`; the API returned 200, open and draft.
 The checked-out branch is
 `eng/71-d38d08-fix-videos-layout-shift-and-slow-first-t`, initially clean.
 These observations do not verify the later harness commit.
@@ -48,10 +48,19 @@ evidence that Marcus or Macklin has received or accepted it.
 
 ## Next task boundary
 
-The caller retains revalidation of ready-for-dev provenance, generation 65 and
-terminal state of `r20261023-2c8c05d70d46`; those control-plane receipts are not
+The caller retains revalidation of ready-for-dev provenance, generation 66 and
+terminal state of `r20261023-5197c446491c`; those control-plane receipts are not
 available here. The supplied empty current-head failure list provides no
 reproduced website defect requiring a speculative code change.
+
+The admission gate and post-deployment check belong outside the website runner.
+This session exposes no authorized Studio control-plane route or scheduler
+implementation. The actual dispatch predicate, its revision, and a routing test
+showing neither task launches a website runner remain **unresolved**. This local
+record neither changes dispatch eligibility nor proves an external hold. Chris
+and Natalya's proposed boundary change requires an external owner receipt;
+Marcus's admission and Macklin's independent clearance remain separate missing
+receipts. No external assignment or contact is claimed.
 
 After admission, measurement must bind every result to the same head, build and
 source digest: initial cards/reserved space and hydration/footer stability;
@@ -62,6 +71,13 @@ checks and production build. Those production observations remain blocked,
 and no network-dependent LCP improvement is claimed. Retain report links only
 through the approved private route.
 
+Use the recorded 2026-10-12 live Lighthouse baseline (CLS 0.511 on all three
+runs; LCP 3.8, 4.3 and 11.8 seconds). No reconstructed baseline is claimed.
+General CI success is not admission evidence or a reason for another website
+revision or independent rereview. Ashley's and Macklin's outstanding blocks
+remain unresolved; only new verification evidence or a changed head supplies
+a new review subject.
+
 Live API integration remains **pending after deployment**, triggered by an
 authorized deployment with an identified Production revision and visible
 `/videos` outcome. It is not a pre-release website-runner dispatch. No deployment,
@@ -71,7 +87,7 @@ merge or independent review verdict is claimed.
 
 Documentation only: no executable behavior changed, so a new automated
 red/green/refactor behavior test is not meaningful. No red run or refactor is
-claimed. Fresh local checks:
+claimed. Fresh revision 7 local checks:
 
 - `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: exit 0;
   987 packages installed, with npm configuration/deprecation/install-script
