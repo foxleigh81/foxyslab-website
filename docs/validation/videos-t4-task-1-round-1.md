@@ -1,5 +1,77 @@
 # T4 task 1, round 1: populated verification disposition
 
+## Admission record, revision round 3, 2026-10-23
+
+This section supersedes the historical admission observations below. Admission
+is **blocked**. The initially clean assigned checkout and a fresh anonymous
+GitHub `GET /repos/foxleigh81/foxyslab-website/pulls/79` (HTTP 200, open draft)
+both identify `0ab76208c393ef079891a0e544c0334838c0440a`. This is the inspected
+head, not the eventual harness commit. The supplied current-head failure
+evidence is empty; it does not establish a website defect.
+
+### Required evidence and disposition
+
+| Admission field | Evidence available in this revision | Missing prerequisite / required receipt |
+| --- | --- | --- |
+| Authorized saved-video source and digest | No approved snapshot or source-owner receipt supplied. Existing unit fixtures are synthetic. | Marcus needs an owner-authorized private immutable source reference, capture time, SHA-256 of the exact input bytes and approval reference. Source digest: **unavailable**, not the lockfile digest below. |
+| Populated and pagination-capable inputs | Not verified against an authorized source. | Privately verify the digest, schema and count after application eligibility filters; require more than 12 eligible videos, a matching populated playlist, and expected search, direct-playlist and pagination inputs. Record aggregate coverage and outcomes without titles, IDs, payloads or private URLs. |
+| Build consumes those inputs | `lib/youtube.ts` fetches live YouTube responses; `scripts/lib/verify-videos.mjs` has no saved-snapshot input or digest binding. | Approved ingestion route proving both production build and runtime consume the same digest-bound snapshot. Live API responses and fixture tests do not establish saved-data acceptance. |
+| Exact-head build and browser target | Existing verifier runs `npm run build`, serves that build with loopback `next start`, then production browser checks and three mobile Lighthouse runs. This is a candidate procedure only. | Production-equivalent runner/configuration, immutable source SHA, dependency/runtime identity, build ID, dataset digest and browser target recorded together. No build ID or approved browser URL is available here. |
+| Credential boundary | No credentials retrieved or credentialed command started. Existing verifier passes application credentials to build/server processes. | Independently cleared external credential-release boundary before any PR-controlled install/build/runtime execution receives credentials; issuer/scope, permitted caller and immutable controller revision recorded without values. Browser processes must not inherit data credentials. |
+| Private artifact destination and retention | No approved private location, readers or effective expiry receipt supplied. A workflow's requested 14 days is configuration intent only. | Actual restricted destination, reader list, enforced expiry and owner receipt covering artifacts, logs and job summaries. PR-generated summaries require independent minimization before retention/publication. |
+| Cleanup | No private input or credentialed report created in this revision. | Operator-owned cleanup on success, failure and cancellation: stop processes, destroy isolated runner inputs, rendered output, build/browser caches and raw reports; expire retained evidence and record deletion receipts. Verifier `finally` cleanup alone is insufficient proof. |
+| Macklin's independent disposition | **Clearance unavailable** for this head, source and route. No new decision receipt supplied. | Independent dated assessment bound to the exact SHA, source digest, controller and effective credential/artifact controls before release. This record neither grants approval nor attributes a new rejection to Macklin. |
+
+The authorized control-plane dispatch route is not established in this session.
+The specific missing record is an operator-approved controller identity and
+immutable revision, permitted caller/invocation, and receipt for the current
+ready-for-dev provenance, plan generation 64 and terminal operation state.
+The supplied run `r20261023-46aa8907b034` is historical context, not a freshly
+retrieved Studio state receipt. No dispatch research, external state change or
+controller-defect claim is part of this website revision. No owner was contacted.
+
+### Admission decision and subsequent verification
+
+Task criterion 1 remains incomplete on the missing source, build, private-store
+and independent-disposition receipts. Criterion 2 is enforced in this session:
+missing prerequisites are named and no credentialed run begins. Criterion 3
+remains blocked: no authorized input is available to inspect for populated and
+pagination-capable properties. An invented digest or synthetic count would not
+resolve it.
+
+After those receipts exist, an authorized operator must revalidate the live
+harness-created head and bind every result to that SHA, build ID and input
+digest. Record each website criterion as observed, failed or blocked: initial
+cards/reserved layout and footer through hydration; three measured mobile
+CLS/LCP pairs with each CLS below 0.1; emitted first-thumbnail priority and its
+observed effect; search, playlists, pagination, direct URLs and distinct
+empty/error behavior; approved-data regression, build and browser results.
+Keep raw evidence private and publish only approved minimized outcomes and
+report references. All those populated results remain blocked here; no LCP
+improvement or later-head verification is claimed. Deployed live API observation
+still needs an authorized Production revision. Dennis's supplied CHANGES
+disposition is not superseded; Ashley and Macklin retain independent authority.
+
+### Local checks
+
+Documentation only: no executable behavior changed, so there is no meaningful
+automated red-green-refactor test, production fix or refactor. No red run is
+claimed. Local runtime: Node `v24.21.0`, npm `11.19.0`; package-lock SHA-256
+`a612c7f7ab3d3cd3040f266ef8e51ef56aa5a26f648263bb3c0f0b8866432dfb`
+identifies dependencies only. Fresh local checks:
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: exit 0,
+  987 packages installed; npm configuration, deprecation and install-script warnings.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0; 38 files passed, 348 tests passed, 1 skipped. Vite
+  emitted its configuration-loader compatibility warning.
+- `git diff --check`: exit 0.
+
+Production build, populated browser and Lighthouse execution
+remain gated by the missing admission evidence and application-origin network
+access. Release readiness remains **no**.
+
 ## Current task 1 reconciliation, 2026-10-23
 
 This section supersedes earlier admission observations below. The assigned
