@@ -1,5 +1,70 @@
 # T4 task 1, round 1: populated verification disposition
 
+## Task 1 revision round 2, plan generation 71, 2026-10-23
+
+This section supersedes the historical setup observations below for this
+revision. **Populated verification is blocked.** The initially clean assigned
+branch and a fresh anonymous GitHub `GET /repos/foxleigh81/foxyslab-website/pulls/79`
+(HTTP 200, open draft) both identify
+`fe36f40af79bfadc196e57b3cc7b55da2ddf98cb`. This revalidates the inspected source
+head only; the harness-created revision still needs independent verification.
+The supplied current-head failure evidence is empty and establishes no website
+defect requiring a repair.
+
+### Setup and acceptance disposition
+
+| Task criterion | Current evidence and specific unmet condition |
+| --- | --- |
+| 1. Head, private target, approved provenance and visible pagination | Head revalidated above. Private target and build ID: unavailable. No approved saved-data source, capture time, approval reference or SHA-256 supplied. Eligible video count and visible pagination: unobserved. The gallery uses 12 cards per page, so approved data must contain more than 12 eligible videos plus the required playlist/search coverage. Synthetic fixtures are not source provenance. Criterion remains blocked. |
+| 2. Valid-credential production build and browser target, or explicit setup block | Block recorded: no independent approval of the exact head's credential route, approved saved-data ingestion route, or authorized private runner supplied. The sandbox network excludes the application API/image origins. No credentialed build or browser target was started. |
+| 3. Exclude credentials and sensitive browser artifacts | This revision retains only this sanitized record. No credential values, private data, rendered pages, browser captures or raw reports were retrieved or generated. Effective private readership, expiry and cleanup controls for a future run remain unverified. No remote containment result is claimed. |
+
+The existing `scripts/lib/verify-videos.mjs` runs the production build, starts
+that build on loopback, invokes `playwright.videos-production.config.ts`, and
+collects three mobile Lighthouse runs. Browser children receive no application
+data credentials; the browser configuration disables traces and screenshots.
+However, the verifier has no saved-snapshot input or digest binding, and
+`lib/youtube.ts` fetches live YouTube responses. An approved route binding both
+build and runtime to the saved source is still needed. No verifier invocation
+here could establish the requested saved-data provenance from supplied inputs.
+
+No current driver-admission receipt was supplied for plan generation 71,
+ready-for-dev provenance, terminal operation `r20261023-f29fda78550c`, permissions
+and dispatch selection. The Task 2 validator diagnostic and accepted schema
+remain external planning work; this website revision does not infer their state
+or implement a substitute controller. Existing historical documents are not new
+admission or credential approvals. No workflow was dispatched or owner contacted.
+
+To unblock setup, the authorized operator needs the admission receipt, approved
+immutable data reference/digest and aggregate coverage, an ingestion route,
+independent exact-head credential approval, and private target/report storage
+with effective reader, retention and cleanup controls. Record the resulting
+head, build ID, data digest and private report references together. The next
+task must still observe initial cards/footer stability, browser interactions,
+three CLS/LCP pairs and thumbnail priority. No SSO page, missing-key CI result,
+synthetic fixture or historical live measurement is counted as a populated pass.
+Live API integration after deployment remains a separate authorized Production
+check. Release readiness remains **no**.
+
+### Local validation
+
+Documentation only: no executable behavior changed, so there is no meaningful
+automated red-green-refactor test or production refactor. No red run is claimed.
+Fresh local checks:
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: exit 0,
+  987 packages installed; configuration, deprecation and install-script warnings.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0, 38 files passed, 348 tests passed and 1 skipped;
+  Vite configuration-loader compatibility warning.
+
+Runtime: Node `v24.21.0`, npm `11.19.0`. Package-lock SHA-256:
+`a612c7f7ab3d3cd3040f266ef8e51ef56aa5a26f648263bb3c0f0b8866432dfb`
+(dependency identity only, not a saved-data digest). Production build,
+populated E2E and Lighthouse were not run because the setup conditions above
+remain unmet. Local checks do not verify the later PR head.
+
 ## Admission record, revision round 3, 2026-10-23
 
 This section supersedes the historical admission observations below. Admission
