@@ -1,5 +1,115 @@
 # T4 task 1, round 1: populated verification disposition
 
+## Current task 1 reconciliation, 2026-10-23
+
+This section supersedes earlier admission observations below. The assigned
+branch was clean at inspection. Local HEAD and a fresh unauthenticated GitHub
+`GET /repos/foxleigh81/foxyslab-website/pulls/79` (HTTP 200, open draft) both
+identify `8f621246ffda7bfd6da202a3b8ab226039f93186`. This is the inspected
+source revision, not the subsequent harness commit. No application, CI,
+deployment or credential-handling code was changed.
+
+### Existing exact-head evidence
+
+Fresh anonymous GitHub reads returned HTTP 200 for the head-filtered Actions
+runs, run jobs, run artifacts, head-filtered deployments and Preview statuses:
+
+- [CI run 39875715588](https://github.com/foxleigh81/foxyslab-website/actions/runs/39875715588)
+  is the only returned run for this head; it is completed with conclusion
+  `success`. Its jobs are Build & Lighthouse (`120160697262`), Lint, Type
+  Check & Unit Tests (`120160697559`), and E2E Tests (`120160697566`), all
+  reported successful. These reconcile the supplied job identifiers to a run.
+- `GET /actions/runs/39875715588/artifacts?per_page=100` returned
+  `total_count: 0`. There is no retained artifact from this run to inspect or
+  reuse as populated-data or performance evidence. No raw logs or archives
+  were downloaded. Job names and conclusions do not establish data inputs.
+- Preview deployment `7266740957` is bound to the same SHA, created at
+  `2026-10-23T00:05:14Z`; status `20328848066` reports `success` at
+  `2026-10-23T00:05:16Z`. This confirms a deployment identity only, not
+  a build/data binding or an observed populated page.
+- `GET /actions/permissions/artifact-and-log-retention` returned HTTP 401.
+  Effective retention and private access could not be inspected anonymously.
+
+These records provide no approved saved-data digest, three mobile measurements,
+or independent credential clearance. Historical evidence for other heads is
+not promoted to this head. No existing populated verification was rerun.
+
+### Prerequisite disposition
+
+| Required field | Observation / missing condition |
+| --- | --- |
+| Approved production-shaped saved source and SHA-256 | Blocked: no owner-approved immutable snapshot, approval receipt, capture time or digest supplied. `test/fixtures/youtube.ts` contains synthetic mocks, not an approved source. |
+| Build and checks consume that source | Blocked: `app/videos/page.tsx` calls live YouTube producers in `lib/youtube.ts`; `scripts/lib/verify-videos.mjs` passes credentials to build/server but has no saved-snapshot input or digest binding. A live response or synthetic fixture cannot establish this criterion. |
+| Production-equivalent build identity | Preview identity observed above; `.next/BUILD_ID`, input digest and a retained build manifest are unavailable. No populated build ran locally. |
+| Private artifact location and retention limit | Blocked: no approved private store/readers or effective expiry receipt. Candidate workflow uploads `.lighthouseci/videos/run-*/summary.json` and requests 14 days, and copies summaries to job output. Configuration does not establish effective privacy or retention for artifacts, logs and summaries. |
+| Cleanup result | No private dataset, credentialed build or raw verification report was created/downloaded in this task, so no such local cleanup was needed. Remote cleanup is unverified; zero current-run artifacts does not prove deletion of historical artifacts. |
+| Macklin's clearance | Blocked: no independent approval receipt for this exact head and credentialed execution boundary supplied or available through this session's tools. No credentialed check was attempted. This is missing clearance, not an attributed rejection. |
+
+Marcus needs the source-owner approval, immutable private snapshot reference,
+SHA-256 and capture time, plus aggregate coverage sufficient for pagination
+(more than 12 eligible videos), playlist membership and representative
+thumbnails. The approved execution route must demonstrate that both build and
+request-time rendering consume that snapshot; the current live-fetch verifier
+alone cannot do so. Macklin's independent clearance must precede credential
+release to any PR-controlled install/build/runtime code. No approval was
+requested through an external message, and none is implied by this record.
+
+### Reproduction boundary and artifact lifecycle
+
+The existing local procedure is `npm ci`, `npm run lint`,
+`npm run type-check`, `npm test`, then `npm run verify:videos` on the
+reviewed exact SHA. The last command runs the normal production build, starts
+that build, runs production browser checks and records three mobile Lighthouse
+runs. It is **not yet a reproducible approved saved-data procedure** because
+the source and ingestion binding above are missing. Do not substitute a
+missing-key build or fixture-only run for that evidence.
+
+For a future admitted run, record the live PR SHA and clean source state,
+Node/npm versions, lockfile digest, approved dataset digest, feature-flag
+configuration (without values), `.next/BUILD_ID`, controller/run identity and
+private report reference together. Reject a head or digest mismatch before
+using credentials; revalidate the harness-created head independently. This
+inspection used Node `v24.21.0`, npm `11.19.0`; the package-lock SHA-256 is
+`a612c7f7ab3d3cd3040f266ef8e51ef56aa5a26f648263bb3c0f0b8866432dfb`.
+That hash identifies dependencies, not video data.
+
+Before execution, the authorized operator must establish a private destination,
+permitted readers and an enforced expiry (candidate limit: 14 days), including
+logs and job summaries. Retain only approved sanitized metadata and private
+report links. On success, failure or cancellation, stop server/browser
+processes and remove the snapshot, raw reports, `.next` and data-bearing
+caches from the isolated runner; record cleanup and expiry/deletion receipts.
+The verifier's `finally` removes raw run-directory files except `summary.json`;
+it does not establish runner-wide cleanup or cancellation recovery. This
+lifecycle is a pending operational requirement, not an observed control.
+
+### Local validation and remaining work
+
+This is a documentation-only reconciliation: there is no changed executable
+behavior for a meaningful automated red-green-refactor test. No red run,
+production fix or refactor is claimed. Fresh local checks:
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: exit 0;
+  987 packages installed, with npm configuration, deprecation and install-script
+  warnings.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0; 38 files passed, 348 tests passed, 1 skipped. Vite
+  reported its configuration-loader compatibility warning.
+- `git diff --check`: exit 0.
+
+Production build, populated browser and Lighthouse checks were not run: the
+approved input, ingestion binding and independent clearance remain missing,
+and the sandbox network excludes application data/image origins. Required
+local checks do not replace those observations.
+
+All three task criteria remain blocked on the prerequisites in the table.
+Populated initial layout/hydration, three CLS/LCP pairs with each CLS below
+0.1, emitted thumbnail priority, populated interactions, approved-data
+regression/build/E2E, and deployed live API verification remain outstanding.
+No network-dependent LCP improvement or later PR-head verification is claimed.
+Release readiness remains **no**.
+
 ## Admission recheck, revision round 4, 2026-10-22
 
 This section supersedes the older admission dispositions below. **Admission
