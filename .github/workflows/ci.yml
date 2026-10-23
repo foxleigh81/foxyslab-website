@@ -89,9 +89,28 @@ jobs:
 
       - run: npm run test:lighthouse
 
-      - uses: actions/upload-artifact@v4
+      - name: Extract numeric Lighthouse measurements
+        if: always()
+        run: node scripts/ci-lighthouse-summary.mjs
+
+      - name: Retain numeric Lighthouse measurements
+        id: reports
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: lighthouse-results
-          path: .lighthouseci/
+          path: .lighthouseci/ci/summary.json
+          include-hidden-files: true
+          if-no-files-found: warn
           retention-days: 14
+
+      - name: Link Lighthouse measurements
+        if: always()
+        env:
+          REPORT_URL: ${{ steps.reports.outputs.artifact-url }}
+        run: |
+          if [ -n "$REPORT_URL" ]; then
+            echo "[Numeric Lighthouse measurements]($REPORT_URL)" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No Lighthouse measurements produced; no artifact retained." >> "$GITHUB_STEP_SUMMARY"
+          fi

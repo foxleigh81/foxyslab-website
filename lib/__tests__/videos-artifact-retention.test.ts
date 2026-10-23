@@ -24,6 +24,46 @@ it.each([
   ).toEqual([]);
 });
 
+it("retains only the ordinary CI numeric Lighthouse summary from the hidden directory", () => {
+  const workflow = parse(readFileSync(".github/workflows/ci.yml", "utf8"));
+  const uploads = workflow.jobs["build-and-lighthouse"].steps.filter(
+    (step: { uses?: string }) =>
+      step.uses?.startsWith("actions/upload-artifact@")
+  );
+  expect(uploads).toHaveLength(1);
+  const upload = uploads[0];
+  expect(upload.with["include-hidden-files"]).toBe(true);
+  expect(upload.with.path).toBe(".lighthouseci/ci/summary.json");
+  expect(upload.with["if-no-files-found"]).toBe("warn");
+
+  const root = mkdtempSync(path.join(process.cwd(), ".ci-lighthouse-test-"));
+  try {
+    const files = {
+      ".lighthouseci/ci/summary.json": '{"runs":[{"cls":0.03,"lcpMs":2100}]}',
+      ".lighthouseci/lhr-1.json": "credential-bearing-report",
+      ".lighthouseci/lhr-1.html": "credential-bearing-report",
+      ".lighthouseci/manifest.json": "credential-bearing-manifest",
+    };
+    for (const [file, content] of Object.entries(files)) {
+      const target = path.join(root, file);
+      mkdirSync(path.dirname(target), { recursive: true });
+      writeFileSync(target, content);
+    }
+    expect(glob.sync(upload.with.path, { cwd: root, dot: true })).toEqual([
+      ".lighthouseci/ci/summary.json",
+    ]);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+it("runs ordinary Lighthouse without publishing raw reports", () => {
+  const scripts = JSON.parse(readFileSync("package.json", "utf8")).scripts;
+  const config = readFileSync("lighthouserc.js", "utf8");
+  expect(scripts["test:lighthouse"]).toBe("lhci collect && lhci assert");
+  expect(config).not.toContain("temporary-public-storage");
+});
+
 it.each([true, false])(
   "uploads only numeric summaries, including on failure (summary exists: %s)",
   (hasSummary) => {
