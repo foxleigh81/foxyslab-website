@@ -1,5 +1,50 @@
 # T4 task 2: prerequisite receipt register
 
+## Revision 24: saved-data input remains blocked
+
+Inspected 2026-10-24 at initially clean local source head
+`748c50da4bce68614c5a095f2aab8ea07350ef06` on the assigned branch.
+This matches the supplied previous checked head; it does not verify the live
+PR head or the future harness commit.
+
+The task makes the saved-data input implementation conditional on the data
+owner supplying an approved immutable digest and coverage manifest. Neither
+was supplied in this revision. The current exact-head failure evidence is
+empty. The task-1 revision-23 record also leaves the approved input and private
+execution controls unresolved; it contains artifact metadata, not an approved
+saved-video dataset digest.
+
+Fresh inspection confirms `scripts/lib/verify-videos.mjs` has no saved-data
+input or digest binding, and `lib/youtube.ts` still fetches live YouTube data.
+The implementation remains outstanding. No synthetic source or live response
+is designated as approved saved data. No payloads or credentials were obtained.
+
+Marcus needs the data owner's approved immutable source reference, SHA-256
+digest and coverage manifest, including video count, playlist membership,
+more-than-one-page coverage and thumbnail availability. With that prerequisite,
+task 2 can implement and test missing/mismatched-digest rejection before
+measurement and bind build/runtime to the same saved bytes. Private input and
+temporary-output containment on success, failure and cancellation must also be
+verified. The existing live application path must remain unchanged.
+
+This revision updates this record only. No executable behavior changed, so
+there is no meaningful automated red/green/refactor cycle; no red run or
+refactor is claimed. Fresh local checks:
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: exit 0;
+  987 packages installed, with configuration, deprecation and install-script warnings.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0; 39 files passed, 353 tests passed and 1 skipped;
+  Vite emitted its configuration-loader compatibility warning.
+- `git diff --check`: exit 0.
+
+Populated build/browser/Lighthouse checks remain blocked, and the separate
+lead-owned post-deployment live API gate remains pending. No release readiness,
+independent approval, external hold or owner acceptance is claimed.
+
+## Historical revision 21
+
 Inspected 2026-10-24, revision round 21, at local source head
 `e8c8c0f99639342520efb29d2402d0d08b173486` on the assigned branch.
 The working tree was initially clean. The live PR head and future harness
