@@ -1,5 +1,63 @@
 # T4 task 2: prerequisite receipt register
 
+## Revision 30: T4 task 1 setup receipt
+
+Inspected 2026-10-24 at 05:15 UTC on the assigned branch, with an initially
+clean working tree. Anonymous GitHub
+`GET /repos/foxleigh81/foxyslab-website/pulls/79` succeeded and returned an
+open draft PR with head `15b6c1e460dba7cdc70a0f4643d44ce73dbed57b`, matching
+local `git rev-parse HEAD` and the supplied previous checked head. This
+revalidates the source at inspection time; it does not approve the future
+harness commit or establish the delivery driver's selected subject.
+
+**Admission: BLOCKED. No credentialed build, browser or Lighthouse check was
+started. This record is a blocker receipt, not an approval.**
+
+| Prerequisite | Observed status and responsible owner | Checks blocked |
+| --- | --- | --- |
+| Run-state reconciliation | Chris must account for terminal run `r20261024-45b5caa28748` and any unresolved operation. Marcus must supply selected-head/CI/Preview attribution from the driver's owning workflow; neither receipt was supplied. | Dispatch and attribution of prior results. |
+| Approved populated saved-video dataset | No immutable source reference, SHA-256, custodian approval or coverage manifest supplied. Marcus must obtain these from the data custodian, covering playlists, search, multiple pages and thumbnails. | Populated build, initial-layout regression, browser interactions and three mobile measurements. |
+| Valid build-time credential source | No approved source identifier, validity attestation or independent approval to release credentials to this exact head supplied. Marcus must obtain these from the credential custodian and authorized build operator. No values retrieved or copied. | Credentialed build and live integration. |
+| Private execution and retention | No approved controller/runner identity, authorized readers, private storage, expiry or cleanup evidence for success/failure/cancellation supplied. Marcus must obtain the runner owner's receipt. | Private dataset execution and retention of browser/Lighthouse outputs. |
+| Independent security disposition | Macklin's decision bound to this head, dataset digest and execution/credential/retention boundary was not supplied. | Admission to all subsequent credentialed verification. |
+| Saved-input binding | Inspection of `scripts/lib/verify-videos.mjs` and `lib/youtube.ts` confirms the verifier builds against live fetches and has no approved saved-input digest binding. Marcus must assign implementation once the data contract is available. | Demonstrating that build and browser checks use the same approved saved bytes. |
+
+The existing `npm run verify:videos` path builds, serves the production app,
+then invokes `playwright.videos-production.config.ts` and Lighthouse. It
+rejects missing credentials and `ALLOW_MISSING_API_KEYS=true`, but its
+`credentials: present` summary does not attest validity or approval. Synthetic
+state fixtures do not supply the missing approved dataset. No empty-data build
+was substituted. No CI, deployment or credential-handling changes were made.
+
+Before dispatch, Marcus must assemble the owner receipts, revalidate the live
+head again, and obtain Macklin's acceptable independent disposition. A changed
+head requires renewed exact-head approval before credential release. This
+document does not enforce an external dispatch hold or claim owner acceptance.
+
+After admission, Thomas's bounded verification output must identify the head
+and dataset digest for each observed, failed or blocked result: initial HTML
+and footer positions before/after hydration; focused populated-layout
+regression; search; playlist filtering; forward/back pagination; direct playlist
+URLs; and distinct empty/error states. An observed failure requires a focused
+red check before repair. A separate measurement receipt must record three
+individual mobile CLS/LCP pairs, CLS below 0.1 in each run, and the emitted
+first-thumbnail priority hint. Build and browser report references must come
+from the approved private execution route. No new measurements or report links
+exist in this revision. Ashley's independent review and the live API check
+after authorized Production deployment remain separate outstanding gates.
+
+This is documentation only, with no executable behavior change and no meaningful
+automated red/green/refactor target. No red run, production repair or refactor
+is claimed. Fresh local configured checks:
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: exit 0;
+  987 packages installed, with configuration, deprecation and install-script warnings.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0; 39 files passed, 353 tests passed and 1 skipped;
+  Vite emitted its configuration-loader compatibility warning.
+- `git diff --check`: exit 0.
+
 ## Revision 28: T4 task 1 admission
 
 Inspected 2026-10-24 at initially clean local source head
