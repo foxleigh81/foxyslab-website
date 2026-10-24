@@ -1,5 +1,63 @@
 # T4 task 2: prerequisite receipt register
 
+## Revision 49: task 4 independent admission intake
+
+Inspected 2026-10-24 for task 4 of 6, round 1 on T4.
+**Classification: Engineering research. Admission remains blocked.** This
+entry records the specific outstanding limitation permitted by the task; it
+does not record a decision by Macklin or substitute Marcus's approval.
+
+### Subject available for independent review
+
+The initially clean assigned branch and anonymous GitHub
+`GET /repos/foxleigh81/foxyslab-website/pulls/79` agree on head
+`eb4c8af1b36bffce869a69826e8c1cef0b30d22c`. The API returned HTTP 200 and
+an open draft PR on `eng/71-d38d08-fix-videos-layout-shift-and-slow-first-t`.
+This revalidates the PR/local match at inspection time only. It does not
+reconcile the owning operation or approve the later harness commit.
+
+| Admission subject | Evidence and outstanding limitation |
+| --- | --- |
+| Selected operation and head | Chris's [identity receipt](videos-identity-reconciliation-round-46.md) leaves generation 98 run `r20261024-14eb53d331be`, the other unnamed generation-98 run and unresolved-operation state unreconciled. A fresh PR/local match does not resolve that limitation. No owning-workflow lookup interface or receipt is supplied here. |
+| Approved populated saved-data digest | The revision-47 input inspection below contains no custodian-approved immutable source, SHA-256 or coverage manifest. No such receipt was supplied in this revision. Synthetic fixture or artifact archive hashes cannot fill this field. Marcus must obtain the approved source receipt. |
+| Private execution boundary | Revision 47 identifies candidate workflow/verifier code, but no attested controller revision, private runner, credential validity/release controls, authorized readers, retention or cleanup boundary. Marcus must obtain the effective-control receipt, including cleanup after success, failure and cancellation. Source configuration is not that attestation. |
+| Retained evidence and inspector | The [task-3 inspection](videos-t3-task-3-round-48.md) records the unavailable separately authorized inspector interface and schema. No retained summary contents were observed there; its limitation remains open. |
+| Independent disposition | No Macklin-authored disposition binding this head, approved digest and private boundary was supplied or found in these intake records. No callable Macklin/Studio review-routing interface is available in this session. The subject is therefore incomplete and has not been presented to Macklin here; no delivery, acceptance, approval or rejection by him is claimed. |
+
+### Required independent receipt
+
+Chris/Marcus must reconcile the owning operation and assemble the missing
+approved digest and execution-boundary references, then present that concrete
+subject through Macklin's authorized review route. His receipt must identify
+reviewer, timestamp, decision reference, exact PR SHA, approved dataset digest,
+controller revision and credential/execution/retention scope, with an explicit
+disposition and any unresolved conditions. Revalidate the then-live head before
+presentation; this document will itself produce a later harness head. A changed
+subject needs a corresponding independent assessment before credential release.
+
+No credentialed build, browser or Lighthouse verification ran or was dispatched
+in this revision. No second owning-workflow operation was started. This record
+does not change an external scheduler's state. Missing admission keeps populated
+verification nondispatchable; local checks cannot establish admission or replace
+Macklin's decision. Populated layout/interaction/build results, three mobile
+CLS/LCP pairs, thumbnail priority and the separately authorized Production live
+API check remain outstanding. No measurement or report link is invented.
+
+This is documentation-only research, with no executable behavior change and no
+meaningful automated red/green/refactor test. No red run or refactor is claimed.
+Fresh local configured checks (all exit 0):
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: 987
+  packages installed; npm configuration, deprecation and install-script warnings.
+- `npm run lint`.
+- `npm run type-check`.
+- `npm test`: 39 files passed, 353 tests passed and 1 skipped; Vite emitted
+  its configuration-loader compatibility warning.
+- `git diff --check`.
+
+These checks establish local validation only, not populated acceptance or
+independent admission. Release readiness remains no.
+
 ## Revision 47: Engineering research into private verification inputs
 
 Inspected 2026-10-24 at initially clean local head
