@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { gotoPage, waitForHydration } from "./helpers";
 import AxeBuilder from "@axe-core/playwright";
 
 const pages = [
@@ -31,11 +32,11 @@ const EXTRA_RULES = { "label-content-name-mismatch": { enabled: true } };
 
 for (const { path, name } of pages) {
   test(`${name} page passes axe accessibility audit`, async ({ page }) => {
-    await page.goto(path);
+    await gotoPage(page, path);
 
-    // Several of these render their content client-side, so an audit that runs
-    // before hydration would pass against an empty page.
-    await page.waitForLoadState("networkidle");
+    // Wait for React, without coupling the audit to image/media downloads.
+    await waitForHydration(page, "main");
+    await expect(page.locator("h1")).toBeVisible();
 
     const results = await new AxeBuilder({ page })
       .withTags(TAGS)
@@ -47,7 +48,7 @@ for (const { path, name } of pages) {
 }
 
 test("skip-to-content link works", async ({ page }) => {
-  await page.goto("/");
+  await gotoPage(page, "/");
 
   // Tab to the skip link
   await page.keyboard.press("Tab");

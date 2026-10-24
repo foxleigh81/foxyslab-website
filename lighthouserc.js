@@ -19,8 +19,5 @@ module.exports = {
         "categories:seo": ["warn", { minScore: 0.9 }],
       },
     },
-    upload: {
-      target: "temporary-public-storage",
-    },
   },
 };

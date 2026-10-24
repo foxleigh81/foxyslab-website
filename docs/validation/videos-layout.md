@@ -1,0 +1,225 @@
+# Videos initial layout: task 1 validation
+
+## Revision 14: exact-head Preview and E2E investigation
+
+On 2026-10-14, the GitHub PR API and local `git rev-parse HEAD` both returned
+`d6c13ef8975e6c389859eaf816a75316b38dc9bf` for draft PR #79.
+The following read-only GitHub API requests establish the remote evidence
+(paths are relative to `https://api.github.com`):
+
+- `GET /repos/foxleigh81/foxyslab-website/pulls/79`: HTTP 200, matching head.
+- `GET /repos/foxleigh81/foxyslab-website/deployments?sha=d6c13ef8975e6c389859eaf816a75316b38dc9bf&per_page=100`:
+  HTTP 200, Preview deployment `7049678288`, matching SHA.
+- `GET /repos/foxleigh81/foxyslab-website/deployments/7049678288/statuses`:
+  HTTP 200, `success` at `2026-10-13T20:46:04Z`, environment URL
+  `https://foxyslab-website-ehxb4c0j3-foxleighco.vercel.app`.
+- `GET /repos/foxleigh81/foxyslab-website/commits/d6c13ef8975e6c389859eaf816a75316b38dc9bf/check-runs`:
+  E2E job `115529433832` failed in Actions run `38465027398`; quality and
+  Build & Lighthouse jobs succeeded. The latter uses the missing-data bypass
+  and is separate from the Vercel deployment.
+- `GET /repos/foxleigh81/foxyslab-website/actions/jobs/115529433832/logs`:
+  HTTP 403, repository admin rights required. Check annotations contain only
+  exit code 1 and runner/action migration notices, not the failing assertion.
+- The run's artifacts API lists unexpired `playwright-report` artifact
+  `11850592767`; its `/actions/artifacts/11850592767/zip` endpoint returns
+  HTTP 401. The CI failure's application-level cause remains undiagnosed;
+  it cannot be inferred from a successful local run.
+
+`curl -I --max-time 20 https://foxyslab-website-ehxb4c0j3-foxleighco.vercel.app/videos`
+returned HTTP 302 to Vercel SSO. No bypass credential is available.
+The direct browser attempt below exited 1 with two failures (desktop/mobile),
+both caused by `page.goto: net::ERR_TUNNEL_CONNECTION_FAILED` before page
+assertions. These are sandbox access failures, not observed gallery defects:
+
+```sh
+VIDEOS_BASE_URL=https://foxyslab-website-ehxb4c0j3-foxleighco.vercel.app VIDEOS_REPORT_DIR=/work/repo/.lighthouseci/videos/revision14-preview npm run test:e2e -- --config=playwright.videos-production.config.ts --grep @production --reporter=line
+```
+
+The successful Preview establishes a deployed production-equivalent build,
+but its populated cards, credential validity, thumbnail hint, hydration
+stability and CLS/LCP remain unverified here. No Lighthouse runs were made
+against the inaccessible page or its login redirect. Completing verification
+requires an authorized runner/browser with Preview access and access to the
+failed job's logs/report. No secret values were retrieved or added.
+
+This revision updates only verification documentation, including the procedure
+for selecting the exact-head Preview. No behavior changes were justified by
+the available evidence, so there is no meaningful new red/green/refactor
+cycle and no new red run is claimed.
+
+Fresh local checks:
+
+- `npm ci --no-audit --no-fund`: exit 0.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0, 297 passed and one skipped across 35 files.
+- `npm test -- app/videos/__tests__/page.test.tsx components/VideoGallery/__tests__/VideoGallery.test.tsx lib/__tests__/videos-navigation.test.ts lib/__tests__/videos-fixture.test.ts`:
+  exit 0, 39 passed across four files.
+- `npm run verify:videos`: exit 1 at local credential preflight, listing
+  `YOUTUBE_API_KEY`, `FOURTHWALL_STOREFRONT_TOKEN`, and `FLAGS_SECRET` as absent.
+  This local limitation does not negate the successful remote deployment.
+- `NODE_OPTIONS=--max-old-space-size=1536 FLAGS_SECRET="<ephemeral>" npm run test:e2e -- --reporter=line --workers=1 --retries=0`:
+  exit 1, 34 passed, 15 failed, one skipped. The flag secret was generated
+  in memory with Node crypto, not stored. Desktop cases passed. Mobile WebKit's
+  homepage accessibility case timed out in `page.goto` waiting for `load`
+  (`e2e/accessibility.spec.ts:34`), despite a populated homepage DOM snapshot.
+  Fourteen subsequent mobile cases failed with connection refused after the
+  development server stopped responding; an independent curl to localhost:3000
+  also failed. The reason the server exited was not reported in captured output.
+  This establishes local navigation/server availability failures, not the
+  remote CI root cause or a populated videos regression.
+- `NODE_OPTIONS=--max-old-space-size=1536 FLAGS_SECRET="<ephemeral>" npm run build`:
+  exit 1 after compilation and integrated lint/type checks; `/about` prerender
+  requires `YOUTUBE_API_KEY`. No missing-data bypass was used. Generated
+  sitemap date changes were removed from the working diff.
+- `git diff --check`: exit 0.
+
+## Existing implementation and historical evidence
+
+The `/videos` page now resolves playlist and page parameters on the server and
+renders the gallery in the initial response. Search remains local client state.
+The old header-only Suspense fallback and `useSearchParams` gallery path are
+removed. The route renders per request; the YouTube fetches retain their cache.
+The bundled Poppins files avoid a build-time Google Fonts request. The first
+card's existing `priority` prop is unchanged.
+
+## Reconstructed pre-change baseline
+
+The historical starting revision is `eca93e0`. With its page and gallery files
+restored temporarily, the focused server-render test produced only the JSON-LD
+scripts, the "All Videos" header and subtitle, and the YouTube CTA. It produced
+zero `h2` card headings for default and direct-playlist URLs; even the empty
+state was absent. The fallback did not reserve grid space. This is a fixture
+render of the historical code, not a recovered production HTTP response.
+
+No pre-change populated desktop/mobile browser recording exists in this checkout.
+The original production HTML, footer coordinates, and pre-change Lighthouse
+measurements cannot be recovered here: the required YouTube and Fourthwall
+credentials are unset, and the sandbox cannot reach their data origins. The
+historical live ticket reported mobile CLS 0.511 on three runs and LCP of 3.8,
+4.3, and 11.8 seconds, but those are ticket measurements, not reproductions.
+The genuine pre-implementation focused-test run and its raw output are
+unavailable. The reconstructed run below is not evidence of that historical
+red result. No pre-change populated browser or Lighthouse evidence exists in
+this checkout.
+
+## Observed layout regression cycle in revision 10
+
+The regression was already committed in `app/videos/__tests__/page.test.tsx`.
+It renders the real page and gallery with fixture YouTube data while the
+navigation hook suspends, modeling Next's static-render bailout. To check that
+it detects the original bug, the historical page and gallery files were
+restored temporarily, tested, then the current implementation was restored.
+
+- Red: `npm test -- app/videos/__tests__/page.test.tsx` exited 1: six failures,
+  one pass. Default and direct-playlist cases received zero headings instead
+  of 12; page-two cases received zero instead of one; the empty state was
+  missing. This was a reconstructed red run, not the original pre-implementation
+  run, whose raw log is unavailable.
+- Green: the same command exited 0 after restoring the current implementation:
+  seven tests passed.
+- Refactor: moved the videos-only navigation diagnostic from the shared E2E
+  helper into `e2e/helpers/videos-fixture.ts`, and removed unrelated E2E route
+  edits and the task-unrelated CI workflow. `npm test -- app/videos/__tests__/page.test.tsx lib/__tests__/videos-navigation.test.ts lib/__tests__/videos-fixture.test.ts`
+  exited 0: 16 tests passed.
+
+The page test covers the first 12 cards, direct playlist URLs, page two,
+unknown and duplicate parameters, and initial empty/error presentation. Gallery
+unit tests cover search, playlist selection and pagination. A temporary
+inspection of the fixture-rendered HTML showed the first YouTube thumbnail
+`img` with `fetchpriority="high"` and a matching image preload with
+`fetchpriority="high"`. The temporary logging was removed. A populated
+production response still needs inspection.
+
+## Revision 10 checks
+
+- `npm ci`: exit 0.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0, 297 passed and one skipped across 35 files.
+- `NODE_OPTIONS=--max-old-space-size=1536 FLAGS_SECRET="$(node -e 'process.stdout.write(require("node:crypto").randomBytes(32).toString("base64url"))')" npm run test:e2e -- --reporter=line --workers=1 --retries=0`: exit 0, 49 passed and one skipped. The ordinary E2E server had no YouTube data, so this covers route and error presentation, not populated gallery hydration.
+- `npm run verify:videos`: exit 1 before build, listing only the missing variable names `YOUTUBE_API_KEY`, `FOURTHWALL_STOREFRONT_TOKEN`, and `FLAGS_SECRET`.
+- `NODE_OPTIONS=--max-old-space-size=1536 FLAGS_SECRET="$(node -e 'process.stdout.write(require("node:crypto").randomBytes(32).toString("base64url"))')" npm run build`: exit 1 after compilation and integrated lint/type checks; `/about` prerender requires `YOUTUBE_API_KEY`.
+- The same build command with `ALLOW_MISSING_API_KEYS=true`: exit 0. This is a missing-data compilation check, not a production-equivalent build.
+- Against that missing-data build, `VIDEOS_BASE_URL=http://127.0.0.1:4173 VIDEOS_REPORT_DIR=/work/repo/.lighthouseci/videos/diagnostic-round10 npm run test:e2e -- e2e/videos-gallery.spec.ts --config=playwright.videos-production.config.ts --reporter=line --workers=1 --retries=0` exited 1 in 4.4 seconds: four smoke tests passed; the populated check failed on desktop and mobile with `Gallery fixture/data unavailable: no rendered video cards`. This exercises the browser diagnostic, not the populated-layout assertion.
+
+No populated desktop/mobile footer stability result or three mobile
+Lighthouse reports (CLS and LCP) were obtainable in this sandbox. Run the
+procedure in [videos-production-checks.md](videos-production-checks.md) with
+valid credentials and data-origin access to complete those acceptance checks.
+
+## Revision 11: continue the supplied draft
+
+This round started with a clean working tree on
+`eng/71-d38d08-fix-videos-layout-shift-and-slow-first-t` at
+`94072565934a00deb1fd8c1689f9409b51401a20` (revision 10). Its history includes
+the preceding nine implementation revisions; the checkout was not restarted
+from `eca93e0`. No branch changes, commits, or pushes were made.
+
+The review names discarded run `r20261013-49e4de29a61d`, which is absent from
+the available Git history. The configured remote, `file:///work/trusted.git`,
+is unavailable (`git ls-remote` exits 128), so the supplied checkout's head
+cannot independently be compared with the pushed head in this sandbox.
+
+Inspection confirmed that the current draft already retains the server-rendered
+gallery, initial-layout regression, local fonts, and populated-browser diagnostic
+checks. The review identifies no additional behavioral change to reapply.
+This revision only records provenance and fresh verification; it does not
+replace the draft implementation. There is no new red/green/refactor cycle for
+this documentation-only update, and no new red run is claimed. The historical
+cycle and outstanding production acceptance checks remain documented above.
+
+Fresh checks on this checkout:
+
+- `npm ci`: exit 0.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0, 297 passed and one skipped across 35 files.
+- `npm test -- app/videos/__tests__/page.test.tsx components/VideoGallery/__tests__/VideoGallery.test.tsx lib/__tests__/videos-navigation.test.ts lib/__tests__/videos-fixture.test.ts`:
+  exit 0, 39 tests passed across four files.
+- `npm run verify:videos`: exit 1 at credential preflight, naming missing
+  `YOUTUBE_API_KEY`, `FOURTHWALL_STOREFRONT_TOKEN`, and `FLAGS_SECRET` without
+  printing values. A credentialed build, populated browser checks, and three
+  mobile Lighthouse measurements remain blocked; no new CLS/LCP result is
+  claimed.
+- `NODE_OPTIONS=--max-old-space-size=1536 FLAGS_SECRET="$(node -e 'process.stdout.write(require("node:crypto").randomBytes(32).toString("base64url"))')" npm run test:e2e -- --reporter=line --workers=1 --retries=0`:
+  exit 0, 49 passed and one skipped. This checks routes and missing-data
+  presentation, not populated gallery stability. The generated flag secret is
+  ephemeral and does not supply the missing data credentials.
+- `NODE_OPTIONS=--max-old-space-size=1536 FLAGS_SECRET="$(node -e 'process.stdout.write(require("node:crypto").randomBytes(32).toString("base64url"))')" npm run build`:
+  exit 1 after successful compilation and integrated lint/type checks. The
+  `/about` prerender reports that `YOUTUBE_API_KEY` is required in production.
+  The prebuild-generated sitemap date changes were removed from the diff.
+- `git diff --check`: exit 0.
+
+## Revision 13: review follow-up
+
+This revision makes no page or test behavior changes. The populated desktop and
+mobile hydration check, three mobile Lighthouse runs, and emitted priority-hint
+inspection still require the production-equivalent credentials and data access
+described in [videos-production-checks.md](videos-production-checks.md). There
+is no historical pre-implementation red run available; the reconstructed red
+described above remains explicitly separate and is not presented as that run.
+This is an evidence limitation, not a request for an exception.
+
+The production verification command was retried on this checkout:
+
+- `npm run verify:videos`: exit 1 at credential preflight, naming missing
+  `YOUTUBE_API_KEY`, `FOURTHWALL_STOREFRONT_TOKEN`, and `FLAGS_SECRET`. It did
+  not build or start a server, so it produced no populated browser result,
+  priority-hint observation, CLS, or LCP report.
+
+This was a documentation-only correction, so no behavior change or new TDD
+cycle was appropriate. The existing red/green/refactor evidence is historical
+and described above; no new red run is claimed.
+
+Fresh checks for this revision:
+
+- `npm ci`: exit 0.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0, 297 passed and one skipped across 35 files.
+- `npm test -- app/videos/__tests__/page.test.tsx`: exit 0, seven passed.
+- `NODE_OPTIONS=--max-old-space-size=1536 FLAGS_SECRET="<ephemeral>" npm run test:e2e -- --reporter=line --workers=1 --retries=0`: exit 0, 49 passed and one skipped. This ran against missing-data development server behavior, not populated hydration.
+- `NODE_OPTIONS=--max-old-space-size=1536 FLAGS_SECRET="<ephemeral>" npm run build`: exit 1 after compilation and integrated lint/type checks because production prerendering requires `YOUTUBE_API_KEY`.
+- `git diff --check`: exit 0.

@@ -77,12 +77,11 @@ vi.mock("next/image", () => ({
     const { fill: _fill, priority, ...rest } = props;
     /*
      * Matches how the real component signals priority: it *omits* `loading`
-     * rather than setting "eager", and sets fetchpriority while the image is
-     * in flight. Asserting on "eager" would pass here and mean nothing in a
-     * browser.
+     * rather than setting "eager". The real image component only emits a
+     * fetchpriority attribute when the caller supplies fetchPriority.
      */
     return createElement("img", {
-      ...(priority ? { fetchPriority: "high" } : { loading: "lazy" }),
+      ...(priority ? {} : { loading: "lazy" }),
       ...rest,
     });
   },

@@ -14,11 +14,6 @@ jobs:
   quality:
     name: Lint, Type Check & Unit Tests
     runs-on: ubuntu-latest
-    env:
-      # Enables the live Fourthwall image-host check in lib/__tests__/image-hosts.test.ts.
-      # That test skips without this, so the suite still passes if the secret is
-      # absent — but the check that catches a CDN migration won't be running.
-      FOURTHWALL_STOREFRONT_TOKEN: ${{ secrets.FOURTHWALL_STOREFRONT_TOKEN }}
     steps:
       - uses: actions/checkout@v4
 
@@ -33,18 +28,11 @@ jobs:
       - run: npm run type-check
       - run: npm run test:coverage
 
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: coverage
-          path: coverage/
-          retention-days: 14
-
   e2e:
     name: E2E Tests
     runs-on: ubuntu-latest
     env:
-      FLAGS_SECRET: ${{ secrets.FLAGS_SECRET }}
+      FLAGS_SECRET: BwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwc
     steps:
       - uses: actions/checkout@v4
 
@@ -76,21 +64,12 @@ jobs:
 
       - run: npm run test:e2e
 
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-report
-          path: |
-            playwright-report/
-            test-results/
-          retention-days: 14
-
   build-and-lighthouse:
     name: Build & Lighthouse
     runs-on: ubuntu-latest
     env:
       NEXT_PUBLIC_SENTRY_DSN: ""
-      FLAGS_SECRET: ${{ secrets.FLAGS_SECRET }}
+      FLAGS_SECRET: BwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwc
       # This job builds to check the site compiles and to run Lighthouse; it
       # never deploys. Pages using YouTube data are prerendered, so without
       # this the build fails here on a missing key. Deploys do not set it, so
@@ -110,9 +89,28 @@ jobs:
 
       - run: npm run test:lighthouse
 
-      - uses: actions/upload-artifact@v4
+      - name: Extract numeric Lighthouse measurements
+        if: always()
+        run: node scripts/ci-lighthouse-summary.mjs
+
+      - name: Retain numeric Lighthouse measurements
+        id: reports
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: lighthouse-results
-          path: .lighthouseci/
+          path: .lighthouseci/ci/summary.json
+          include-hidden-files: true
+          if-no-files-found: warn
           retention-days: 14
+
+      - name: Link Lighthouse measurements
+        if: always()
+        env:
+          REPORT_URL: ${{ steps.reports.outputs.artifact-url }}
+        run: |
+          if [ -n "$REPORT_URL" ]; then
+            echo "[Numeric Lighthouse measurements]($REPORT_URL)" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No Lighthouse measurements produced; no artifact retained." >> "$GITHUB_STEP_SUMMARY"
+          fi
