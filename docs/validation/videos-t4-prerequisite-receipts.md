@@ -1,5 +1,53 @@
 # T4 task 2: prerequisite receipt register
 
+## Revision 28: T4 task 1 admission
+
+Inspected 2026-10-24 at initially clean local source head
+`0e2e35f44e1cbd8e7472682fefdd75a07b40bef3` on the assigned branch.
+An anonymous `GET /repos/foxleigh81/foxyslab-website/pulls/79` returned
+HTTP 200, an open PR, the assigned branch and the same head. This confirms
+the live PR/local match at inspection time, not the future harness commit or
+the delivery driver's selected subject.
+
+**Admission: BLOCKED; no credentialed verification authorized or started.**
+
+| Required receipt | Revision 28 finding |
+| --- | --- |
+| Reconciled subject | PR/local match observed above. Chris/Marcus's owning-workflow receipt accounting for terminal run `r20261024-ea1bc420e682`, plan generation 88 and runner-reported head `925605fb4b5786afc2ac95e4e162df9f5214e1ea` is not supplied. Driver selection remains unreconciled. |
+| Approved populated saved-data digest | Not supplied: immutable source reference, SHA-256, custodian approval and coverage manifest for saved videos, playlists, pagination and thumbnails. No dataset digest can truthfully be recorded. |
+| Valid build-time credential source | No named approved source, validity attestation or independent exact-head release approval supplied. No credential values retrieved or copied. |
+| Private execution and artifact retention | No approved controller/runner identity, authorized readers, private storage, expiry or success/failure/cancellation cleanup receipt supplied. |
+| Macklin's independent disposition | Not supplied for this head, dataset, credential boundary and execution/retention controls. This blocked implementer record is not Macklin's decision. |
+
+The current exact-head failure evidence supplied with this task is empty.
+Inspection of the existing verifier confirms missing credentials and
+`ALLOW_MISSING_API_KEYS=true` are rejected; its `credentials: present` record
+is not a validity attestation. No demonstrated setup defect warrants a repair.
+The existing saved-input/digest-binding gap recorded below remains outstanding;
+synthetic fixtures and historical artifact hashes do not supply data approval.
+
+Admission requires the owners' non-secret evidence above and a refreshed head
+comparison before credential release. Driver diagnosis stays in its owning
+workflow; none was attempted here. No populated build, browser or Lighthouse
+run was started. Initial layout/hydration, three mobile CLS/LCP pairs, thumbnail
+priority, populated interaction/state checks and valid-data build evidence
+remain blocked. Ashley's independent review is not established by this record.
+The separate live API gate remains pending an authorized Production deployment
+and deployed-revision receipt. No later task result or release readiness is
+claimed.
+
+This update is documentation only. There is no executable behavior change or
+meaningful automated red/green/refactor test; no red run or refactor is claimed.
+Fresh local configured checks:
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: exit 0;
+  987 packages installed, with configuration, deprecation and install-script warnings.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0; 39 files passed, 353 tests passed and 1 skipped;
+  Vite emitted its configuration-loader compatibility warning.
+- `git diff --check`: exit 0.
+
 ## Revision 25: task 1 admission and head reconciliation
 
 Inspected 2026-10-24 at initially clean local source head
