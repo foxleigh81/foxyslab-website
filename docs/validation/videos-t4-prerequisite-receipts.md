@@ -1,5 +1,55 @@
 # T4 task 2: prerequisite receipt register
 
+## Revision 38: T4 task 1 admission remains blocked
+
+Inspected 2026-10-24 on the assigned branch at local head
+`85b6cf55c70ffcaf7efeca08bc7473f08a9b57c1`, with an initially clean working
+tree. This matches the previous checked head supplied in the brief; the live
+PR head and future harness commit have not been revalidated here.
+
+**Admission: BLOCKED.** No approved source digest, credential-validity receipt,
+private execution/retention receipt or Macklin admission disposition was
+supplied. The existing records do not establish these conditions for this
+subject. This is an implementer blocker record, not an independent decision.
+
+| Missing external condition | Owner and observable resolution |
+| --- | --- |
+| Approved populated saved-video source | Marcus obtains an inspectable custodian approval, immutable source reference, SHA-256 and coverage manifest for videos, playlists, pagination, search and thumbnails. Resolution is a receipt binding approval and coverage to the same saved bytes. |
+| Valid build-time credentials and release approval | Marcus obtains a non-secret source identifier and custodian validity attestation. Independent approval must bind credential release to the revalidated exact PR head before execution. No secret values belong in the sandbox or this record. |
+| Private execution and retained artifacts | Marcus obtains the runner/controller identity, authorized readers, private storage references, retention period and cleanup evidence covering success, failure and cancellation. Resolution is inspectable effective controls and approved report references, not merely requested workflow settings. |
+| Independent admission | Macklin records identity, timestamp, subject head, dataset digest, execution/credential/retention scope and disposition in the authorized review system. A missing or blocking decision remains blocked. |
+| Intake reconciliation | Chris coordinates the owning-system trace for generation 94, run `r20261024-bfa825b724c2` and unresolved operations. Resolution requires an accepted replan and persisted effective task eligibility receipt; this repository entry cannot change the external task graph. |
+
+The supplied current failure is HTTP 500 from the Natalya skill invocation:
+`litellm.A2AError: The model output did not match the output schema.` This is
+reported intake evidence, not a locally reproduced website failure. The raw
+response, validator details and authorized Studio control-plane interface are
+unavailable in this session, so no specific schema field or applied graph
+correction is claimed. The supplied replan proposal is not proof of acceptance.
+No external owner was contacted or handoff acceptance inferred.
+
+Lead-owned admission remains outside this website sandbox. There is no new
+website defect to repair and no credentialed build, browser or Lighthouse run
+was started. Saved-input binding, populated layout and interaction checks,
+three mobile CLS/LCP pairs, thumbnail priority and production build evidence
+remain unverified. Live API verification additionally needs an authorized
+Production deployed-revision receipt. No measurement report links exist for
+this revision, and no later PR head is verified.
+
+This change only records the missing external conditions and how their
+resolution can be observed. No executable behavior changes, so there is no
+meaningful automated red/green/refactor behavior test; no red run or refactor
+is claimed. Fresh local configured checks:
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: exit 0;
+  987 packages installed, with configuration, deprecation and install-script warnings.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0; 39 files passed, 353 tests passed and 1 skipped;
+  Vite emitted its configuration-loader compatibility warning.
+
+These checks do not establish populated-data admission or production acceptance.
+
 ## Revision 30: T4 task 1 setup receipt
 
 Inspected 2026-10-24 at 05:15 UTC on the assigned branch, with an initially
