@@ -1,5 +1,70 @@
 # T4 task 2: prerequisite receipt register
 
+## Revision 53: populated-data admission boundary
+
+Inspected 2026-10-24 for task 2 of 4, round 1 on T4. This is a repository
+receipt for draft PR #79; publication and independent review remain pending
+through the lead's authorized route. No PR comment or review request was sent
+from this sandbox; no callable Macklin/Studio routing interface is supplied.
+**Admission remains blocked.** This record is not Macklin's disposition.
+
+The initially clean assigned branch and anonymous GitHub
+`GET /repos/foxleigh81/foxyslab-website/pulls/79` (HTTP 200, open/draft) agree
+on `93793b0d44de07ae99c52a5fdc2f52e5b73d95e2`. That observation binds only
+the inspected source, not the later harness commit. The
+[revision-52 hold receipt](videos-t4-hold-artifact-round-52.md) still leaves
+generation 100, run `r20261024-fd19b1abe480`, operation state, external
+ownership and enforced hold unresolved. A PR/local match does not reconcile
+that operation or establish a hold.
+
+### Boundary evidence and precise provisioning gaps
+
+| Required field | Observed evidence / outstanding provision |
+| --- | --- |
+| Approved production-shaped saved source and digest | No custodian-approved immutable source, SHA-256 or coverage manifest is supplied. `lib/youtube.ts` fetches live YouTube data; `scripts/lib/verify-videos.mjs` has no saved-source/digest binding. Marcus needs the custodian's approval reference, private object/version, capture provenance, digest of the exact saved bytes and coverage of videos, playlists/membership, search, multiple pages and thumbnails. Synthetic fixtures and artifact archive digests are not this dataset receipt. Build/browser binding to those bytes remains outstanding. |
+| Valid credential source | The branch workflow names environment `videos-verification`, with `VIDEOS_VERIFY_YOUTUBE_API_KEY`, `VIDEOS_VERIFY_FOURTHWALL_STOREFRONT_TOKEN` and `VIDEOS_VERIFY_FLAGS_SECRET` mapped to the corresponding application variables. These names are candidate sources only. Marcus needs custodian/source/scope/validity attestations and effective independent exact-head release controls. The verifier's `present` status checks nonempty values, not validity. No credentials were retrieved. |
+| Private build and browser boundary | The candidate workflow is main-only; its configured runner is `ubuntu-latest`. The verifier gives application credentials to build/server children and excludes them from browser/Lighthouse children, suppresses child output, and targets a local production server. This source configuration does not attest a private boundary. Marcus needs the trusted controller revision, private runner and storage identity, authorized readers, permitted network destinations and proof that private input, generated HTML, `.next` and fetch/browser caches stay within that boundary. This sandbox's network allowlist cannot support live YouTube/thumbnail verification. |
+| Retention and cleanup | The workflow uploads only `run-*/summary.json`, requests 14-day retention and also prints JSON into the job summary. The verifier removes raw report/fixture files in `finally`, retaining the summary. Marcus needs effective artifact/log/job-summary readership and expiry, approved output classification, and runner teardown evidence covering input, `.next`, caches and temporary files on success, failure, cancellation and runner loss. Report-directory cleanup alone does not establish these controls. Historical artifact disposition remains in the [containment record](videos-historical-artifact-containment.md). |
+| Independent admission | No Macklin-authored decision binds the revalidated head, approved dataset digest and attested boundary. Prior admissions do not cover a changed subject. Missing fields remain blockers; this implementer cannot approve them. |
+
+### Pending request to Macklin through the lead
+
+Marcus/Chris must first validate the owning operation and enforced hold, obtain
+the missing owner receipts above, and revalidate the then-live PR head. Present
+Macklin with that exact SHA, dataset SHA-256 and approval reference, controller
+revision, credential-source/validity attestations, private build/browser scope,
+authorized readers, retention and cleanup receipts. Request an independent
+explicit admit/block disposition, with reviewer, timestamp, decision reference
+and any conditions, for that complete subject before releasing credentials.
+If the head, digest or boundary changes, obtain a corresponding new assessment.
+This paragraph records the pending request content, not delivery or approval.
+
+No credentialed build, browser or Lighthouse work was started. Missing
+admission preserves the block. Populated initial-layout/hydration/footer and
+interaction/state evidence, three mobile CLS readings below 0.1 with paired
+LCP and first-thumbnail priority, populated regression/build results and the
+authorized post-deployment live API check remain outstanding. No new measured
+report links exist; local checks cannot replace those results or clear Ashley's
+or Macklin's blocks.
+
+### Local validation
+
+Documentation only: no executable behavior changes, so there is no meaningful
+automated red/green/refactor test. No red run or refactor is claimed.
+Fresh configured local checks all exited 0:
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: 987
+  packages installed; configuration, deprecation and install-script warnings.
+- `npm run lint`.
+- `npm run type-check`.
+- `npm test`: 39 files passed, 353 tests passed and 1 skipped; Vite emitted
+  its configuration-loader compatibility warning.
+- `git diff --check`.
+
+These checks validate the local checkout only. PR publication, owner receipts,
+independent admission and populated verification remain pending. Release
+readiness remains no.
+
 ## Revision 49: task 4 independent admission intake
 
 Inspected 2026-10-24 for task 4 of 6, round 1 on T4.
