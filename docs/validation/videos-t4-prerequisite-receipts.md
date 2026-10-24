@@ -1,5 +1,57 @@
 # T4 task 2: prerequisite receipt register
 
+## Revision 25: task 1 admission and head reconciliation
+
+Inspected 2026-10-24 at initially clean local source head
+`6eefc88491a5de11ad0555d32ac268c8a02d3072` on the assigned branch.
+Fresh anonymous `GET /repos/foxleigh81/foxyslab-website/pulls/79` returned
+HTTP 200, an open PR, and that same head. This establishes the live PR/local
+head match at inspection time only, not the later harness commit.
+
+**Admission remains blocked.** The supplied runner-reported head
+`be6e7c9ddf4fba1c2782bf5fab50f6726cbe6b34` differs from the observed PR head.
+No evidence supplied here establishes the gate's selected subject or explains
+that difference. Chris/Marcus's separate gate trace for plan generation 87,
+run `r20261024-434d912b074c`, remains required before attributing its CI or
+Preview evidence. No gate defect is demonstrated by the mismatch alone; no
+gate repair or new website run was attempted.
+
+| Admission requirement | Current receipt status |
+| --- | --- |
+| Selected commit | Live PR and local source match above; lead gate selection remains unverified. |
+| Approved saved-data digest | No approved immutable source, SHA-256 or coverage manifest supplied. Historical artifact archive digests are not dataset digests. |
+| Valid credential boundary | No validity attestation or independent exact-head release approval supplied. No secret values retrieved or copied. |
+| Private execution and retention | No approved controller invocation, private runner/readership, expiry or success/failure/cancellation cleanup receipt supplied. |
+| Macklin disposition | No independent decision bound to this head, dataset and execution controls supplied. |
+
+Fresh source inspection confirms `verifyVideos` rejects missing credentials
+and `ALLOW_MISSING_API_KEYS=true`; its `credentials: present` summary does not
+validate credentials. The production Playwright configuration requires the
+verifier's server URL and report directory. These checks must not be bypassed
+to turn prior missing-key or E2E setup failures into successes. Neither failure
+has been resolved under an admitted populated run. `lib/youtube.ts` still
+fetches live data, and the verifier has no approved saved-input digest binding;
+the planned saved-data implementation remains outstanding.
+
+No populated build, browser or Lighthouse session was started. Both task-1
+acceptance criteria remain blocked. Populated layout, interactions, three
+CLS/LCP pairs, thumbnail priority and regression/build evidence remain
+outstanding, as does the post-deployment live API check. No new measurement
+report exists. The next admission evidence must come from the dataset,
+credential and private-runner owners and Macklin; local checks cannot replace it.
+
+This revision changes this receipt register only. There is no executable
+behavior change and no meaningful automated red/green/refactor test; no red
+run or refactor is claimed. Fresh local configured checks:
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: exit 0;
+  987 packages installed, with configuration, deprecation and install-script warnings.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0; 39 files passed, 353 tests passed and 1 skipped;
+  Vite emitted its configuration-loader compatibility warning.
+- `git diff --check`: exit 0.
+
 ## Revision 24: saved-data input remains blocked
 
 Inspected 2026-10-24 at initially clean local source head
