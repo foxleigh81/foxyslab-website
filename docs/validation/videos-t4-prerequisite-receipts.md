@@ -1,5 +1,100 @@
 # T4 task 2: prerequisite receipt register
 
+## Revision 47: Engineering research into private verification inputs
+
+Inspected 2026-10-24 at initially clean local head
+`c198b824813eb9b27acf827de3fa0e34327d7bc3` on the assigned branch.
+Anonymous GitHub `GET /repos/foxleigh81/foxyslab-website/pulls/79` returned
+HTTP 200, open/draft, the assigned branch and the same head. This comparison
+does not validate the future harness commit or reconcile Studio's operation.
+
+**Classification: Engineering research. Verification remains nondispatchable.**
+The following are evidence dependencies, not product choices. This entry is
+the current task-2 inspection; older entries retain their historical scope.
+
+| Research item | Owner / required receipt | Current evidence and precise limitation |
+| --- | --- | --- |
+| Identity and operation | Chris coordinates the owning workflow; Marcus validates the selected subject and unresolved-operation status. | Local/live PR match observed above. The brief names generation 98, run `r20261024-14eb53d331be`, subject `e2ae8deda234e7e71ae0a27d61b96a7d398eafe9` and another generation-98 run without its identifier. No Studio operation lookup interface is available here; neither run reconciliation nor terminal operation status is established. |
+| Private verification inputs | Marcus obtains custodian approval, immutable populated source, SHA-256, credential validity and effective execution controls. | Source inspection below establishes a candidate existing implementation only. No approved saved source, dataset digest or custodian attestation was supplied or found in the inspected receipt register and linked boundary record. |
+| Independent admission | Macklin records disposition bound to the revalidated head, approved data digest and execution boundary. | No such disposition supplied. This implementer record is not independent admission; credentials must not be released before exact-head approval. |
+| Retained summary and inspector contract | Separately authorized artifact-owning workflow, coordinated by Chris/Marcus. | No callable owning-workflow inspector or contract supplied. Local summary-writing code is inspectable but does not establish retained archive contents or the external inspector schema. Historical ZIP 401 responses do not establish a repository-permission refusal or measurements. |
+
+### Source and digest
+
+`lib/youtube.ts` fetches live YouTube videos, playlists and membership;
+`scripts/lib/verify-videos.mjs` builds that application without a saved-source
+input or digest binding. `test/fixtures/youtube.ts` and the populated page test
+provide synthetic regression inputs, not custodian-approved production-shaped
+saved data. No approved immutable source identifier or SHA-256 can be recorded
+from these observations. An artifact archive hash is not a dataset hash.
+
+The missing source receipt must identify the custodian approval, immutable
+private object/version, capture provenance, SHA-256 of the exact saved bytes
+and coverage manifest for populated videos, playlists, search, multiple pages
+and thumbnails. Keep content in approved private storage; record only approved
+non-secret references here. Binding build and browser execution to those same
+bytes remains unimplemented and cannot be certified from live fetches.
+
+### Existing credential and execution path
+
+Reuse candidate: `.github/workflows/videos-verification.yml` and
+`npm run verify:videos`, described in
+[the existing boundary receipt](videos-task-3-round-18.md). No duplicate workflow
+or credential route was created. The workflow names environment
+`videos-verification` and secret references `VIDEOS_VERIFY_YOUTUBE_API_KEY`,
+`VIDEOS_VERIFY_FOURTHWALL_STOREFRONT_TOKEN` and `VIDEOS_VERIFY_FLAGS_SECRET`,
+mapped to build-time `YOUTUBE_API_KEY`, `FOURTHWALL_STOREFRONT_TOKEN` and
+`FLAGS_SECRET`. These are configured source names, not proof of validity,
+environment scope, independent approval or effective access restrictions.
+
+Fresh anonymous GitHub inspection returned HTTP 404 for both
+`contents/.github/workflows/videos-verification.yml?ref=main` and
+`environments/videos-verification`, and HTTP 401 for
+`actions/permissions/artifact-and-log-retention`. These are inspection limits;
+they do not prove the configuration is absent. The authorized operator must
+attest the trusted controller revision, independent exact-head release gate,
+credential custodian/source/scope/validity, runner identity and authorized
+readers. The local YAML's main-only condition and two PR-head comparisons do
+not establish those effective controls. No owner contact or acceptance occurred.
+
+The verifier passes data credentials to build/server children, uses synthetic
+values for fixture tests, and excludes data credentials from browser/Lighthouse
+children. Child output is suppressed. The browser uses the local production
+server with screenshots and traces disabled. Private input, generated HTML,
+`.next` and fetch caches still require an attested private runner boundary.
+
+### Retention and cleanup
+
+The configured upload contains only `run-*/summary.json`, with 14-day retention;
+the job also prints it to the Actions summary. Its bounded results and numeric
+metrics must be treated as publishable, not as private dataset storage. Raw
+browser reports, fixture HTML and Lighthouse reports are removed in the
+verifier's `finally` path, preserving the summary. This does not prove cleanup
+after abrupt cancellation or disposal of `.next`, caches and runner storage.
+The runner owner must attest effective readers, log/summary retention, expiry
+and teardown on success, failure and cancellation. Historical artifact
+disposition remains separate in
+[the containment record](videos-historical-artifact-containment.md).
+
+No credential values, private saved-video contents or raw artifacts were
+retrieved or added. No credentialed build/browser/Lighthouse run was dispatched.
+Local checks cannot supply missing admission, populated measurements or the
+authorized Production revision and live API result. All remain open.
+
+This is documentation-only research: no executable behavior changed, so there
+is no meaningful automated red/green/refactor test. No red run or refactor is
+claimed. Fresh local configured checks:
+
+- `npm ci --cache /work/repo/.git/npm-cache --no-audit --no-fund`: exit 0;
+  987 packages installed, with configuration, deprecation and install-script warnings.
+- `npm run lint`: exit 0.
+- `npm run type-check`: exit 0.
+- `npm test`: exit 0; 39 files passed, 353 tests passed and 1 skipped;
+  Vite emitted its configuration-loader compatibility warning.
+- `git diff --check`: exit 0.
+
+These results validate local checks only, not populated production acceptance.
+
 ## Revision 38: T4 task 1 admission remains blocked
 
 Inspected 2026-10-24 on the assigned branch at local head
